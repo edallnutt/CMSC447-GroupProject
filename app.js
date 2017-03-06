@@ -31,6 +31,12 @@ app.get('/login', function(req,res) {
 
 });
 
+app.get('/logout', function(req,res) {
+
+	res.redirect('https://accounts.google.com/logout');
+
+});
+
 
 
 // catch 404 and forward to error handler
