@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+
+<!-- This is the app's google id, hide once in production
+ 58632476148-94bkj0jr5vd3pc68fg6uostlsbj54ogn.apps.googleusercontent.com
+ -->
+
+<html lang="en">
+<head>
+  <title>login</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="google-signin-client_id" content="58632476148-94bkj0jr5vd3pc68fg6uostlsbj54ogn.apps.googleusercontent.com">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  <style>
+    .h-centered { 
+		margin: auto; 
+		max-width: 300px;
+	}
+	.v-centered {
+		min-height: 100%;  /* Fallback for browsers do NOT support vh unit */
+		min-height: 100vh; /* These two lines are counted as one :-)       */
+
+		display: flex;
+		align-items: center;
+	}
+  </style>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+<head>
+<body>
+  <script>
+    var googleUser = {}; //So we have 'global' access to user's data and not just in the scope of the login function
+
+    /*
+        This function is called when a user is successfully signed in
+    */
+    function onSuccess(tgoogleUser) {
+
+        /*
+          This is where we would check the email for an admin email and redirect accordingly
+        */
+
+        googleUser = tgoogleUser;
+        console.log('Logged in as: ' + tgoogleUser.getBasicProfile().getEmail());
+        console.log('This would now redirect to index.html or whatever our landing page is');
+    }
+
+    /*
+        This function is called if there is a login error
+    */
+    function onFailure(error) {
+        console.log(error);
+    }
+
+    /*
+        This function shows the Google signin button
+    */
+    function renderButton() {
+        gapi.signin2.render('my-signin2', {
+            'scope': 'profile email',
+            'width': 240,
+			'height': 50,
+            'longtitle': true,
+            'theme': 'dark',
+            'onsuccess': onSuccess,
+            'onfailure': onFailure
+        });
+    }
+  </script>
+  
+  <div class="h-centered">
+	<div class="v-centered">
+      <div class="row">  
+		<center>Please click below to login with your UMBC email and password</center>
+        <center><div id="my-signin2"></div></center>
+      </div>
+	</div>
+  </div>
+  <script src="https://apis.google.com/js/platform.js?onload=renderButton" async defer></script>
+</body>
+</html>
+			
+
