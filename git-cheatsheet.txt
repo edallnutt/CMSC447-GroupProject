@@ -15,7 +15,7 @@
 ---------------------------------------------------------
 #I have added a file but don't want to commit it
 
-	git remove <file> --or-- git remove
+	git reset
 
 
 ---------------------------------------------------------
