@@ -77,7 +77,7 @@
 	git commit -m '<commit message>'
 	git push
 	git checkout master
-	git merge
+	git merge <branch name>
 
 
 ---------------------------------------------------------
