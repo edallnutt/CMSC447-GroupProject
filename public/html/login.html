@@ -31,6 +31,8 @@
   <script>
     var googleUser = {}; //So we have 'global' access to user's data and not just in the scope of the login function
 
+
+
     /*
         This function is called when a user is successfully signed in
     */
@@ -43,6 +45,12 @@
         googleUser = tgoogleUser;
         console.log('Logged in as: ' + tgoogleUser.getBasicProfile().getEmail());
         console.log('This would now redirect to index.html or whatever our landing page is');
+	if(googleUser.getBasicProfile.getEmail() == 'allnutt2@umbc.edu') {
+	    window.location.replace('/admin');
+	} else {
+	    window.location.replace('/');
+	}
+
     }
 
     /*
