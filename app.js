@@ -51,6 +51,11 @@ function checkSubmissionStatus(callback) {
     });
 }
 
+app.get('/', function(req,res) {
+
+    res.sendFile(path.join(__dirname,'public/html/login.html'));
+
+});
 
 app.get('/home', function(req,res) {
     checkSubmissionStatus(function(posted) {
@@ -67,19 +72,35 @@ app.get('/home', function(req,res) {
     });
 });
 
-
-app.get('/', function(req,res) {
-
-	res.sendFile(path.join(__dirname,'public/html/login.html'));
-
-});
-
 app.get('/logout', function(req,res) {
 
 	res.redirect('https://accounts.google.com/logout');
 
 });
 
+app.get('/admin', function(req,res) {
+    res.sendFile(path.join(__dirname,'public/html/admin.html'));
+});
+
+app.get('/close', function(req,res) {
+    var file = require('./config.json');
+    var val = (req.query.status == "true");
+    file.submissionsClosed = val;
+    fs.writeFile(path.join(__dirname,'config.json'), JSON.stringify(file), function (err) {
+        if (err) return console.log(err);
+        res.redirect('/admin');
+    });
+});
+
+app.get('/publish', function(req,res) {
+    var file = require('./config.json');
+    var val = (req.query.status == "true");
+    file.submissionsClosed = val;
+    fs.writeFile(path.join(__dirname,'config.json'), JSON.stringify(file), function (err) {
+        if (err) return console.log(err);
+        res.redirect('/admin');
+    });
+});
 
 
 // catch 404 and forward to error handler
