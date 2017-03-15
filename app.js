@@ -10,6 +10,11 @@ var users = require('./routes/users');
 
 var app = express();
 
+function checkSubmissionStatus() {
+    //Check config file for status
+    return 1;
+}
+
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
@@ -22,8 +27,23 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.use('/', index);
+//app.use('/', index);
 app.use('/users', users);
+
+app.get('/', function(req,res) {
+    var posted = checkSubmissionStatus();
+    switch(posted) {
+        case -1: res.sendFile(path.join(__dirname,'public/html/not-posted-landing.html'));
+            break;
+        case 0: res.sendFile(path.join(__dirname,'public/html/stop-submit-landing.html'));
+            break;
+        case 1: res.sendFile(path.join(__dirname,'public/html/index.html'));
+            break;
+        default: res.sendFile(path.join(__dirname,'public/html/index.html'));
+            break;
+    }
+});
+
 
 app.get('/login', function(req,res) {
 
