@@ -54,16 +54,12 @@ function checkSubmissionStatus(callback) {
 
 app.get('/home', function(req,res) {
     checkSubmissionStatus(function(posted) {
-        console.log(posted)
         switch(posted) {
             case -1: res.sendFile(path.join(__dirname,'public/html/not-posted-landing.html'));
-                console.log("Not-posted");
                 break;
             case 0: res.sendFile(path.join(__dirname,'public/html/stop-submit-landing.html'));
-                console.log("Locked");
                 break;
             case 1: res.sendFile(path.join(__dirname,'public/html/index.html'));
-                console.log("Ready")
                 break;
             default: res.sendFile(path.join(__dirname,'public/html/index.html'));
                 break;
