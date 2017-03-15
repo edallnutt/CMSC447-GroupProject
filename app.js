@@ -1,19 +1,23 @@
 var express = require('express');
 var path = require('path');
+var http = require('http');
+var reload = require('reload');
 var favicon = require('serve-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
+var fs = require('fs')
 
 var index = require('./routes/index');
 var users = require('./routes/users');
 
+var config = require('./config.json');
+
 var app = express();
 
-function checkSubmissionStatus() {
-    //Check config file for status
-    return 1;
-}
+
+//var config = require('./config.json');
+
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -30,18 +34,41 @@ app.use(express.static(path.join(__dirname, 'public')));
 //app.use('/', index);
 app.use('/users', users);
 
+
+function checkSubmissionStatus(callback) {
+    fs.readFile(path.join(__dirname,'config.json'),'utf-8',function(err,data) {
+        if (err) {
+            return console.log(err);
+        }
+        var config = JSON.parse(data);
+        if(config.submissionsPublished) {
+            callback(1);
+        } else if(config.submissionsClosed) {
+            callback(0);
+        } else {
+            callback(-1);
+        }
+    });
+}
+
+
 app.get('/home', function(req,res) {
-    var posted = checkSubmissionStatus();
-    switch(posted) {
-        case -1: res.sendFile(path.join(__dirname,'public/html/not-posted-landing.html'));
-            break;
-        case 0: res.sendFile(path.join(__dirname,'public/html/stop-submit-landing.html'));
-            break;
-        case 1: res.sendFile(path.join(__dirname,'public/html/index.html'));
-            break;
-        default: res.sendFile(path.join(__dirname,'public/html/index.html'));
-            break;
-    }
+    checkSubmissionStatus(function(posted) {
+        console.log(posted)
+        switch(posted) {
+            case -1: res.sendFile(path.join(__dirname,'public/html/not-posted-landing.html'));
+                console.log("Not-posted");
+                break;
+            case 0: res.sendFile(path.join(__dirname,'public/html/stop-submit-landing.html'));
+                console.log("Locked");
+                break;
+            case 1: res.sendFile(path.join(__dirname,'public/html/index.html'));
+                console.log("Ready")
+                break;
+            default: res.sendFile(path.join(__dirname,'public/html/index.html'));
+                break;
+        }
+    });
 });
 
 
