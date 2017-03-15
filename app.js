@@ -30,7 +30,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 //app.use('/', index);
 app.use('/users', users);
 
-app.get('/', function(req,res) {
+app.get('/home', function(req,res) {
     var posted = checkSubmissionStatus();
     switch(posted) {
         case -1: res.sendFile(path.join(__dirname,'public/html/not-posted-landing.html'));
@@ -45,7 +45,7 @@ app.get('/', function(req,res) {
 });
 
 
-app.get('/login', function(req,res) {
+app.get('/', function(req,res) {
 
 	res.sendFile(path.join(__dirname,'public/html/login.html'));
 
