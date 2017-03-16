@@ -47,13 +47,68 @@ function checkSubmissionStatus(callback) {
     });
 }
 
+function addAdminID(email,id, callback) {
+    var admin = false;
+
+    fs.readFile(path.join(__dirname,'config.json'),'utf-8',function(err,data) {
+        if (err) {
+            return console.log(err);
+        }
+        var config = JSON.parse(data);
+        for(var i=0;i<config.adminEmails.length;i++) {
+            if(config.adminEmails[i] == email) {
+                admin = true;
+                break;
+            }
+        }
+        if(admin) {
+            var found = false;
+            for(var i=0;i<config.adminIDs.length;i++) {
+                if (config.adminIDs[i] == id) {
+                    found = true;
+                    break;
+                }
+            }
+            if(!found) {
+                config.adminIDs.push(id);
+                fs.writeFile(path.join(__dirname,'config.json'), JSON.stringify(config), function (err) {
+                    if (err) return console.log(err);
+                });
+            }
+        }
+
+        callback(admin);
+
+    });
+}
+
+
 app.get('/', function(req,res) {
 
     res.sendFile(path.join(__dirname,'public/html/login.html'));
 
 });
 
+//checks is logged in user is currently an admin and redirects to specified page if they are
+app.get('/checkadminstatus', function(req,res) {
+
+    var email = req.query.email;
+    var id = req.query.id;
+    var redirect = req.query.redirect;
+    addAdminID(email,id, function(admin) {
+        if(admin) {
+            res.redirect('/'+redirect);
+        } else {
+            res.redirect('/home');
+        }
+    });
+
+});
+
 app.get('/home', function(req,res) {
+
+
+
     checkSubmissionStatus(function(posted) {
         switch(posted) {
             case -1: res.sendFile(path.join(__dirname,'public/html/not-posted-landing.html'));
@@ -75,9 +130,15 @@ app.get('/logout', function(req,res) {
 });
 
 app.get('/admin', function(req,res) {
+
     res.sendFile(path.join(__dirname,'public/html/admin.html'));
+
 });
 
+
+//link to /close?status=true to close submissions, everything else opens them back up
+//redirects to admin page
+//TODO: Add in credential passing so only a logged in admin can do this
 app.get('/close', function(req,res) {
     var file = require('./config.json');
     var val = (req.query.status == "true");
@@ -88,6 +149,10 @@ app.get('/close', function(req,res) {
     });
 });
 
+
+//link to /publish?status=true to publish submissions, everything else hides them
+//redirects to admin page
+//TODO: Add in credential passing so only a logged in admin can do this
 app.get('/publish', function(req,res) {
     var file = require('./config.json');
     var val = (req.query.status == "true");
