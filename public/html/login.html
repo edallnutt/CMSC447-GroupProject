@@ -43,9 +43,10 @@
         googleUser = tgoogleUser;
         console.log('Logged in as: ' + tgoogleUser.getBasicProfile().getEmail());
         console.log('This would now redirect to index.html or whatever our landing page is');
-        $.get('/checkadminstatus?email='+ tgoogleUser.getBasicProfile().getEmail()+
-        '&id='+tgoogleUser.getBasicProfile().getId()+
-        '&redirect=admin');
+        $.get('/checkadminstatus?email='+ tgoogleUser.getBasicProfile().getEmail()+'&id='+tgoogleUser.getBasicProfile().getId()+ '&redirect=admin', function(data) {
+            window.location.href = data;
+        });
+
     }
 
     /*
