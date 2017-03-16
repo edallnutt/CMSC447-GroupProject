@@ -97,9 +97,9 @@ app.get('/checkadminstatus', function(req,res) {
     var redirect = req.query.redirect;
     addAdminID(email,id, function(admin) {
         if(admin) {
-            res.redirect('/'+redirect);
+            res.send('/'+redirect);
         } else {
-            res.redirect('/home');
+            res.send('/home');
         }
     });
 
