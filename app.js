@@ -82,6 +82,10 @@ function addAdminID(email,id, callback) {
     });
 }
 
+/*function view(values, res) {
+  var fileContents = fs.readFileSync(path.join(__dirname,'public/html/test.txt'));
+  res.write(fileContents);
+}*/
 
 app.get('/', function(req,res) {
 
@@ -112,6 +116,7 @@ app.get('/home', function(req,res) {
     checkSubmissionStatus(function(posted) {
         switch(posted) {
             case -1: res.sendFile(path.join(__dirname,'public/html/not-posted-landing.html'));
+                //view({}, res);
                 break;
             case 0: res.sendFile(path.join(__dirname,'public/html/stop-submit-landing.html'));
                 break;
