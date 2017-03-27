@@ -59,7 +59,12 @@
     var fileDisplayArea = document.getElementById('fileDisplayArea');
     function readTextFile(file)
     {
-        var rawFile = new XMLHttpRequest();
+      if (window.XMLHttpRequest) {
+          var rawFile = new XMLHttpRequest();
+        } else {
+          // code for older browsers
+          var rawFile = new ActiveXObject("Microsoft.XMLHTTP");
+        }
         rawFile.open("GET", file, false);
         rawFile.onreadystatechange = function ()
         {

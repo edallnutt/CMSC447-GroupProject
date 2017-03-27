@@ -7,6 +7,8 @@ var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var fs = require('fs');
+var GoogleAuth = require('google-auth-library');
+
 
 var index = require('./routes/index');
 var users = require('./routes/users');
@@ -56,7 +58,7 @@ function addAdminID(email,id, callback) {
         }
         var config = JSON.parse(data);
         for(var i=0;i<config.adminEmails.length;i++) {
-            if(config.adminEmails[i] == email) {
+            if(config.adminEmails[i] === email) {
                 admin = true;
                 break;
             }
@@ -64,7 +66,7 @@ function addAdminID(email,id, callback) {
         if(admin) {
             var found = false;
             for(var i=0;i<config.adminIDs.length;i++) {
-                if (config.adminIDs[i] == id) {
+                if (config.adminIDs[i] === id) {
                     found = true;
                     break;
                 }
@@ -86,6 +88,26 @@ function addAdminID(email,id, callback) {
   var fileContents = fs.readFileSync(path.join(__dirname,'public/html/test.txt'));
   res.write(fileContents);
 }*/
+
+app.post('/tokensignin', function (req, res) {
+    var CLIENT_ID = req.query.idtoken;
+    var auth = new GoogleAuth;
+    var client = new auth.OAuth2(CLIENT_ID, '', '');
+    client.verifyIdToken(
+        token,
+        CLIENT_ID,
+        // Or, if multiple clients access the backend:
+        //[CLIENT_ID_1, CLIENT_ID_2, CLIENT_ID_3],
+        function(e, login) {
+            var payload = login.getPayload();
+            var userid = payload['sub'];
+            var useremail = payload['email'];
+            console.log(userid);
+            console.log(useremail);
+            // If request specified a G Suite domain:
+            //var domain = payload['hd'];
+        });
+});
 
 app.get('/', function(req,res) {
 
@@ -110,8 +132,6 @@ app.get('/checkadminstatus', function(req,res) {
 });
 
 app.get('/home', function(req,res) {
-
-
 
     checkSubmissionStatus(function(posted) {
         switch(posted) {
