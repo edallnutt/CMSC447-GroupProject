@@ -18,7 +18,7 @@
 	}
 	.v-centered {
 		min-height: 100%;  /* Fallback for browsers do NOT support vh unit */
-		min-height: 100vh; /* These two lines are counted as one :-)       */
+		min-height: 100vh; /* These two lines are counted as one      */
 
 		display: flex;
 		align-items: center;
@@ -26,10 +26,10 @@
   </style>
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+  <scritp src="../javascripts/script.js"></scritp>
 <head>
 <body>
   <script>
-    var googleUser = {}; //So we have 'global' access to user's data and not just in the scope of the login function
 
     /*
         This function is called when a user is successfully signed in
@@ -39,21 +39,13 @@
         googleUser = tgoogleUser;
 
         var id_token = googleUser.getAuthResponse().id_token
-        var xhr = new XMLHttpRequest();
-        xhr.open('POST', 'http://cmsc447.ethanallnutt.com:8080/tokensignin');
-        xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-        xhr.onload = function() {
-            console.log('Signed in as: ' + xhr.responseText);
-        };
-        xhr.send('idtoken=' + id_token);
-
 
         /*
           This is where we would check the email for an admin email and redirect accordingly
         */
         console.log('Logged in as: ' + googleUser.getBasicProfile().getEmail());
         console.log('This would now redirect to index.html or whatever our landing page is');
-        $.get('#', function(data) {
+        $.get('/admin?id=id_token', function(data) {
             //window.location.href = data;
         });
 
