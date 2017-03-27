@@ -44,111 +44,20 @@
       <!-- /.container-fluid -->
   </nav>
 
-  <button type="button" onclick="loadXMLDoc()">Change Content</button>
-
   <!-- Submissions Not Posted Section -->
   <section style="margin-top: 350px">
       <div class="container">
           <div class="row">
               <div class="col-lg-12 text-center">
-                  <h2 id="fileDisplayArea">Submissions have not been posted</h2>
+                  <p id="demo">Submissions have not been posted</p>
               </div>
           </div>
       </div>
   </section>
 
   <script>
-    function loadXMLDoc() {
-      var xmlhttp;
-      if (window.XMLHttpRequest) {
-        xmlhttp = new XMLHttpRequest();
-      } else {
-        // code for older browsers
-        xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
-      }
-      xmlhttp.onreadystatechange = function() {
-        if (this.readyState == 4 && this.status == 200) {
-          document.getElementById("demo").innerHTML =
-          this.responseText;
-        }
-      };
-      xmlhttp.open("GET", "xmlhttp_info.txt", true);
-      xmlhttp.send();
-    }
+    
   </script>
-
-  <!--<script>
-    var fileDisplayArea = document.getElementById('fileDisplayArea');
-    function readTextFile(file)
-    {
-      if (window.XMLHttpRequest) {
-          var rawFile = new XMLHttpRequest();
-        } else {
-          // code for older browsers
-          var rawFile = new ActiveXObject("Microsoft.XMLHTTP");
-        }
-        rawFile.open("GET", file, false);
-        rawFile.onreadystatechange = function ()
-        {
-            if(rawFile.readyState === 4)
-            {
-                if(rawFile.status === 200 || rawFile.status == 0)
-                {
-                    var allText = rawFile.responseText;
-                    fileDisplayArea.innerText = allText;
-                }
-            }
-        }
-        rawFile.send(null);
-    }
-
-    readTextFile("/test.txt");
-  </script>-->
-
-  <!--<table style="margin-top: 150px"><tr>
-  <td>Select a File to Load:</td>
-  <td><input type="file" id="fileToLoad" onchange="loadFileAsText()"></td>
-
-  </tr><tr>
-  <td colspan="2"><textarea id="inputTextToSave" style="width:512px;height:256px"></textarea></td>
-  </tr></table>
-
-  <script type="text/javascript">
-
-  function saveTextAsFile()
-  {
-      var textToSave = document.getElementById("inputTextToSave").value;
-      var textToSaveAsBlob = new Blob([textToSave], {type:"text/plain"});
-      var textToSaveAsURL = window.URL.createObjectURL(textToSaveAsBlob);
-      var fileNameToSaveAs = document.getElementById("inputFileNameToSaveAs").value;
-
-      var downloadLink = document.createElement("a");
-      downloadLink.download = fileNameToSaveAs;
-      downloadLink.innerHTML = "Download File";
-      downloadLink.href = textToSaveAsURL;
-      downloadLink.onclick = destroyClickedElement;
-      downloadLink.style.display = "none";
-      document.body.appendChild(downloadLink);
-
-      downloadLink.click();
-  }
-
-  function destroyClickedElement(event)
-  {
-      document.body.removeChild(event.target);
-  }
-
-  function loadFileAsText(){
-    var fileToLoad = document.getElementById("fileToLoad").files[0];
-    console.log(fileToLoad);
-    var fileReader = new FileReader();
-        fileReader.onload = function(fileLoadedEvent){
-            document.getElementById("inputTextToSave").value = fileLoadedEvent.target.result;
-        };
-    fileReader.readAsText(fileToLoad, "UTF-8");
-  }
-
-</script>-->
 
 </body>
 </html>
