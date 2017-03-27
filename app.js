@@ -84,7 +84,7 @@ function addAdminID(email,id, callback) {
     });
 }
 
-app.post('/tokensignin', function (req, res) {
+app.all('/tokensignin', function (req, res) {
     var CLIENT_ID = req.query.idtoken;
     var auth = new GoogleAuth;
     var client = new auth.OAuth2(CLIENT_ID, '', '');
