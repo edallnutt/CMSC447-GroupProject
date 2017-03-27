@@ -8,6 +8,8 @@ var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var fs = require('fs');
 var GoogleAuth = require('google-auth-library');
+var exec = require("child_process").exec;
+
 
 
 var index = require('./routes/index');
@@ -84,30 +86,42 @@ function addAdminID(email,id, callback) {
     });
 }
 
+function getAdmins(callback) {
+    fs.readFile(path.join(__dirname,'config.json'),'utf-8',function(err,data) {
+        if (err) {
+            return console.log(err);
+        }
+        var config = JSON.parse(data);
+        callback(config.adminEmails);
+
+    });
+}
+
+function verifyAdmin(id, callback) {
+    var url = 'https://www.googleapis.com/oauth2/v3/tokeninfo?id_token='+id;
+    exec(['curl '+url], function(err, out, code) {
+        if (err instanceof Error)
+            throw err;
+        var data = JSON.parse(out);
+        var email = data['email'];
+        if(email != null) {
+            getAdmins(function(data) {
+                for(var i = 0;i < data.length;i++) {
+                    if(data[i] === email) {
+                        return true;
+                    }
+                }
+                return false;
+            })
+        }
+
+    });
+}
+
 /*function view(values, res) {
   var fileContents = fs.readFileSync(path.join(__dirname,'public/html/test.txt'));
   res.write(fileContents);
 }*/
-
-app.all('/tokensignin', function (req, res) {
-    var CLIENT_ID = req.query.idtoken;
-    var auth = new GoogleAuth;
-    var client = new auth.OAuth2(CLIENT_ID, '', '');
-    client.verifyIdToken(
-        token,
-        CLIENT_ID,
-        // Or, if multiple clients access the backend:
-        //[CLIENT_ID_1, CLIENT_ID_2, CLIENT_ID_3],
-        function(e, login) {
-            var payload = login.getPayload();
-            var userid = payload['sub'];
-            var useremail = payload['email'];
-            console.log(userid);
-            console.log(useremail);
-            // If request specified a G Suite domain:
-            //var domain = payload['hd'];
-        });
-});
 
 app.get('/', function(req,res) {
 
@@ -148,6 +162,14 @@ app.get('/home', function(req,res) {
     });
 });
 
+app.get('/getAdmins', function(req,res) {
+
+    getAdmins(function(data) {
+        res.send(data);
+    });
+
+});
+
 app.get('/logout', function(req,res) {
 
 	res.redirect('https://accounts.google.com/logout');
@@ -156,7 +178,14 @@ app.get('/logout', function(req,res) {
 
 app.get('/admin', function(req,res) {
 
-    res.sendFile(path.join(__dirname,'public/html/admin.html'));
+    verifyAdmin(req.query.id, function(data) {
+        if(data) {
+            res.sendFile(path.join(__dirname,'public/html/admin.html'));
+        } else {
+            res.sendFile(path.join(__dirname,'public/html/index.html'));
+        }
+    });
+
 
 });
 
