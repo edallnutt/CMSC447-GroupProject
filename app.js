@@ -84,12 +84,6 @@ function addAdminID(email,id, callback) {
     });
 }
 
-<<<<<<< HEAD
-function view(values, res) {
-  var fileContents = fs.readFileSync(path.join(__dirname,'public/html/test.txt'));
-  res.write(fileContents);
-}
-=======
 function getAdmins(callback) {
     fs.readFile(path.join(__dirname,'config.json'),'utf-8',function(err,data) {
         if (err) {
@@ -122,11 +116,29 @@ function verifyAdmin(id, callback) {
     });
 }
 
-/*function view(values, res) {
-  var fileContents = fs.readFileSync(path.join(__dirname,'public/html/test.txt'));
-  res.write(fileContents);
-}*/
->>>>>>> c5fd159f07439f482b68866f63d877c289411ace
+// Merges json values to dynamically display an html template
+function mergeValues(values, content){
+    // Cycle over the keys
+    for(var key in values){
+        // Replace all {{key}} with the value from the values object
+        content = content.replace("{{" + key + "}}", values[key]);
+    }
+
+    //return merged content
+    return content;
+}
+
+// Displays html template to the screen
+function view(templateName, values, res){
+    // Read from the template files
+    var fileContents = fs.readFileSync("./public/html/" + templateName + ".html", {encoding: "utf-8"});
+
+    // Insert values into the Content
+    fileContents = mergeValues(values, fileContents);
+
+    // Write out the content to the response
+    res.write(fileContents);
+}
 
 app.get('/', function(req,res) {
 
@@ -154,15 +166,35 @@ app.get('/home', function(req,res) {
 
     checkSubmissionStatus(function(posted) {
         switch(posted) {
-            case -1: res.sendFile(path.join(__dirname,'public/html/not-posted-landing.html'));
-                view({}, res);
-                break;
-            case 0: res.sendFile(path.join(__dirname,'public/html/stop-submit-landing.html'));
-                break;
-            case 1: res.sendFile(path.join(__dirname,'public/html/index.html'));
-                break;
-            default: res.sendFile(path.join(__dirname,'public/html/index.html'));
-                break;
+            case -1: res.writeHead(200, {'Content-Type': 'text/html'});
+                     view("header", {}, res);
+                     view("nav", {}, res);
+                     view("landing-page", {username:"Landing Page", description:"Answers will be posted soon"}, res);
+                     view("footer", {}, res);
+                     res.end();
+                     break;
+
+            case 0:  res.writeHead(200, {'Content-Type': 'text/html'});
+                     view("header", {}, res);
+                     view("nav", {}, res);
+                     view("landing-page",  {username:"Landing Page", description:"Submissions have been closed"}, res);
+                     view("footer", {}, res);
+                     res.end();
+                     break;
+
+            case 1:  res.writeHead(200, {'Content-Type': 'text/html'});
+                     view("header", {}, res);
+                     view("nav", {}, res);
+                     view("footer", {}, res);
+                     res.end();
+                     break;
+
+            default: res.writeHead(200, {'Content-Type': 'text/html'});
+                     view("header", {}, res);
+                     view("nav", {}, res);
+                     view("footer", {}, res);
+                     res.end();
+                     break;
         }
     });
 });
@@ -187,10 +219,9 @@ app.get('/admin', function(req,res) {
         if(data) {
             res.sendFile(path.join(__dirname,'public/html/admin.html'));
         } else {
-            res.sendFile(path.join(__dirname,'public/html/index.html'));
+            res.redirect('/home');
         }
     });
-
 
 });
 

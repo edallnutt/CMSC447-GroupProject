@@ -10,24 +10,6 @@
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 </head>
 <body>
-  <script>
-    var fs = require('fs');
-
-    function read(callback)){
-      fs.readFile(path.join(__dirname,'public/html/test.txt'), 'utf8', function(err, data) {
-        if (err) {
-          console.log(err);
-        }
-        callback(data);
-      });
-    }
-
-    function getContents(){
-      var output = read(function(data) {
-        console.log(output);
-      });
-    }
-  </script>
 
   <!-- Navigation -->
   <nav id="mainNav" class="navbar navbar-default navbar-fixed-top">
