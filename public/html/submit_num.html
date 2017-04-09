@@ -1,0 +1,23 @@
+<html>
+
+<body>
+
+
+<form>
+  Submit A Number: <br>
+  <textarea name="submit_num" rows="20" cols="70" style="font-size: 20pt">
+  </textarea>
+  <br>
+  <button style="height:40px;width:70px" onclick="submitting()">Submit</button>
+</form>
+
+<script>
+  function submitting(){
+  var submitted_num = document.getElementsByName("submit_num")[0].value;
+
+  // Do whatever with value in text box
+  alert(submitted_num);
+  }
+</script>
+</body>
+</html>
