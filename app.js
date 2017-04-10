@@ -162,6 +162,24 @@ app.get('/checkadminstatus', function(req,res) {
 
 });
 
+app.get('/submit-num', function(req, res) {
+    res.writeHead(200, {'Content-Type': 'text/html'});
+    view("header", {}, res);
+    view("nav", {}, res);
+    view("submit_num", {}, res);
+    view("footer", {}, res);
+    res.end();
+});
+
+app.get('/submit-answer', function(req, res) {
+    res.writeHead(200, {'Content-Type': 'text/html'});
+    view("header", {}, res);
+    view("nav", {}, res);
+    view("table", {}, res);
+    view("footer", {}, res);
+    res.end();
+});
+
 app.get('/home', function(req,res) {
 
     checkSubmissionStatus(function(posted) {
