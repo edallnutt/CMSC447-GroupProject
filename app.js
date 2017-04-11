@@ -108,10 +108,10 @@ function verifyAdmin(id, callback) {
             getAdmins(function(data) {
                 for(var i = 0;i < data.length;i++) {
                     if(data[i] === email) {
-                        return true;
+                        callback(true);
                     }
                 }
-                return false;
+                callback(false);
             })
         }
 
@@ -243,18 +243,28 @@ app.get('/logout', function(req,res) {
 
 app.post('/padmin', function(req, res) {
     var token = req.query.token;
-    var admin = verifyAdmin(token, function(data) {});
+    verifyAdmin(token, function(admin) {
 
-    console.log("*#*#*#*#*#*#*#*#*#*");
-    console.log(admin);
-    console.log("*#*#*#*#*#*#*#*#*#*");
-    var path = "/";
-    if(admin) {
-        path += "admin";
-    } else {
-        path += "home";
-    }
-    res.send(path);
+
+        var path = "/";
+        if(admin) {
+            path += "admin";
+        } else {
+            path += "home";
+        }
+
+        console.log("*#*#*#*#*#*#*#*#*#*");
+        console.log(admin);
+        console.log("*#*#*#*#*#*#*#*#*#*");
+        console.log("*#*#*#*#*#*#*#*#*#*");
+        console.log(path);
+        console.log("*#*#*#*#*#*#*#*#*#*");
+
+        res.send(path);
+
+    });
+
+
 
 });
 
