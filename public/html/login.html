@@ -48,8 +48,10 @@
                 //alert("This site needs local storage and cannot work correctly in Safari incognito mode.");
 
                 fakeSessionStorage();
+                console.log("USING FAKE STORAGE");
                 sessionStorage.setItem('userID', token);
                 sessionStorage.setItem('userEmail', tgoogleUser.getBasicProfile().getEmail());
+                console.log("FAKE STORAGE SUCCESSFUL");
 
             } finally {
                 console.log('Logged in as: ' + tgoogleUser.getBasicProfile().getEmail());
