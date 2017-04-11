@@ -299,7 +299,10 @@ app.get('/number-list', function(req, res) {
     var file = require('./data.json');
     //console.log(file);
     for(var email in file) {
-        console.log(file[email]);
+        //console.log(file[email]);
+        for(var sub in email) {
+            console.log(sub);
+        }
     }
     res.send();
 });
