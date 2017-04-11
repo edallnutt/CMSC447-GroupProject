@@ -51,41 +51,6 @@ function checkSubmissionStatus(callback) {
     });
 }
 
-function addAdminID(email,id, callback) {
-    var admin = false;
-
-    fs.readFile(path.join(__dirname,'config.json'),'utf-8',function(err,data) {
-        if (err) {
-            return console.log(err);
-        }
-        var config = JSON.parse(data);
-        for(var i=0;i<config.adminEmails.length;i++) {
-            if(config.adminEmails[i] == email) {
-                admin = true;
-                break;
-            }
-        }
-        if(admin) {
-            var found = false;
-            for(var i=0;i<config.adminIDs.length;i++) {
-                if (config.adminIDs[i] == id) {
-                    found = true;
-                    break;
-                }
-            }
-            if(!found) {
-                config.adminIDs.push(id);
-                fs.writeFile(path.join(__dirname,'config.json'), JSON.stringify(config), function (err) {
-                    if (err) return console.log(err);
-                });
-            }
-        }
-
-        callback(admin);
-
-    });
-}
-
 function getAdmins(callback) {
     fs.readFile(path.join(__dirname,'config.json'),'utf-8',function(err,data) {
         if (err) {
@@ -243,6 +208,7 @@ app.get('/logout', function(req,res) {
 
 });
 
+//Where /login redirects to and check for admin status from config.json
 app.post('/admin', function(req, res) {
     var token = req.query.token;
     verifyAdmin(token, function(admin) {
@@ -260,6 +226,7 @@ app.post('/admin', function(req, res) {
 
 });
 
+//TODO: Add admin page
 app.get('/admin', function(req,res) {
 
     res.send("HELLO");
@@ -269,7 +236,6 @@ app.get('/admin', function(req,res) {
 
 //link to /close?status=true to close submissions, everything else opens them back up
 //redirects to admin page
-//TODO: Add in credential passing so only a logged in admin can do this
 app.get('/close', function(req,res) {
     var file = require('./config.json');
     var val = (req.query.status == "true");
@@ -290,7 +256,6 @@ app.get('/close', function(req,res) {
 
 //link to /publish?status=true to publish submissions, everything else hides them
 //redirects to admin page
-//TODO: Add in credential passing so only a logged in admin can do this
 app.get('/publish', function(req,res) {
     var file = require('./config.json');
     var val = (req.query.status == "true");
