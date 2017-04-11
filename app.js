@@ -299,8 +299,8 @@ app.get('/number-list', function(req, res) {
     var file = require('./data.json');
     //console.log(file);
     for(var email in file) {
-        var sub = file[email];
-        console.log(sub[alias]+" : "+sub[num_submit]);
+        console.log(file[email].alias;
+        console.log(file[email].num_submit);
     }
     res.send();
 });
