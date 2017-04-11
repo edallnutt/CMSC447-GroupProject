@@ -17,5 +17,6 @@ function getUserToken() {
 }
 
 function adminLink() {
+    var userToken = getUserToken();
     return "/admin?token=" + userToken;
 }
