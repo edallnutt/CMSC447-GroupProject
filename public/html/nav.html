@@ -1,4 +1,9 @@
-
+<script src="../javascripts/script.js">
+    window.onload = function() {
+        var token = getUserToken();
+        document.getElementById("admin").href = "/admin?token=" + token;
+    }
+</script>
 
 <!-- Navigation -->
 <nav id="mainNav" class="navbar navbar-default navbar-fixed-top">
@@ -23,8 +28,8 @@
                 <li>
                     <a href="/statistics">Statistics</a>
                 </li>
-                <li id="admin">
-
+                <li>
+                    <a id="admin" href="/admin?token=">Admin Page</a>
                 </li>
                 <li>
                     <a href="/logout">Logout</a>
@@ -36,11 +41,3 @@
     <!-- /.container-fluid -->
 </nav>
 
-<script src="../javascripts/script.js">
-    function link() {
-        var token = getUserToken();
-        document.getElementById("admin").innerHTML = '<a href="/admin?token="' + token + '>Admin Page</a>';
-    }
-
-    window.onload = link;
-</script>
