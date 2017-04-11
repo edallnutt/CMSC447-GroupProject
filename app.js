@@ -109,9 +109,11 @@ function verifyAdmin(id, callback) {
                 for(var i = 0;i < data.length;i++) {
                     if(data[i] === email) {
                         callback(true);
+                        return;
                     }
                 }
                 callback(false);
+                return;
             })
         }
 
