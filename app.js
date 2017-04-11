@@ -9,6 +9,7 @@ var bodyParser = require('body-parser');
 var fs = require('fs');
 var GoogleAuth = require('google-auth-library');
 var exec = require("child_process").exec;
+var util = require('util');
 
 var index = require('./routes/index');
 var users = require('./routes/users');
@@ -32,11 +33,6 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 //app.use('/', index);
 app.use('/users', users);
-
-// Support encoded bodies
-app.use(bodyParser.urlencoded({ extended: true }));
-app.use( bodyParser.json() );
-
 
 function checkSubmissionStatus(callback) {
     fs.readFile(path.join(__dirname,'config.json'),'utf-8',function(err,data) {
@@ -177,11 +173,21 @@ app.get('/submit-num', function(req, res) {
 });
 
 app.post('/submit-num', function(req, res) {
-    var number = req.body.submit_num;
+    var number = req.query.submit_num;
     console.log(number);
 
     var object = {}
-    var key = 
+    var key = 'jngo1@umbc.edu';
+    object[key] = [];
+
+    var data = {
+        alias: 'strawberry',
+        num_submit: number
+    };
+
+    object[key].push(data);
+
+    fs.writeFileSync('./test.json', util.inspect(JSON.stringify(object)), 'utf-8');
 
     res.writeHead(303, {"Location": "/submit-num"});
     res.end();
@@ -253,12 +259,6 @@ app.get('/getAdmins', function(req,res) {
 app.get('/logout', function(req,res) {
 
 	res.redirect('https://accounts.google.com/logout');
-
-});
-
-app.post('/padmin', function(req, res) {
-
-    console.log(req.body.token);
 
 });
 
