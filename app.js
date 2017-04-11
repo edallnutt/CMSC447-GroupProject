@@ -216,7 +216,7 @@ app.post('/admin', function(req, res) {
     verifyAdmin(token, function(admin) {
         var path = "/";
         if(admin) {
-            path += "admin";
+            path += "admin?token="+token;
         } else {
             path += "home";
         }
