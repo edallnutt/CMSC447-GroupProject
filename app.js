@@ -244,6 +244,10 @@ app.get('/logout', function(req,res) {
 app.post('/padmin', function(req, res) {
     var token = req.query.token;
     var admin = verifyAdmin(token, function(data) {});
+
+    console.log("*#*#*#*#*#*#*#*#*#*");
+    console.log(admin);
+    console.log("*#*#*#*#*#*#*#*#*#*");
     var path = "/";
     if(admin) {
         path += "admin";
