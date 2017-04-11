@@ -16,7 +16,11 @@ function getUserToken() {
     return sessionStorage.getItem('userID');
 }
 
+function getUserEmail() {
+    return sessionStorage.getItem('userEmail');
+}
+
 function adminLink() {
     var userToken = getUserToken();
-    return "/admin?token=" + userToken;
+    document.location.href = "/admin?token=" + userToken;
 }
