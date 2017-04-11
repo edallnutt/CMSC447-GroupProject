@@ -271,7 +271,7 @@ app.post('/padmin', function(req, res) {
 
         var path = "/";
         if(data) {
-            path += "submit-answer";
+            path += "statistics";
         } else {
             path += "home";
         }
@@ -283,19 +283,7 @@ app.post('/padmin', function(req, res) {
 
 app.get('/admin', function(req,res) {
 
-    /*
-    var token = req.query.token;
-    /*/
-    verifyAdmin(req.query.token, function(data) {
-        if(data) {
-            res.send(data);
-            //res.sendFile(path.join(__dirname,'public/html/admin.html'));
-        } else {
-            res.send(data);
-            //res.redirect('/home');
-        }
-    });
-    //*/
+    res.sendFile(path.join(__dirname,'public/html/admin.html'))
 
 });
 
