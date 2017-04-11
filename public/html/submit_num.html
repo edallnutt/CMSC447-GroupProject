@@ -5,14 +5,15 @@
       </textarea>
       <br>
       <button style="margin-top: 25px; height:40px; width:100px" onclick="submitting()">Submit</button>
-      <input name="user_email" id="user_email" type="text" value="getUserEmail()" />
+      <textarea name="user_email" id="user_email" type="text"></textarea>
     </form>
 </div>
 
 <script>
   function submitting(){
       var submitted_num = document.getElementsByName("submit_num")[0].value;
-
+      var email = getUserEmail();
+      document.getElementsByName("user_email")[0].value = email;
       if(!isNaN(submitted_num)) {
           alert(submitted_num);
       }
