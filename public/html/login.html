@@ -44,14 +44,8 @@
                 sessionStorage.setItem('userID', token);
                 sessionStorage.setItem('userEmail', tgoogleUser.getBasicProfile().getEmail());
             } catch (err) {
-                //console.log(err);
-                //alert("This site needs local storage and cannot work correctly in Safari incognito mode.");
-
-                fakeSessionStorage();
-                console.log("USING FAKE STORAGE");
-                sessionStorage.setItem('userID', token);
-                sessionStorage.setItem('userEmail', tgoogleUser.getBasicProfile().getEmail());
-                console.log("FAKE STORAGE SUCCESSFUL");
+                console.log(err);
+                alert("This site needs local storage and cannot work correctly in your browser. This is often caused by browsing in private mode. Some features may not work.");
 
             } finally {
                 console.log('Logged in as: ' + tgoogleUser.getBasicProfile().getEmail());
@@ -60,10 +54,7 @@
                 });
             }
         } else {
-            console.log("using fake storage");
-            fakeSessionStorage();
-            //sessionStorage.setItem('userID', token);
-            //sessionStorage.setItem('userEmail', tgoogleUser.getBasicProfile().getEmail());
+            alert("This site needs local storage and cannot work correctly in your browser. This is often caused by browsing in private mode. Some features may not work.");
 
             console.log('Logged in as: ' + tgoogleUser.getBasicProfile().getEmail());
             $.post('/admin?token='+token, function(data) {
