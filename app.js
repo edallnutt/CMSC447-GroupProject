@@ -10,6 +10,7 @@ var fs = require('fs');
 var GoogleAuth = require('google-auth-library');
 var exec = require("child_process").exec;
 var util = require('util');
+var querystring = require("querystring");
 
 var index = require('./routes/index');
 var users = require('./routes/users');
@@ -121,8 +122,9 @@ function verifyAdmin(id, callback) {
 function mergeValues(values, content){
     // Cycle over the keys
     for(var key in values){
-        // Replace all {{key}} with the value from the values object
-        content = content.replace("{{" + key + "}}", values[key]);
+        // Replace all {{key}} with the value from the values object\
+        content = content.replace("{{alias}}", values[key][0].alias);
+        content = content.replace("{{num_submit}}", values[key][0].num_submit);
     }
 
     //return merged content
@@ -173,20 +175,21 @@ app.get('/submit-num', function(req, res) {
 });
 
 app.post('/submit-num', function(req, res) {
-    var number = req.query.submit_num;
-    console.log(number);
+    var number = req.body.submit_num;
 
-    var object = {}
-    var key = 'jngo1@umbc.edu';
-    object[key] = [];
+    if(!isNaN(number)){
+        var object = JSON.parse(fs.readFileSync('./data.json', 'utf-8'));
+        var key = 'person@umbc.edu';
+        object[key] = [];
 
-    var data = {
-        alias: 'strawberry',
-        num_submit: number
-    };
+        var data = {
+            alias: 'orange',
+            num_submit: number.trim()
+        };
 
-    object[key].push(data);
-    fs.writeFileSync('./test.json', util.inspect(JSON.stringify(users)), 'utf-8');
+        object[key].push(data);
+        fs.writeFileSync('./data.json', JSON.stringify(object), 'utf-8');
+    }
 
     res.writeHead(303, {"Location": "/submit-num"});
     res.end();
@@ -196,7 +199,8 @@ app.get('/submit-answer', function(req, res) {
     res.writeHead(200, {'Content-Type': 'text/html'});
     view("header", {}, res);
     view("nav", {}, res);
-    view("table", {}, res);
+    var user = JSON.parse(fs.readFileSync('./data.json', 'utf-8'));
+    view("table", user, res);
     view("footer", {}, res);
     res.end();
 });

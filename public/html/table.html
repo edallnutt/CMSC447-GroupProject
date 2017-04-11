@@ -20,7 +20,7 @@
 <script>
 var numTable = document.getElementById('numTable');
 
-var numData  = [
+/*var numData  = [
 ["Plantain",24355675,433,0,""],
 ["Pineapple",24355675,433,0,""],
 ["Apricot",24355675,433,0,""],
@@ -109,7 +109,15 @@ var numData  = [
 ["Challenge 2",54353453,2048,0,""],
 ["Challenge 1",28394723,2048,1,"4/30 3:27:54"],
 ["Pineapple(You)",43838484,432,0,""]
-];
+];*/
+
+var numData = [];
+var data = [
+    "{{alias}}",
+    {{num_submit}}
+]
+
+numData.push(data);
 
 for(var i=0; i<numData.length; i++){
 
@@ -121,9 +129,9 @@ for(var i=0; i<numData.length; i++){
 
 	row.insertCell(0).innerHTML = numData[i][0];
 	row.insertCell(1).innerHTML = numData[i][1];
-	row.insertCell(2).innerHTML = numData[i][2];
-	row.insertCell(3).innerHTML = numData[i][3];
-	row.insertCell(4).innerHTML = numData[i][4];
+	//row.insertCell(2).innerHTML = numData[i][2];
+	//row.insertCell(3).innerHTML = numData[i][3];
+	//row.insertCell(4).innerHTML = numData[i][4];
 
 }
 </script>
