@@ -252,7 +252,7 @@ app.get('/logout', function(req,res) {
 
 });
 
-app.post('/admin', function(req, res) {
+app.post('/padmin', function(req, res) {
 
     console.log(req.body.token);
 
