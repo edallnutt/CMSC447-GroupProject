@@ -38,7 +38,8 @@
 
         googleUser = tgoogleUser;
 
-        var id_token = googleUser.getAuthResponse().id_token;
+        //var id_token = googleUser.getAuthResponse().id_token;
+        var id_token = getUserToken();
         var token = id_token.toString();
 
         /*
@@ -46,7 +47,7 @@
         */
         console.log('Logged in as: ' + googleUser.getBasicProfile().getEmail());
         console.log('This would now redirect to index.html or whatever our landing page is');
-        $.post('/padmin?token='+token, function(data) {
+        $.post('/admin?token='+token, function(data) {
             console.log(data);
             document.location.href = data;
 

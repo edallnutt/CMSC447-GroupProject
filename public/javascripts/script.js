@@ -10,3 +10,7 @@ String.prototype.hashCode = function() {
     }
     return hash;
 }
+
+function getUserToken() {
+    return googleUser.getAuthResponse().id_token;
+}

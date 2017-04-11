@@ -243,11 +243,9 @@ app.get('/logout', function(req,res) {
 
 });
 
-app.post('/padmin', function(req, res) {
+app.post('/admin', function(req, res) {
     var token = req.query.token;
     verifyAdmin(token, function(admin) {
-
-
         var path = "/";
         if(admin) {
             path += "admin";
@@ -255,15 +253,7 @@ app.post('/padmin', function(req, res) {
             path += "home";
         }
 
-        console.log("*#*#*#*#*#*#*#*#*#*");
-        console.log(admin);
-        console.log("*#*#*#*#*#*#*#*#*#*");
-        console.log("*#*#*#*#*#*#*#*#*#*");
-        console.log(path);
-        console.log("*#*#*#*#*#*#*#*#*#*");
-
         res.send(path);
-
     });
 
 
@@ -285,11 +275,15 @@ app.get('/close', function(req,res) {
     var val = (req.query.status == "true");
     var token = req.query.token;
     verifyAdmin(token, function(data) {
-        file.submissionsClosed = val;
-        fs.writeFile(path.join(__dirname, 'config.json'), JSON.stringify(file), function (err) {
-            if (err) return console.log(err);
-            res.redirect('/admin');
-        });
+        if(data) {
+            file.submissionsClosed = val;
+            fs.writeFile(path.join(__dirname, 'config.json'), JSON.stringify(file), function (err) {
+                if (err) return console.log(err);
+                res.redirect('/admin');
+            });
+        } else {
+            res.redirect('/home');
+        }
     });
 });
 
@@ -302,11 +296,15 @@ app.get('/publish', function(req,res) {
     var val = (req.query.status == "true");
     var token = req.query.token;
     verifyAdmin(token, function(data) {
-        file.submissionsClosed = val;
-        fs.writeFile(path.join(__dirname, 'config.json'), JSON.stringify(file), function (err) {
-            if (err) return console.log(err);
-            res.redirect('/admin');
-        });
+        if(data) {
+            file.submissionsClosed = val;
+            fs.writeFile(path.join(__dirname, 'config.json'), JSON.stringify(file), function (err) {
+                if (err) return console.log(err);
+                res.redirect('/admin');
+            });
+        } else {
+            res.redirect("/home");
+        }
     });
 });
 
