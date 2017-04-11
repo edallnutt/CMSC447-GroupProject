@@ -1,4 +1,4 @@
-var googleUser = {};      //So we have 'global' access to user's data and not just in the scope of the login function
+var userToken = null;      //So we have 'global' access to user's data and not just in the scope of the login function
 
 String.prototype.hashCode = function() {
     var hash = 0;
@@ -12,11 +12,9 @@ String.prototype.hashCode = function() {
 }
 
 function getUserToken() {
-    return googleUser.getAuthResponse().id_token;
+    return userToken;
 }
 
 function adminLink() {
-    var token = getUserToken();
-    var url = "/admin?token=" + token;
-    return url;
+    return "/admin?token=" + userToken;
 }

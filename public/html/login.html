@@ -36,16 +36,14 @@
     */
     function onSuccess(tgoogleUser) {
 
-        googleUser = tgoogleUser;
-
-        //var id_token = googleUser.getAuthResponse().id_token;
-        var id_token = getUserToken();
+        var id_token = tgoogleUser.getAuthResponse().id_token;
         var token = id_token.toString();
+        userToken = token;
 
         /*
           This is where we would check the email for an admin email and redirect accordingly
         */
-        console.log('Logged in as: ' + googleUser.getBasicProfile().getEmail());
+        console.log('Logged in as: ' + tgoogleUser.getBasicProfile().getEmail());
         console.log('This would now redirect to index.html or whatever our landing page is');
         $.post('/admin?token='+token, function(data) {
             document.location.href = data;
