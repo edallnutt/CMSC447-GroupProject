@@ -3,10 +3,12 @@
         var token = getUserToken();
         document.getElementById("admin").innerHTML = '<a href="/admin?token="' + token + '>Admin Page</a>';
     }
+
+    window.onload = link;
 </script>
 
 <!-- Navigation -->
-<nav id="mainNav" class="navbar navbar-default navbar-fixed-top" onload="link();">
+<nav id="mainNav" class="navbar navbar-default navbar-fixed-top">
     <div class="container">
         <!-- Title link-->
         <div class="navbar-header">
