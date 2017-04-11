@@ -1,3 +1,8 @@
+<script src="../javascripts/script.js">
+    var token  = getUserToken();
+    document.getElementById("admin").innerHTML = '<a href="/admin?token="'+token+'>Admin Page</a>';
+</script>
+
 <!-- Navigation -->
 <nav id="mainNav" class="navbar navbar-default navbar-fixed-top">
     <div class="container">
@@ -21,8 +26,8 @@
                 <li>
                     <a href="/statistics">Statistics</a>
                 </li>
-                <li>
-                    <a href="/admin">Admin Page</a>
+                <li id="admin">
+
                 </li>
                 <li>
                     <a href="/logout">Logout</a>
