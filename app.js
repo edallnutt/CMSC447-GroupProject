@@ -51,6 +51,7 @@ function checkSubmissionStatus(callback) {
     });
 }
 
+//retrieves a list of admins from config file
 function getAdmins(callback) {
     fs.readFile(path.join(__dirname,'config.json'),'utf-8',function(err,data) {
         if (err) {
@@ -62,6 +63,7 @@ function getAdmins(callback) {
     });
 }
 
+//Use this function along with a user id_token to check if they are an admin, callback ensures synchronous behaviour
 function verifyAdmin(id, callback) {
     var url = 'https://www.googleapis.com/oauth2/v3/tokeninfo?id_token='+id;
     exec(['curl '+url], function(err, out, code) {
@@ -111,6 +113,12 @@ function view(templateName, values, res){
 }
 
 app.get('/', function(req,res) {
+
+    res.sendFile(path.join(__dirname,'public/html/login.html'));
+
+});
+
+app.get('/login', function(req,res) {
 
     res.sendFile(path.join(__dirname,'public/html/login.html'));
 
@@ -202,12 +210,6 @@ app.get('/home', function(req,res) {
     });
 });
 
-app.get('/logout', function(req,res) {
-
-	res.redirect('https://accounts.google.com/logout');
-
-});
-
 //Where /login redirects to and check for admin status from config.json
 app.post('/admin', function(req, res) {
     var token = req.query.token;
@@ -226,7 +228,7 @@ app.post('/admin', function(req, res) {
 
 });
 
-//TODO: Add admin page
+//TODO: Add admin html page
 app.get('/admin', function(req,res) {
 
     res.send("HELLO");
@@ -273,11 +275,10 @@ app.get('/publish', function(req,res) {
     });
 });
 
-app.get('/getAdmins', function(req,res) {
+//logs user out of google account
+app.get('/logout', function(req,res) {
 
-    getAdmins(function(data) {
-        res.send(data);
-    });
+    res.redirect('https://accounts.google.com/logout');
 
 });
 
