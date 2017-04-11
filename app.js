@@ -271,13 +271,12 @@ app.post('/padmin', function(req, res) {
 
         if(data) {
             res.writeHead(303, {"Location": "/table"});
-            res.end();
-            res.send();
         } else {
             res.writeHead(303, {"Location": "/home"});
-            res.end();
-            res.send();
         }
+
+        res.end();
+        res.send();
 
     });
 
