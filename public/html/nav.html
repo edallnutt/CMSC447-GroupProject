@@ -1,9 +1,3 @@
-<script src="../javascripts/script.js">
-    window.onload = function() {
-        var token = getUserToken();
-        document.getElementById("admin").href = "/admin?token=" + token;
-    }
-</script>
 
 <!-- Navigation -->
 <nav id="mainNav" class="navbar navbar-default navbar-fixed-top">
@@ -41,3 +35,9 @@
     <!-- /.container-fluid -->
 </nav>
 
+<script src="../javascripts/script.js">
+    window.onload = function() {
+        var token = getUserToken();
+        document.getElementById("admin").href = "/admin?token=" + token;
+    }
+</script>
