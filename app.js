@@ -297,7 +297,8 @@ app.get('/logout', function(req,res) {
 
 app.get('/number-list', function(req, res) {
     var file = require('./data.json');
-    res.send(file.length);
+    console.log(file);
+    console.log(file.length);
 });
 
 // catch 404 and forward to error handler
