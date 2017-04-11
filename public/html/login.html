@@ -39,18 +39,30 @@
         var id_token = tgoogleUser.getAuthResponse().id_token;
         var token = id_token.toString();
 
-        try {
+        if (typeof window.localStorage === 'object') {
+            try {
+                sessionStorage.setItem('userID', token);
+                sessionStorage.setItem('userEmail', tgoogleUser.getBasicProfile().getEmail());
+            } catch (err) {
+                //console.log(err);
+                //alert("This site needs local storage and cannot work correctly in Safari incognito mode.");
+
+                fakeSessionStorage();
+                sessionStorage.setItem('userID', token);
+                sessionStorage.setItem('userEmail', tgoogleUser.getBasicProfile().getEmail());
+
+            } finally {
+                console.log('Logged in as: ' + tgoogleUser.getBasicProfile().getEmail());
+                $.post('/admin?token='+token, function(data) {
+                    document.location.href = data;
+                });
+            }
+        } else {
+            fakeSessionStorage();
             sessionStorage.setItem('userID', token);
             sessionStorage.setItem('userEmail', tgoogleUser.getBasicProfile().getEmail());
-        } catch (err) {
-            console.log(err);
-            alert("This site needs local storage and cannot work correctly in incognito mode.");
-        } finally {
-          /*
-           This is where we would check the email for an admin email and redirect accordingly
-           */
+
             console.log('Logged in as: ' + tgoogleUser.getBasicProfile().getEmail());
-            console.log('This would now redirect to index.html or whatever our landing page is');
             $.post('/admin?token='+token, function(data) {
                 document.location.href = data;
             });
