@@ -1,11 +1,4 @@
-<script src="../javascripts/script.js">
-    function link() {
-        var token = getUserToken();
-        document.getElementById("admin").innerHTML = '<a href="/admin?token="' + token + '>Admin Page</a>';
-    }
 
-    window.onload = link;
-</script>
 
 <!-- Navigation -->
 <nav id="mainNav" class="navbar navbar-default navbar-fixed-top">
@@ -42,3 +35,12 @@
     </div>
     <!-- /.container-fluid -->
 </nav>
+
+<script src="../javascripts/script.js">
+    function link() {
+        var token = getUserToken();
+        document.getElementById("admin").innerHTML = '<a href="/admin?token="' + token + '>Admin Page</a>';
+    }
+
+    window.onload = link;
+</script>
