@@ -231,7 +231,12 @@ app.post('/admin', function(req, res) {
 //TODO: Add admin html page
 app.get('/admin', function(req,res) {
 
-    res.send("HELLO");
+    res.writeHead(200, {'Content-Type': 'text/html'});
+    view("header", {}, res);
+    view("nav", {}, res);
+    //view("admin", {}, res);
+    view("footer", {}, res);
+    res.end();
 
 });
 
@@ -240,7 +245,7 @@ app.get('/admin', function(req,res) {
 //redirects to admin page
 app.get('/close', function(req,res) {
     var file = require('./config.json');
-    var val = (req.query.status == "true");
+    var val = (req.query.status === "true");
     var token = req.query.token;
     verifyAdmin(token, function(data) {
         if(data) {
