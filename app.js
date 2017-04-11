@@ -269,12 +269,13 @@ app.post('/padmin', function(req, res) {
     var token = req.query.token;
     verifyAdmin(token,function(data) {
 
+        var path = "/";
         if(data) {
-            res.writeHead(303, {"Location": "/submit-answer"});
+            path += "submit-answer";
         } else {
-            res.writeHead(303, {"Location": "/home"});
+            path += "home";
         }
-
+        res.writeHead(303, {"Location": path});
         res.end();
         res.send();
 
