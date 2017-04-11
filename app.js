@@ -192,6 +192,15 @@ app.get('/submit-answer', function(req, res) {
     res.end();
 });
 
+app.get('/statistics', function(req, res) {
+    res.writeHead(200, {'Content-Type': 'text/html'});
+    view("header", {}, res);
+    view("nav", {}, res);
+    view("graph", {}, res);
+    view("footer", {}, res);
+    res.end();
+});
+
 app.get('/home', function(req,res) {
 
     checkSubmissionStatus(function(posted) {
