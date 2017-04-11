@@ -252,6 +252,12 @@ app.get('/logout', function(req,res) {
 
 });
 
+app.post('/admin', function(req, res) {
+
+    console.log(req.body.token);
+
+});
+
 app.get('/admin', function(req,res) {
 
     /*

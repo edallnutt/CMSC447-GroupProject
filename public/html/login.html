@@ -49,10 +49,9 @@
         console.log(token);
         console.log('###############');
         console.log(token.hashCode());
-        /*$.get('/admin?token='+token, function(data) {
-            console.log(data);
-            console.log("tester");
-        });*/
+        $.post('/admin?token='+token.hashCode(), function() {
+            console.log("Tester");
+        });
 
     }
 
