@@ -49,9 +49,9 @@
 
                 fakeSessionStorage();
                 console.log("USING FAKE STORAGE");
-                //sessionStorage.setItem('userID', token);
-                //sessionStorage.setItem('userEmail', tgoogleUser.getBasicProfile().getEmail());
-                //console.log("FAKE STORAGE SUCCESSFUL");
+                sessionStorage.setItem('userID', token);
+                sessionStorage.setItem('userEmail', tgoogleUser.getBasicProfile().getEmail());
+                console.log("FAKE STORAGE SUCCESSFUL");
 
             } finally {
                 console.log('Logged in as: ' + tgoogleUser.getBasicProfile().getEmail());
