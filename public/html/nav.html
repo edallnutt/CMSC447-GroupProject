@@ -23,7 +23,7 @@
                     <a href="/statistics">Statistics</a>
                 </li>
                 <li>
-                    <a id="admin" href="/admin?token=">Admin Page</a>
+                    <a id="adminLink" href="/admin?token=">Admin Page</a>
                 </li>
                 <li>
                     <a href="/logout">Logout</a>
@@ -38,6 +38,7 @@
 <script src="../javascripts/script.js">
     window.onload = function() {
         var token = getUserToken();
-        document.getElementById("admin").href = "/admin?token=" + token;
+        var url = "/admin?token=" + token;
+        document.getElementById("adminLink").href = url;
     }
 </script>
