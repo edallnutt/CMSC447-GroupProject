@@ -298,14 +298,25 @@ app.get('/logout', function(req,res) {
 
 app.get('/number-list', function(req, res) {
     var file = require('./data.json');
-    //console.log(file);
+    var list = [];
     for(var email in file) {
+<<<<<<< HEAD
         //console.log(file[email]);
         for(var sub in email) {
             console.log(sub);
+=======
+        for(var sub in file[email]) {
+            list.push(file[email][sub].alias+" : "+file[email][sub].num_submit);
+>>>>>>> c89a39b9582e62a46ab6e41a16303beb07a06004
         }
     }
-    res.send();
+    /*
+    fs.writeFile(path.join(__dirname, 'nums.txt'), JSON.stringify(file), function (err) {
+        if (err) return console.log(err);
+        res.attachment('./nums.txt');
+    });
+    */
+    res.send;
 });
 
 // catch 404 and forward to error handler
