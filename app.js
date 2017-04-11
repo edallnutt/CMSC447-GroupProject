@@ -176,24 +176,17 @@ app.post('/submit-num', function(req, res) {
     var number = req.query.submit_num;
     console.log(number);
 
-    var object = function(alias, num){
-        this.objectAlias = alias;
-        this.objectNum = num;
-    };
+    var object = {}
+    var key = 'jngo1@umbc.edu';
+    object[key] = [];
 
-
-    //var key = 'jngo1@umbc.edu';
-    //object[key] = [];
-    var users = [];
-    users.push(new object("apple", number));
-    /*var data = {
+    var data = {
         alias: 'strawberry',
         num_submit: number
-    };*/
+    };
 
-    //object[key].push(data);
-    JSON.stringify(users);
-    fs.writeFileSync('./test.json', util.inspect(users), 'utf-8');
+    object[key].push(data);
+    fs.writeFileSync('./test.json', util.inspect(JSON.stringify(users)), 'utf-8');
 
     res.writeHead(303, {"Location": "/submit-num"});
     res.end();
