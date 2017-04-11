@@ -46,8 +46,9 @@
         */
         console.log('Logged in as: ' + googleUser.getBasicProfile().getEmail());
         console.log('This would now redirect to index.html or whatever our landing page is');
-        $.post('/padmin?token='+token, function() {
-            console.log("Tester");
+        $.post('/padmin?token='+token, function(data) {
+            document.location.href = data;
+            console.log(data);
         });
 
     }

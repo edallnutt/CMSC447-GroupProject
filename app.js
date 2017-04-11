@@ -275,7 +275,7 @@ app.post('/padmin', function(req, res) {
         } else {
             path += "home";
         }
-        res.redirect(path);
+        res.send(path);
 
     });
 
