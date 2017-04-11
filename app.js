@@ -245,13 +245,19 @@ app.get('/logout', function(req,res) {
 
 app.get('/admin', function(req,res) {
 
-    verifyAdmin(req.query.id, function(data) {
+    /*
+    var token = req.query.token;
+    /*/
+    verifyAdmin(req.query.token, function(data) {
         if(data) {
-            res.sendFile(path.join(__dirname,'public/html/admin.html'));
+            res.send(data);
+            //res.sendFile(path.join(__dirname,'public/html/admin.html'));
         } else {
-            res.redirect('/home');
+            res.send(data);
+            //res.redirect('/home');
         }
     });
+    //*/
 
 });
 
