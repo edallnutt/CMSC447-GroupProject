@@ -44,8 +44,10 @@
                 sessionStorage.setItem('userID', token);
                 sessionStorage.setItem('userEmail', tgoogleUser.getBasicProfile().getEmail());
             } catch (err) {
-                console.log(err);
-                alert("This site needs local storage and cannot work correctly in your browser. This is often caused by browsing in private mode. Some features may not work.");
+                //console.log(err);
+                //alert("This site needs local storage and cannot work correctly in your browser. This is often caused by browsing in private mode. Some features may not work.");
+                setCookie('userID',token,1);
+                setCookie('userEmail',tgoogleUser.getBasicProfile().getEmail(),1);
 
             } finally {
                 console.log('Logged in as: ' + tgoogleUser.getBasicProfile().getEmail());
