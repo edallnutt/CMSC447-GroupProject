@@ -265,6 +265,13 @@ app.get('/logout', function(req,res) {
 
 });
 
+app.post('/padmin', function(req, res) {
+    console.log(req.query.token);
+    res.writeHead(303, {"Location": "/"});
+    res.end();
+    res.send();
+});
+
 app.get('/admin', function(req,res) {
 
     /*
