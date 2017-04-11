@@ -14,3 +14,9 @@ String.prototype.hashCode = function() {
 function getUserToken() {
     return googleUser.getAuthResponse().id_token;
 }
+
+function adminLink() {
+    var token = getUserToken();
+    var url = "/admin?token=" + token;
+    return url;
+}
