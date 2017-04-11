@@ -164,7 +164,7 @@ app.post('/submit-num', function(req, res) {
                         randomFruit = fruits["fruits"][Math.floor((Math.random() * Object.keys(fruits["fruits"]).length) + 1)].name;
                     }
                     else{
-                        count++;
+                        count += 1;
                     }
                 }
             }
