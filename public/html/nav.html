@@ -1,10 +1,12 @@
 <script src="../javascripts/script.js">
-    var token  = getUserToken();
-    document.getElementById("admin").innerHTML = '<a href="/admin?token="'+token+'>Admin Page</a>';
+    function link() {
+        var token = getUserToken();
+        document.getElementById("admin").innerHTML = '<a href="/admin?token="' + token + '>Admin Page</a>';
+    }
 </script>
 
 <!-- Navigation -->
-<nav id="mainNav" class="navbar navbar-default navbar-fixed-top">
+<nav id="mainNav" class="navbar navbar-default navbar-fixed-top" onload="link();">
     <div class="container">
         <!-- Title link-->
         <div class="navbar-header">
