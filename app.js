@@ -82,6 +82,9 @@ function verifyAdmin(id, callback) {
                 callback(false);
                 return;
             })
+        } else {
+            callback(false);
+            return;
         }
 
     });
