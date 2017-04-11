@@ -135,6 +135,14 @@ app.get('/submit-num', function(req, res) {
     res.end();
 });
 
+function isEmpty(obj) {
+    for(var key in obj) {
+        if(obj.hasOwnProperty(key))
+            return false;
+    }
+    return true;
+}
+
 app.post('/submit-num', function(req, res) {
     var number = req.body.submit_num;
     var email = req.body.user_email;
@@ -143,10 +151,15 @@ app.post('/submit-num', function(req, res) {
         var object = JSON.parse(fs.readFileSync('./data.json', 'utf-8'));
         var fruits = JSON.parse(fs.readFileSync('./fruit.json', 'utf-8'));
         var key = email;
-        object[key] = [];
+
+        /*var randomFruit = fruits["fruits"][Math.floor((Math.random() * Object.keys(fruits["fruits"]).length) + 1)].name;
+        if(isEmpty(object[key][0])){
+            randomFruit = fruits["fruits"][Math.floor((Math.random() * Object.keys(fruits["fruits"]).length) + 1)].name;
+        }
+        object[key] = [];*/
 
         var data = {
-            alias: fruits[][Math.floor((Math.random() * Object.keys(fruits).length) + 1)].name,
+            alias: fruits["fruits"][Math.floor((Math.random() * Object.keys(fruits["fruits"]).length) + 1)].name,
             num_submit: number.trim()
         };
 
@@ -300,14 +313,9 @@ app.get('/number-list', function(req, res) {
     var file = require('./data.json');
     var list = [];
     for(var email in file) {
-<<<<<<< HEAD
         //console.log(file[email]);
-        for(var sub in email) {
-            console.log(sub);
-=======
         for(var sub in file[email]) {
             list.push(file[email][sub].alias+" : "+file[email][sub].num_submit);
->>>>>>> c89a39b9582e62a46ab6e41a16303beb07a06004
         }
     }
     /*
