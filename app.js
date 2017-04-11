@@ -146,20 +146,33 @@ function isEmpty(obj) {
 app.post('/submit-num', function(req, res) {
     var number = req.body.submit_num;
     var email = req.body.user_email;
+
     console.log(email);
     if(!isNaN(number)){
         var object = JSON.parse(fs.readFileSync('./data.json', 'utf-8'));
         var fruits = JSON.parse(fs.readFileSync('./fruit.json', 'utf-8'));
         var key = email;
 
-        /*var randomFruit = fruits["fruits"][Math.floor((Math.random() * Object.keys(fruits["fruits"]).length) + 1)].name;
-        if(isEmpty(object[key][0])){
+        var randomFruit;
+        var count = 0;
+        if(isEmpty(object[key])){
             randomFruit = fruits["fruits"][Math.floor((Math.random() * Object.keys(fruits["fruits"]).length) + 1)].name;
+            while(count != Object.keys(object).length){
+                count = 0;
+                for(var idx in object){
+                    if(object[idx][0].alias === randomfruit){
+                        randomFruit = fruits["fruits"][Math.floor((Math.random() * Object.keys(fruits["fruits"]).length) + 1)].name;
+                    }
+                    else{
+                        count++;
+                    }
+                }
+            }
         }
-        object[key] = [];*/
+        object[key] = [];
 
         var data = {
-            alias: fruits["fruits"][Math.floor((Math.random() * Object.keys(fruits["fruits"]).length) + 1)].name,
+            alias: randomFruit,
             num_submit: number.trim()
         };
 
