@@ -49,9 +49,9 @@
 
                 fakeSessionStorage();
                 console.log("USING FAKE STORAGE");
-                sessionStorage.setItem('userID', token);
-                sessionStorage.setItem('userEmail', tgoogleUser.getBasicProfile().getEmail());
-                console.log("FAKE STORAGE SUCCESSFUL");
+                //sessionStorage.setItem('userID', token);
+                //sessionStorage.setItem('userEmail', tgoogleUser.getBasicProfile().getEmail());
+                //console.log("FAKE STORAGE SUCCESSFUL");
 
             } finally {
                 console.log('Logged in as: ' + tgoogleUser.getBasicProfile().getEmail());
@@ -60,9 +60,10 @@
                 });
             }
         } else {
+            console.log("using fake storage");
             fakeSessionStorage();
-            sessionStorage.setItem('userID', token);
-            sessionStorage.setItem('userEmail', tgoogleUser.getBasicProfile().getEmail());
+            //sessionStorage.setItem('userID', token);
+            //sessionStorage.setItem('userEmail', tgoogleUser.getBasicProfile().getEmail());
 
             console.log('Logged in as: ' + tgoogleUser.getBasicProfile().getEmail());
             $.post('/admin?token='+token, function(data) {
