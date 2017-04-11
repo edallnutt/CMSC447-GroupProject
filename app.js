@@ -108,10 +108,10 @@ function verifyAdmin(id, callback) {
             getAdmins(function(data) {
                 for(var i = 0;i < data.length;i++) {
                     if(data[i] === email) {
-                        callback(true);
+                        return true;
                     }
                 }
-                callback(false);
+                return false;
             })
         }
 
@@ -146,22 +146,6 @@ function view(templateName, values, res){
 app.get('/', function(req,res) {
 
     res.sendFile(path.join(__dirname,'public/html/login.html'));
-
-});
-
-//checks is logged in user is currently an admin and redirects to specified page if they are
-app.get('/checkadminstatus', function(req,res) {
-
-    var email = req.query.email;
-    var id = req.query.id;
-    var redirect = req.query.redirect;
-    addAdminID(email,id, function(admin) {
-        if(admin) {
-            res.send('/'+redirect);
-        } else {
-            res.send('/home');
-        }
-    });
 
 });
 
@@ -251,14 +235,6 @@ app.get('/home', function(req,res) {
     });
 });
 
-app.get('/getAdmins', function(req,res) {
-
-    getAdmins(function(data) {
-        res.send(data);
-    });
-
-});
-
 app.get('/logout', function(req,res) {
 
 	res.redirect('https://accounts.google.com/logout');
@@ -267,17 +243,14 @@ app.get('/logout', function(req,res) {
 
 app.post('/padmin', function(req, res) {
     var token = req.query.token;
-    verifyAdmin(token,function(data) {
-
-        var path = "/";
-        if(data) {
-            path += "admin";
-        } else {
-            path += "home";
-        }
-        res.send(path);
-
-    });
+    var admin = verifyAdmin(token, function(data) {});
+    var path = "/";
+    if(admin) {
+        path += "admin";
+    } else {
+        path += "home";
+    }
+    res.send(path);
 
 });
 
@@ -294,10 +267,13 @@ app.get('/admin', function(req,res) {
 app.get('/close', function(req,res) {
     var file = require('./config.json');
     var val = (req.query.status == "true");
-    file.submissionsClosed = val;
-    fs.writeFile(path.join(__dirname,'config.json'), JSON.stringify(file), function (err) {
-        if (err) return console.log(err);
-        res.redirect('/admin');
+    var token = req.query.token;
+    verifyAdmin(token, function(data) {
+        file.submissionsClosed = val;
+        fs.writeFile(path.join(__dirname, 'config.json'), JSON.stringify(file), function (err) {
+            if (err) return console.log(err);
+            res.redirect('/admin');
+        });
     });
 });
 
@@ -308,13 +284,23 @@ app.get('/close', function(req,res) {
 app.get('/publish', function(req,res) {
     var file = require('./config.json');
     var val = (req.query.status == "true");
-    file.submissionsClosed = val;
-    fs.writeFile(path.join(__dirname,'config.json'), JSON.stringify(file), function (err) {
-        if (err) return console.log(err);
-        res.redirect('/admin');
+    var token = req.query.token;
+    verifyAdmin(token, function(data) {
+        file.submissionsClosed = val;
+        fs.writeFile(path.join(__dirname, 'config.json'), JSON.stringify(file), function (err) {
+            if (err) return console.log(err);
+            res.redirect('/admin');
+        });
     });
 });
 
+app.get('/getAdmins', function(req,res) {
+
+    getAdmins(function(data) {
+        res.send(data);
+    });
+
+});
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
