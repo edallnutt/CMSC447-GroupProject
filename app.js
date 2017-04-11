@@ -270,7 +270,7 @@ app.post('/padmin', function(req, res) {
     verifyAdmin(token,function(data) {
 
         if(data) {
-            res.writeHead(303, {"Location": "/table"});
+            res.writeHead(303, {"Location": "/submit-answer"});
         } else {
             res.writeHead(303, {"Location": "/home"});
         }
