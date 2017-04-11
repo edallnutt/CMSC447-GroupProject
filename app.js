@@ -300,7 +300,7 @@ app.get('/number-list', function(req, res) {
     //console.log(file);
     for(var email in file) {
         console.log(email);
-        console.log(file.email);
+        console.log(file[email]);
     }
     res.send();
 });
