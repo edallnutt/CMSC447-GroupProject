@@ -108,10 +108,10 @@ function verifyAdmin(id, callback) {
             getAdmins(function(data) {
                 for(var i = 0;i < data.length;i++) {
                     if(data[i] === email) {
-                        return true;
+                        callback(true);
                     }
                 }
-                return false;
+                callback(false);
             })
         }
 
@@ -266,10 +266,21 @@ app.get('/logout', function(req,res) {
 });
 
 app.post('/padmin', function(req, res) {
-    console.log(req.query.token);
-    res.writeHead(303, {"Location": "/"});
-    res.end();
-    res.send();
+    var token = req.query.token;
+    verifyAdmin(token,function(data) {
+
+        if(data) {
+            res.writeHead(303, {"Location": "/admin"});
+            res.end();
+            res.send();
+        } else {
+            res.writeHead(303, {"Location": "/home"});
+            res.end();
+            res.send();
+        }
+
+    });
+
 });
 
 app.get('/admin', function(req,res) {
