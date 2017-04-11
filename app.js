@@ -267,7 +267,7 @@ app.post('/padmin', function(req, res) {
     console.log(req.body.token);
     res.writeHead(303, {"Location": "/"});
     res.end();
-
+    res.send();
 });
 
 app.get('/admin', function(req,res) {
