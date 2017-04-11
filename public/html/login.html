@@ -40,8 +40,8 @@
         var token = id_token.toString();
 
         try {
-            localStorage.setItem('userID', token);
-            localStorage.setItem('userEmail', tgoogleUser.getBasicProfile().getEmail());
+            sessionStorage.setItem('userID', token);
+            sessionStorage.setItem('userEmail', tgoogleUser.getBasicProfile().getEmail());
         } catch (err) {
             console.log(err);
             alert("This site needs local storage and cannot work correctly in incognito mode.");
