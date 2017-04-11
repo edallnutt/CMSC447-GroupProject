@@ -168,13 +168,22 @@ app.post('/submit-num', function(req, res) {
                     }
                 }
             }
-        }
-        object[key] = [];
+            object[key] = [];
 
-        var data = {
-            alias: randomFruit,
-            num_submit: number.trim()
-        };
+            var data = {
+                alias: randomFruit,
+                num_submit: number.trim()
+            };
+        }
+        else{
+            var objAlias = object[key][0].alias;
+            object[key] = [];
+
+            var data = {
+                alias: objAlias,
+                num_submit: number.trim()
+            };
+        }
 
         object[key].push(data);
         fs.writeFileSync('./data.json', JSON.stringify(object), 'utf-8');
