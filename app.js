@@ -298,13 +298,19 @@ app.get('/logout', function(req,res) {
 
 app.get('/number-list', function(req, res) {
     var file = require('./data.json');
-    //console.log(file);
+    var list = [];
     for(var email in file) {
         for(var sub in file[email]) {
-            console.log(file[email][sub].alias+" : "+file[email][sub].num_submit);
+            list.push(file[email][sub].alias+" : "+file[email][sub].num_submit);
         }
     }
-    res.send();
+    /*
+    fs.writeFile(path.join(__dirname, 'nums.txt'), JSON.stringify(file), function (err) {
+        if (err) return console.log(err);
+        res.attachment('./nums.txt');
+    });
+    */
+    res.send;
 });
 
 // catch 404 and forward to error handler
