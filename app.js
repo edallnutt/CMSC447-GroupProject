@@ -223,20 +223,25 @@ app.post('/admin', function(req, res) {
 
         res.send(path);
     });
-
-
-
 });
 
 //TODO: Add admin html page
 app.get('/admin', function(req,res) {
 
-    res.writeHead(200, {'Content-Type': 'text/html'});
-    view("header", {}, res);
-    view("nav", {}, res);
-    //view("admin", {}, res);
-    view("footer", {}, res);
-    res.end();
+    var token = req.query.token;
+    verifyAdmin(token, function(admin) {
+        if(admin) {
+            res.writeHead(200, {'Content-Type': 'text/html'});
+            view("header", {}, res);
+            view("nav", {}, res);
+            //view("admin", {}, res);
+            view("footer", {}, res);
+            res.end();
+            res.send;
+        } else {
+            res.redirect("/home");
+        }
+    });
 
 });
 
