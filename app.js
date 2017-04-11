@@ -14,6 +14,7 @@ var index = require('./routes/index');
 var users = require('./routes/users');
 
 var config = require('./config.json');
+var bodyParser = require('body-parser');
 
 var app = express();
 
@@ -31,6 +32,10 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 //app.use('/', index);
 app.use('/users', users);
+
+// Support encoded bodies
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use( bodyParser.json() );
 
 
 function checkSubmissionStatus(callback) {
@@ -168,6 +173,13 @@ app.get('/submit-num', function(req, res) {
     view("nav", {}, res);
     view("submit_num", {}, res);
     view("footer", {}, res);
+    res.end();
+});
+
+app.post('/submit-num', function(req, res) {
+    var number = req.body.submit_num;
+    console.log(number);
+    res.writeHead(303, {"Location": "/submit-num"});
     res.end();
 });
 

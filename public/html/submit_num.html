@@ -1,7 +1,7 @@
 <div style="display: block; text-align: center">
-    <form style="display: inline-block; left-margin: auto; right-margin:auto; margin-top: 200px; text-align: center">
+    <form action="submit-num" method="post" style="display: inline-block; left-margin: auto; right-margin:auto; margin-top: 200px; text-align: center">
       <h1>Submit A Number:</h1> <br>
-      <textarea name="submit_num" rows="1" cols="70" style="margin-top: 25px; min-width: 700px; min-height: 45px; max-width: 100%; max-height: 300px; font-size: 20pt">
+      <textarea name="submit_num" id="submit_num" rows="1" cols="70" style="margin-top: 25px; min-width: 700px; min-height: 45px; max-width: 100%; max-height: 300px; font-size: 20pt">
       </textarea>
       <br>
       <button style="margin-top: 25px; height:40px; width:100px" onclick="submitting()">Submit</button>
@@ -12,7 +12,11 @@
   function submitting(){
       var submitted_num = document.getElementsByName("submit_num")[0].value;
 
-      // Do whatever with value in text box
-      alert(submitted_num);
+      if(!isNaN(submitted_num)) {
+          alert(submitted_num);
+      }
+      else{
+          alert("Invalid Submission");
+      }
   }
 </script>
