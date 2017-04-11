@@ -181,9 +181,6 @@ app.post('/submit-num', function(req, res) {
         this.objectNum = num;
     };
 
-    object.prototype.toJSON = function() {
-        return this.objectAlias;
-    };
 
     //var key = 'jngo1@umbc.edu';
     //object[key] = [];
@@ -269,13 +266,6 @@ app.get('/logout', function(req,res) {
 
 	res.redirect('https://accounts.google.com/logout');
 
-});
-
-app.post('/padmin', function(req, res) {
-    console.log(req.body);
-    res.writeHead(303, {"Location": "/"});
-    res.end();
-    res.send();
 });
 
 app.get('/admin', function(req,res) {
