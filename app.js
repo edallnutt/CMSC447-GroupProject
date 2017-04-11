@@ -146,7 +146,7 @@ app.post('/submit-num', function(req, res) {
         object[key] = [];
 
         var data = {
-            alias: 'orange',
+            alias: fruits[][Math.floor((Math.random() * Object.keys(fruits).length) + 1)].name,
             num_submit: number.trim()
         };
 
@@ -300,8 +300,9 @@ app.get('/number-list', function(req, res) {
     var file = require('./data.json');
     //console.log(file);
     for(var email in file) {
-        for(var sub in file[email]) {
-            console.log(file[email][sub].alias+" : "+file[email][sub].num_submit);
+        //console.log(file[email]);
+        for(var sub in email) {
+            console.log(sub);
         }
     }
     res.send();
