@@ -95,8 +95,7 @@ function mergeValues(values, content){
     // Cycle over the keys
     for(var key in values){
         // Replace all {{key}} with the value from the values object\
-        content = content.replace("{{alias}}", values[key][0].alias);
-        content = content.replace("{{num_submit}}", values[key][0].num_submit);
+        content = content.replace("{{" + key + "}}", values[key]);
     }
 
     //return merged content
@@ -138,10 +137,10 @@ app.get('/submit-num', function(req, res) {
 
 app.post('/submit-num', function(req, res) {
     var number = req.body.submit_num;
-
+    var email = req.body.user_email;
     if(!isNaN(number)){
         var object = JSON.parse(fs.readFileSync('./data.json', 'utf-8'));
-        var key = 'person@umbc.edu';
+        var key = email;
         object[key] = [];
 
         var data = {
