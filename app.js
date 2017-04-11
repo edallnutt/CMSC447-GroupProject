@@ -275,9 +275,7 @@ app.post('/padmin', function(req, res) {
         } else {
             path += "home";
         }
-        res.writeHead(303, {"Location": path});
-        res.end();
-        res.send();
+        res.redirect(path);
 
     });
 
