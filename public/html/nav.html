@@ -1,8 +1,9 @@
-<script src="../javascripts/script.js">
+<script src='../javascripts/script.js' type='text/javascript'>
     function adminLink() {
         var token = getUserToken();
         var url = "/admin?token=" + token;
-        document.location.href = url;
+        //document.location.href = url;
+        return url;
     }
 </script>
 
@@ -30,7 +31,7 @@
                     <a href="/statistics">Statistics</a>
                 </li>
                 <li>
-                    <a onclick="adminLink();">Admin Page</a>
+                    <a href="javascript:adminLink();">Admin Page</a>
                 </li>
                 <li>
                     <a href="/logout">Logout</a>
