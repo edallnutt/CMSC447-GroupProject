@@ -39,7 +39,8 @@
         var id_token = tgoogleUser.getAuthResponse().id_token;
         var token = id_token.toString();
         sessionStorage.setItem('userID', token);
-        sessionStorage.setItem('user', tgoogleUser);
+        sessionStorage.setItem('userEmail', tgoogleUser.getBasicProfile().getEmail());
+        sessionStorage.setItem('userProfile', tgoogleUser.getBasicProfile())
         /*
           This is where we would check the email for an admin email and redirect accordingly
         */

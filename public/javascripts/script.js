@@ -17,7 +17,7 @@ function getUserToken() {
 }
 
 function getUserEmail() {
-    return sessionStorage.getItem('user').getBasicProfile().getEmail();
+    return sessionStorage.getItem('userProfile').getEmail();
 }
 
 function adminLink() {
