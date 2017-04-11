@@ -271,7 +271,7 @@ app.post('/padmin', function(req, res) {
 
         var path = "/";
         if(data) {
-            path += "statistics";
+            path += "admin";
         } else {
             path += "home";
         }
@@ -283,7 +283,7 @@ app.post('/padmin', function(req, res) {
 
 app.get('/admin', function(req,res) {
 
-    res.sendFile(path.join(__dirname,'public/html/admin.html'))
+    res.send("HELLO");
 
 });
 
