@@ -141,6 +141,7 @@ app.post('/submit-num', function(req, res) {
     console.log(email);
     if(!isNaN(number)){
         var object = JSON.parse(fs.readFileSync('./data.json', 'utf-8'));
+        var fruits = JSON.parse(fs.readFileSync('./fruit.json', 'utf-8'));
         var key = email;
         object[key] = [];
 
@@ -301,7 +302,7 @@ app.get('/number-list', function(req, res) {
     for(var email in file) {
         //console.log(file[email]);
         for(var sub in email) {
-            console.log(email[sub]);
+            console.log(sub);
         }
     }
     res.send();
