@@ -138,6 +138,7 @@ app.get('/submit-num', function(req, res) {
 app.post('/submit-num', function(req, res) {
     var number = req.body.submit_num;
     var email = req.body.user_email;
+    console.log(email);
     if(!isNaN(number)){
         var object = JSON.parse(fs.readFileSync('./data.json', 'utf-8'));
         var key = email;
