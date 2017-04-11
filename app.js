@@ -179,6 +179,10 @@ app.get('/submit-num', function(req, res) {
 app.post('/submit-num', function(req, res) {
     var number = req.body.submit_num;
     console.log(number);
+
+    var object = {}
+    var key = 
+
     res.writeHead(303, {"Location": "/submit-num"});
     res.end();
 });
@@ -249,12 +253,6 @@ app.get('/getAdmins', function(req,res) {
 app.get('/logout', function(req,res) {
 
 	res.redirect('https://accounts.google.com/logout');
-
-});
-
-app.post('/admin', function(req, res) {
-
-    console.log(req.body.token);
 
 });
 
