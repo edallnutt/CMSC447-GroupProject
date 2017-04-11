@@ -1,4 +1,5 @@
-var userToken = null;      //So we have 'global' access to user's data and not just in the scope of the login function
+
+
 
 String.prototype.hashCode = function() {
     var hash = 0;
@@ -12,7 +13,7 @@ String.prototype.hashCode = function() {
 }
 
 function getUserToken() {
-    return userToken;
+    return sessionStorage.getItem('userID');
 }
 
 function adminLink() {
