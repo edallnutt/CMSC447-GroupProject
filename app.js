@@ -301,7 +301,7 @@ app.get('/number-list', function(req, res) {
     for(var email in file) {
         //console.log(file[email]);
         for(var sub in email) {
-            console.log(sub);
+            console.log(email[sub]);
         }
     }
     res.send();
