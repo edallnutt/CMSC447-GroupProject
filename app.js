@@ -263,7 +263,7 @@ app.get('/logout', function(req,res) {
 });
 
 app.post('/padmin', function(req, res) {
-    console.log(req.body);
+    console.log(req.query.token);
     res.writeHead(303, {"Location": "/"});
     res.end();
     res.send();
