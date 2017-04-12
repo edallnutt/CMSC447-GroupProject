@@ -90,28 +90,40 @@ function verifyAdmin(id, callback) {
     });
 }
 
-// Merges json values to dynamically display an html template
-function mergeValues(values, content){
-    // Cycle over the keys
-    for(var key in values){
-        // Replace all {{key}} with the value from the values object\
-        content = content.replace("{{" + key + "}}", values[key]);
-    }
-
-    //return merged content
-    return content;
-}
-
-// Displays html template to the screen
+/* Displays html template to the screen */
 function view(templateName, values, res){
     // Read from the template files
     var fileContents = fs.readFileSync("./public/html/" + templateName + ".html", {encoding: "utf-8"});
 
     // Insert values into the Content
-    fileContents = mergeValues(values, fileContents);
+    for(var key in values){
+        // Replace all {{key}} with the value from the values object
+        fileContents = fileContents.replace("{{" + key + "}}", values[key]);
+    }
 
     // Write out the content to the response
     res.write(fileContents);
+}
+
+/* Displays html template with student data to the screen */
+function table_view(templateName, values, res){
+    // Read from the template files
+    var fileContents = fs.readFileSync("./public/html/" + templateName + ".html", {encoding: "utf-8"});
+
+    // Insert course JSON object into the Content
+    fileContents = fileContents.replace("{{course.JSON}}", values);
+
+    // Write out the content to the response
+    res.write(fileContents);
+}
+
+/* Checks if an object is empty */
+function isEmpty(obj) {
+    for(var key in obj) {
+        if(obj.hasOwnProperty(key))
+            return false;
+    }
+    return true;
 }
 
 app.get('/', function(req,res) {
@@ -127,66 +139,77 @@ app.get('/login', function(req,res) {
 });
 
 app.get('/submit-num', function(req, res) {
-    res.writeHead(200, {'Content-Type': 'text/html'});
-    view("header", {}, res);
-    view("nav", {}, res);
-    view("submit_num", {}, res);
-    view("footer", {}, res);
-    res.end();
+    checkSubmissionStatus(function (posted) {
+        switch(posted){
+            case -1:    res.writeHead(200, {'Content-Type': 'text/html'});
+                        view("header", {}, res);
+                        view("nav", {}, res);
+                        view("submit_num", {}, res);
+                        view("footer", {}, res);
+                        res.end();
+                        break;
+            case 0:     res.writeHead(200, {'Content-Type': 'text/html'});
+                        view("header", {}, res);
+                        view("nav", {}, res);
+                        view("landing-page",  {username:"Landing Page", description:"Submissions have been closed"}, res);
+                        view("footer", {}, res);
+                        res.end();
+                        break;
+        }
+    });
+
 });
 
-function isEmpty(obj) {
-    for(var key in obj) {
-        if(obj.hasOwnProperty(key))
-            return false;
-    }
-    return true;
-}
-
+/* Creates and stores student object who submitted a number */
 app.post('/submit-num', function(req, res) {
-    var number = req.body.submit_num;
-    var email = req.body.user_email;
+    var student_number = req.body.submit_num.trim();
+    var student_email = req.body.user_email;
 
-    console.log(email);
-    if(!isNaN(number)){
-        var object = JSON.parse(fs.readFileSync('./data.json', 'utf-8'));
+    if(!isNaN(student_number) && student_number.length > 0){
+        var course = JSON.parse(fs.readFileSync('./data.json', 'utf-8'));
         var fruits = JSON.parse(fs.readFileSync('./fruit.json', 'utf-8'));
-        var key = email;
 
         var randomFruit;
-        var count = 0;
-        if(isEmpty(object[key])){
-            randomFruit = fruits["fruits"][Math.floor((Math.random() * Object.keys(fruits["fruits"]).length) + 1)].name;
-            while(count != Object.keys(object).length){
-                count = 0;
-                for(var idx in object){
-                    if(object[idx][0].alias === randomfruit){
-                        randomFruit = fruits["fruits"][Math.floor((Math.random() * Object.keys(fruits["fruits"]).length) + 1)].name;
+        var counter = 0;
+        if(isEmpty(course[student_email])){
+            randomFruit = fruits["fruits"][Math.floor((Math.random() * Object.keys(fruits["fruits"]).length))].name;
+            while(counter != Object.keys(course).length){
+                counter = 0;
+                for(var student in course){
+                    if(course[student][0].alias === randomfruit){
+                        randomFruit = fruits["fruits"][Math.floor((Math.random() * Object.keys(fruits["fruits"]).length))].name;
                     }
                     else{
-                        count += 1;
+                        counter++;
+                        console.log(counter);
                     }
                 }
             }
-            object[key] = [];
+            course[student_email] = [];
 
-            var data = {
+            var student_data = {
                 alias: randomFruit,
-                num_submit: number.trim()
+                num_submit: student_number,
+                num_length: student_number.length,
+                factor_count: 0,
+                first_factor_time: ""
             };
         }
         else{
-            var objAlias = object[key][0].alias;
-            object[key] = [];
+            var objAlias = course[student_email][0].alias;
+            course[student_email] = [];
 
-            var data = {
+            var student_data = {
                 alias: objAlias,
-                num_submit: number.trim()
+                num_submit: student_number,
+                num_length: student_number.length,
+                factor_count: 0,
+                first_factor_time: ""
             };
         }
 
-        object[key].push(data);
-        fs.writeFileSync('./data.json', JSON.stringify(object), 'utf-8');
+        course[student_email].push(student_data);
+        fs.writeFileSync('./data.json', JSON.stringify(course), 'utf-8');
     }
 
     res.writeHead(303, {"Location": "/submit-num"});
@@ -194,13 +217,32 @@ app.post('/submit-num', function(req, res) {
 });
 
 app.get('/submit-answer', function(req, res) {
-    res.writeHead(200, {'Content-Type': 'text/html'});
-    view("header", {}, res);
-    view("nav", {}, res);
-    var user = JSON.parse(fs.readFileSync('./data.json', 'utf-8'));
-    view("table", user, res);
-    view("footer", {}, res);
-    res.end();
+    checkSubmissionStatus(function(posted) {
+        switch(posted){
+            case -1:    res.writeHead(200, {'Content-Type': 'text/html'});
+                        view("header", {}, res);
+                        view("nav", {}, res);
+                        table_view("table", fs.readFileSync('./data.json', 'utf-8'), res);
+                        view("footer", {}, res);
+                        res.end();
+                        /* BELOW IS THE ACTUAL CODE FOR THIS SECTION, ABOVE IS FOR TESTING */
+                        /*res.writeHead(200, {'Content-Type': 'text/html'});
+                        view("header", {}, res);
+                        view("nav", {}, res);
+                        view("landing-page", {username:"Landing Page", description:"Answers will be posted soon"}, res);
+                        view("footer", {}, res);
+                        res.end();*/
+                        break;
+            case 1:     res.writeHead(200, {'Content-Type': 'text/html'});
+                        view("header", {}, res);
+                        view("nav", {}, res);
+                        table_view("table", fs.readFileSync('./data.json', 'utf-8'), res);
+                        view("footer", {}, res);
+                        res.end();
+                        break;
+        }
+    });
+
 });
 
 app.get('/statistics', function(req, res) {
@@ -219,7 +261,7 @@ app.get('/home', function(req,res) {
             case -1: res.writeHead(200, {'Content-Type': 'text/html'});
                      view("header", {}, res);
                      view("nav", {}, res);
-                     view("landing-page", {username:"Landing Page", description:"Answers will be posted soon"}, res);
+                     view("submit_num", {}, res);
                      view("footer", {}, res);
                      res.end();
                      break;
@@ -235,6 +277,7 @@ app.get('/home', function(req,res) {
             case 1:  res.writeHead(200, {'Content-Type': 'text/html'});
                      view("header", {}, res);
                      view("nav", {}, res);
+                     table_view("table", fs.readFileSync('./data.json', 'utf-8'), res);
                      view("footer", {}, res);
                      res.end();
                      break;

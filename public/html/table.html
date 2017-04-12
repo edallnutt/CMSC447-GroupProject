@@ -17,7 +17,7 @@
 $(document).ready(function(){
 	var numTable = document.getElementById('numTable');
 
-	var numData  = [
+	/*var numData  = [
 	["Plantain",24355675,433,0,""],
 	["Pineapple",24355675,433,0,""],
 	["Apricot",24355675,433,0,""],
@@ -106,17 +106,9 @@ $(document).ready(function(){
 	["Challenge 2",54353453,2048,0,""],
 	["Challenge 1",28394723,2048,1,"4/30 3:27:54"],
 	["Pineapple(You)",43838484,432,0,""]
-	];
+];*/
 
-	/*var numData = [];
-	var data = [
-		"{{alias}}",
-		{{num_submit}}
-	]
-
-	numData.push(data);*/
-
-
+	var numData = JSON.parse('{{course.JSON}}')
 	var show = null
 
 	function expand(){
@@ -131,21 +123,23 @@ $(document).ready(function(){
 		show=n
 	}
 
-	for(var i=0; i<numData.length; i++){
+    var i = 0
+	for(var key in numData){
 
 		var row                     = document.getElementById("numTable").insertRow(1)
 		row.className               = "expand"
 		row.onclick                 = expand
 		row.style.backgroundColor   = i%2==0?"#FFFFFF":"#F0F0F0"
-		row.insertCell(0).innerHTML = numData[i][0]
-		row.insertCell(1).innerHTML = numData[i][1]
-		row.insertCell(2).innerHTML = numData[i][2]
-		row.insertCell(3).innerHTML = numData[i][3]
-		row.insertCell(4).innerHTML = numData[i][4]
-		
+		row.insertCell(0).innerHTML = numData[key][0].alias
+		row.insertCell(1).innerHTML = numData[key][0].num_submit
+		row.insertCell(2).innerHTML = numData[key][0].num_length
+		row.insertCell(3).innerHTML = numData[key][0].factor_count
+	    row.insertCell(4).innerHTML = numData[key][0].first_factor_time
+
 		document.getElementById("numTable").insertRow(2).insertCell(0)
+        i++;
 	}
-	
+
 	$(".expand").each(function(){$(this).next().toggle()})
 
 });

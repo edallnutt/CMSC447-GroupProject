@@ -11,11 +11,11 @@
 
 <script>
   function submitting(){
-      var submitted_num = document.getElementsByName("submit_num")[0].value;
+      var submitted_num = document.getElementsByName("submit_num")[0].value.trim();
       var email = getUserEmail();
       document.getElementsByName("user_email")[0].value = email;
-      if(!isNaN(submitted_num)) {
-          alert(submitted_num);
+      if(!isNaN(submitted_num) && submitted_num.length > 0) {
+          alert("Valid Sumbission: " + submitted_num);
       }
       else{
           alert("Invalid Submission");
