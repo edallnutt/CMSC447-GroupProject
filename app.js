@@ -379,12 +379,30 @@ app.get('/submit-answer', function(req, res) {
 });
 
 app.get('/statistics', function(req, res) {
-    res.writeHead(200, {'Content-Type': 'text/html'});
-    view("header", {}, res);
-    view("nav", {}, res);
-    view("graph", {}, res);
-    view("footer", {}, res);
-    res.end();
+    var token = req.query.token;
+    verifyStudent(token, function(student) {
+        if(student) {
+            res.writeHead(200, {'Content-Type': 'text/html'});
+            view("header", {}, res);
+            view("nav", {}, res);
+            view("graph", {}, res);
+            view("footer", {}, res);
+            res.end();
+        } else {
+            verifyAdmin(token, function(admin) {
+                if(admin) {
+                    res.writeHead(200, {'Content-Type': 'text/html'});
+                    view("header", {}, res);
+                    view("nav", {}, res);
+                    view("graph", {}, res);
+                    view("footer", {}, res);
+                    res.end();
+                } else {
+                    res.sendFile(path.join(__dirname,'public/html/invalid-login.html'));
+                }
+            });
+        }
+    });
 });
 
 app.get('/home', function(req,res) {
