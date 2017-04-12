@@ -63,6 +63,16 @@ function getAdmins(callback) {
     });
 }
 
+function getStudents(callback) {
+    fs.readFile(path.join(__dirname,'students.txt'),'utf-8',function(err,data) {
+        if (err) {
+            return console.log(err);
+        }
+        var list = data.split('\n');
+        callback(list);
+    });
+}
+
 //Use this function along with a user id_token to check if they are an admin, callback ensures synchronous behaviour
 function verifyAdmin(id, callback) {
     var url = 'https://www.googleapis.com/oauth2/v3/tokeninfo?id_token='+id;
@@ -73,6 +83,32 @@ function verifyAdmin(id, callback) {
         var email = data['email'];
         if(email != null) {
             getAdmins(function(data) {
+                for(var i = 0;i < data.length;i++) {
+                    if(data[i] === email) {
+                        callback(true);
+                        return;
+                    }
+                }
+                callback(false);
+                return;
+            })
+        } else {
+            callback(false);
+            return;
+        }
+
+    });
+}
+
+function verifyStudent(id, callback) {
+    var url = 'https://www.googleapis.com/oauth2/v3/tokeninfo?id_token='+id;
+    exec(['curl '+url], function(err, out, code) {
+        if (err instanceof Error)
+            throw err;
+        var data = JSON.parse(out);
+        var email = data['email'];
+        if(email != null) {
+            getStudents(function(data) {
                 for(var i = 0;i < data.length;i++) {
                     if(data[i] === email) {
                         callback(true);
@@ -295,7 +331,7 @@ app.get('/home', function(req,res) {
 //Where /login redirects to and check for admin status from config.json
 app.post('/admin', function(req, res) {
     var token = req.query.token;
-    verifyAdmin(token, function(admin) {
+    verifyStudent(token, function(admin) {
         var path = "/";
         if(admin) {
             path += "admin?token="+token;
@@ -382,7 +418,6 @@ app.get('/number-list', function(req, res) {
         for(var sub in file[email]) {
             var str = file[email][sub].alias+' : '+file[email][sub].num_submit;
             list.push(str);
-            //console.log(file[email][sub].alias+" : "+file[email][sub].num_submit);
         }
     }
     for(var str in list) {
@@ -392,8 +427,6 @@ app.get('/number-list', function(req, res) {
         if (err) return console.log(err);
         res.download(path.join(__dirname, 'nums.txt'));
     });
-
-    //res.send();
 });
 
 // catch 404 and forward to error handler
