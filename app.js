@@ -69,7 +69,6 @@ function getStudents(callback) {
             return console.log(err);
         }
         var list = data.split('\n');
-        console.log(list);
         callback(list);
     });
 }
@@ -111,6 +110,8 @@ function verifyStudent(id, callback) {
         if(email != null) {
             getStudents(function(list) {
                 for(var i = 0;i < list.length;i++) {
+                    console.log(list[i]+" : "+email);
+                    console.log(email.type);
                     if(list[i] == email) {
                         callback(true);
                         return;
