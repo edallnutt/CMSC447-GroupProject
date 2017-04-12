@@ -165,9 +165,7 @@ function isEmpty(obj) {
 }
 
 app.get('/', function(req,res) {
-
     res.sendFile(path.join(__dirname,'public/html/login.html'));
-
 });
 
 app.get('/submit-num', function(req, res) {
@@ -306,7 +304,7 @@ app.get('/submit-answer', function(req, res) {
                         }
                     });
                 } else {
-                    res.send("INVALID LOGIN");
+                    res.sendFile(path.join(__dirname,'public/html/invalid-login.html'));
                 }
             });
         }
@@ -398,7 +396,7 @@ app.get('/home', function(req,res) {
                         }
                     });
                 } else {
-                    res.send("INVALID LOGIN");
+                    res.sendFile(path.join(__dirname,'public/html/invalid-login.html'));
                 }
             });
         }
