@@ -176,7 +176,7 @@ app.post('/submit-num', function(req, res) {
             while(counter != Object.keys(course).length){
                 counter = 0;
                 for(var student in course){
-                    if(course[student][0].alias === randomfruit){
+                    if(course[student][0].alias === randomFruit){
                         randomFruit = fruits["fruits"][Math.floor((Math.random() * Object.keys(fruits["fruits"]).length))].name;
                     }
                     else{
