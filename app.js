@@ -85,7 +85,7 @@ function verifyAdmin(id, callback) {
         if(email != null) {
             getAdmins(function(data) {
                 for(var i = 0;i < data.length;i++) {
-                    if(data[i] == email) {
+                    if(data[i] === email) {
                         callback(true);
                         return;
                     }
@@ -111,7 +111,7 @@ function verifyStudent(id, callback) {
         if(email != null) {
             getStudents(function(list) {
                 for(var i = 0;i < list.length;i++) {
-                    if(list[i] === email) {
+                    if(list[i] == email) {
                         callback(true);
                         return;
                     }
