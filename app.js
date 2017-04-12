@@ -377,20 +377,23 @@ app.get('/logout', function(req,res) {
 app.get('/number-list', function(req, res) {
     var file = require('./data.json');
     var list = [];
+    var body = '';
     for(var email in file) {
         //console.log(file[email]);
         for(var sub in file[email]) {
-            //list.push(file[email][sub].alias+" : "+file[email][sub].num_submit);
-            console.log(file[email][sub].alias+" : "+file[email][sub].num_submit);
+            var str = file[email][sub].alias+' : '+file[email][sub].num_submit;
+            list.push(str);
+            //console.log(file[email][sub].alias+" : "+file[email][sub].num_submit);
         }
     }
-    /*
-    fs.writeFile(path.join(__dirname, 'nums.txt'), JSON.stringify(file), function (err) {
+    for(var str in list) {
+        body += str + '\n';
+    }
+    fs.writeFile(path.join(__dirname, 'nums.txt'), body, function (err) {
         if (err) return console.log(err);
         res.attachment('./nums.txt');
     });
-    */
-    res.send;
+    res.send();
 });
 
 // catch 404 and forward to error handler
