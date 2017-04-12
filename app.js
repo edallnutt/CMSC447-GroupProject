@@ -379,7 +379,6 @@ app.get('/number-list', function(req, res) {
     var list = [];
     var body = '';
     for(var email in file) {
-        //console.log(file[email]);
         for(var sub in file[email]) {
             var str = file[email][sub].alias+' : '+file[email][sub].num_submit;
             list.push(str);
@@ -391,8 +390,8 @@ app.get('/number-list', function(req, res) {
     }
     fs.writeFile(path.join(__dirname, 'nums.txt'), body, function (err) {
         if (err) return console.log(err);
-        res.attachment('./nums.txt');
     });
+    //res.attachment('./nums.txt');
     res.send();
 });
 
