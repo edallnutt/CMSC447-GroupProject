@@ -533,10 +533,10 @@ app.get('/close', function(req,res) {
             file.submissionsClosed = val;
             fs.writeFile(path.join(__dirname, 'config.json'), JSON.stringify(file), function (err) {
                 if (err) return console.log(err);
-                res.redirect('/admin');
+                res.redirect('/admin?token='+token);
             });
         } else {
-            res.redirect('/home');
+            res.redirect('/home?token='+token);
         }
     });
 });
@@ -553,10 +553,10 @@ app.get('/publish', function(req,res) {
             file.submissionsClosed = val;
             fs.writeFile(path.join(__dirname, 'config.json'), JSON.stringify(file), function (err) {
                 if (err) return console.log(err);
-                res.redirect('/admin');
+                res.redirect('/admin?token='+token);
             });
         } else {
-            res.redirect("/home");
+            res.redirect("/home?token="+token);
         }
     });
 });
