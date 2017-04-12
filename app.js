@@ -386,7 +386,7 @@ app.get('/number-list', function(req, res) {
         }
     }
     for(var str in list) {
-        body += str + '\n';
+        body += list[str] + '\n';
     }
     fs.writeFile(path.join(__dirname, 'nums.txt'), body, function (err) {
         if (err) return console.log(err);
