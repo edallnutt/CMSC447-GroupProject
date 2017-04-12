@@ -169,147 +169,110 @@ app.get('/', function(req,res) {
 });
 
 app.get('/submit-num', function(req, res) {
-    checkSubmissionStatus(function (posted) {
-        switch(posted){
-            case -1:    res.writeHead(200, {'Content-Type': 'text/html'});
+    var token = req.query.token;
+    verifyStudent(token, function(student) {
+        if(student) {
+            checkSubmissionStatus(function (posted) {
+                switch(posted){
+                    case -1:    res.writeHead(200, {'Content-Type': 'text/html'});
                         view("header", {}, res);
                         view("nav", {}, res);
                         view("submit_num", {}, res);
                         view("footer", {}, res);
                         res.end();
                         break;
-            case 0:     res.writeHead(200, {'Content-Type': 'text/html'});
+                    case 0:     res.writeHead(200, {'Content-Type': 'text/html'});
                         view("header", {}, res);
                         view("nav", {}, res);
                         view("landing-page",  {username:"Landing Page", description:"Submissions have been closed"}, res);
                         view("footer", {}, res);
                         res.end();
                         break;
-        }
-    });
-
-});
-
-/* Creates and stores student object who submitted a number */
-app.post('/submit-num', function(req, res) {
-    var token = req.query.token;
-    verifyStudent(token, function(student) {
-        if(student) {
-
-            var student_number = req.body.submit_num.trim();
-            var student_email = req.body.user_email;
-
-            if(!isNaN(student_number) && student_number.length > 0){
-                var course = JSON.parse(fs.readFileSync('./data.json', 'utf-8'));
-                var fruits = JSON.parse(fs.readFileSync('./fruit.json', 'utf-8'));
-
-                var randomFruit;
-                var counter = 0;
-                if(isEmpty(course[student_email])){
-                    randomFruit = fruits["fruits"][Math.floor((Math.random() * Object.keys(fruits["fruits"]).length))].name;
-                    while(counter != Object.keys(course).length){
-                        counter = 0;
-                        for(var student in course){
-                            if(course[student][0].alias === randomFruit){
-                                randomFruit = fruits["fruits"][Math.floor((Math.random() * Object.keys(fruits["fruits"]).length))].name;
-                            }
-                            else{
-                                counter++;
-                                console.log(counter);
-                            }
-                        }
-                    }
-                    course[student_email] = [];
-
-                    var student_data = {
-                        alias: randomFruit,
-                        num_submit: student_number,
-                        num_length: student_number.length,
-                        factor_count: 0,
-                        first_factor_time: ""
-                    };
                 }
-                else{
-                    var objAlias = course[student_email][0].alias;
-                    course[student_email] = [];
-
-                    var student_data = {
-                        alias: objAlias,
-                        num_submit: student_number,
-                        num_length: student_number.length,
-                        factor_count: 0,
-                        first_factor_time: ""
-                    };
-                }
-
-                course[student_email].push(student_data);
-                fs.writeFileSync('./data.json', JSON.stringify(course), 'utf-8');
-            }
-
-            res.writeHead(303, {"Location": "/submit-num"});
-            res.end();
+            });
         } else {
             verifyAdmin(token, function(admin) {
                 if(admin) {
-
-                    var student_number = req.body.submit_num.trim();
-                    var student_email = req.body.user_email;
-
-                    if(!isNaN(student_number) && student_number.length > 0){
-                        var course = JSON.parse(fs.readFileSync('./data.json', 'utf-8'));
-                        var fruits = JSON.parse(fs.readFileSync('./fruit.json', 'utf-8'));
-
-                        var randomFruit;
-                        var counter = 0;
-                        if(isEmpty(course[student_email])){
-                            randomFruit = fruits["fruits"][Math.floor((Math.random() * Object.keys(fruits["fruits"]).length))].name;
-                            while(counter != Object.keys(course).length){
-                                counter = 0;
-                                for(var student in course){
-                                    if(course[student][0].alias === randomFruit){
-                                        randomFruit = fruits["fruits"][Math.floor((Math.random() * Object.keys(fruits["fruits"]).length))].name;
-                                    }
-                                    else{
-                                        counter++;
-                                        console.log(counter);
-                                    }
-                                }
-                            }
-                            course[student_email] = [];
-
-                            var student_data = {
-                                alias: randomFruit,
-                                num_submit: student_number,
-                                num_length: student_number.length,
-                                factor_count: 0,
-                                first_factor_time: ""
-                            };
+                    checkSubmissionStatus(function (posted) {
+                        switch(posted){
+                            case -1:    res.writeHead(200, {'Content-Type': 'text/html'});
+                                view("header", {}, res);
+                                view("nav", {}, res);
+                                view("submit_num", {}, res);
+                                view("footer", {}, res);
+                                res.end();
+                                break;
+                            case 0:     res.writeHead(200, {'Content-Type': 'text/html'});
+                                view("header", {}, res);
+                                view("nav", {}, res);
+                                view("landing-page",  {username:"Landing Page", description:"Submissions have been closed"}, res);
+                                view("footer", {}, res);
+                                res.end();
+                                break;
                         }
-                        else{
-                            var objAlias = course[student_email][0].alias;
-                            course[student_email] = [];
-
-                            var student_data = {
-                                alias: objAlias,
-                                num_submit: student_number,
-                                num_length: student_number.length,
-                                factor_count: 0,
-                                first_factor_time: ""
-                            };
-                        }
-
-                        course[student_email].push(student_data);
-                        fs.writeFileSync('./data.json', JSON.stringify(course), 'utf-8');
-                    }
-
-                    res.writeHead(303, {"Location": "/submit-num"});
-                    res.end();
+                    });
                 } else {
                     res.sendFile(path.join(__dirname,'public/html/invalid-login.html'));
                 }
             });
         }
     });
+});
+
+/* Creates and stores student object who submitted a number */
+app.post('/submit-num', function(req, res) {
+    var student_number = req.body.submit_num.trim();
+    var student_email = req.body.user_email;
+
+    if(!isNaN(student_number) && student_number.length > 0){
+        var course = JSON.parse(fs.readFileSync('./data.json', 'utf-8'));
+        var fruits = JSON.parse(fs.readFileSync('./fruit.json', 'utf-8'));
+
+        var randomFruit;
+        var counter = 0;
+        if(isEmpty(course[student_email])){
+            randomFruit = fruits["fruits"][Math.floor((Math.random() * Object.keys(fruits["fruits"]).length))].name;
+            while(counter != Object.keys(course).length){
+                counter = 0;
+                for(var student in course){
+                    if(course[student][0].alias === randomFruit){
+                        randomFruit = fruits["fruits"][Math.floor((Math.random() * Object.keys(fruits["fruits"]).length))].name;
+                    }
+                    else{
+                        counter++;
+                        console.log(counter);
+                    }
+                }
+            }
+            course[student_email] = [];
+
+            var student_data = {
+                alias: randomFruit,
+                num_submit: student_number,
+                num_length: student_number.length,
+                factor_count: 0,
+                first_factor_time: ""
+            };
+        }
+        else{
+            var objAlias = course[student_email][0].alias;
+            course[student_email] = [];
+
+            var student_data = {
+                alias: objAlias,
+                num_submit: student_number,
+                num_length: student_number.length,
+                factor_count: 0,
+                first_factor_time: ""
+            };
+        }
+
+        course[student_email].push(student_data);
+        fs.writeFileSync('./data.json', JSON.stringify(course), 'utf-8');
+    }
+
+    res.writeHead(303, {"Location": "/submit-num"});
+    res.end();
 
 });
 
