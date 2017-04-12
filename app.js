@@ -398,7 +398,7 @@ app.get('/home', function(req,res) {
                         }
                     });
                 } else {
-                    res.redirect('/');
+                    res.send("INVALID LOGIN");
                 }
             });
         }

@@ -20,11 +20,6 @@ function getUserEmail() {
     }
 }
 
-function adminLink() {
-    var userToken = getUserToken();
-    document.location.href = "/admin?token=" + userToken;
-}
-
 function setCookie(cname, cvalue, exdays) {
     var d = new Date();
     d.setTime(d.getTime() + (exdays * 24 * 60 * 60 * 1000));
@@ -63,4 +58,15 @@ function deleteCookie(cname) {
         var expires = "expires="+d.toUTCString();
         document.cookie = cname + "=;" + expires + ";path=/";
     }
+}
+
+function adminLink(path) {
+    var userToken = getUserToken();
+    document.location.href = path+"?token=" + userToken;
+}
+
+
+function studentLink(path) {
+    var userToken = getUserToken();
+    document.location.href = path+"?token=" + userToken;
 }
