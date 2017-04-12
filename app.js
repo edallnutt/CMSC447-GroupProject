@@ -306,7 +306,7 @@ app.get('/submit-answer', function(req, res) {
                         }
                     });
                 } else {
-                    res.redirect('/');
+                    res.send("INVALID LOGIN");
                 }
             });
         }
