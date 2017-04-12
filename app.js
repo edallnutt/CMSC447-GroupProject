@@ -380,7 +380,8 @@ app.get('/number-list', function(req, res) {
     for(var email in file) {
         //console.log(file[email]);
         for(var sub in file[email]) {
-            list.push(file[email][sub].alias+" : "+file[email][sub].num_submit);
+            //list.push(file[email][sub].alias+" : "+file[email][sub].num_submit);
+            console.log(file[email][sub].alias+" : "+file[email][sub].num_submit);
         }
     }
     /*
