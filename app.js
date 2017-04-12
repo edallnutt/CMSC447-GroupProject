@@ -349,7 +349,7 @@ app.post('/admin', function(req, res) {
 app.get('/admin', function(req,res) {
 
     var token = req.query.token;
-    verifyAdmin(token, function(admin) {
+    verifyStudent(token, function(admin) {
         if(admin) {
             res.writeHead(200, {'Content-Type': 'text/html'});
             view("header", {}, res);
