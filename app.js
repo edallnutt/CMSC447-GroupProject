@@ -415,7 +415,7 @@ app.post('/login', function(req, res) {
         if(admin) {
             path += "admin?token="+token;
         } else {
-            path += "home";
+            path += "home?token="+token;
         }
         res.send(path);
     });
