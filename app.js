@@ -85,7 +85,7 @@ function verifyAdmin(id, callback) {
         if(email != null) {
             getAdmins(function(data) {
                 for(var i = 0;i < data.length;i++) {
-                    if(data[i] === email) {
+                    if(data[i] == email) {
                         callback(true);
                         return;
                     }
