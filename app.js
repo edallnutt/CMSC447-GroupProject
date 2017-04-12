@@ -514,7 +514,6 @@ app.get('/admin', function(req,res) {
             view("admin", {}, res);
             view("footer", {}, res);
             res.end();
-            res.send;
         } else {
             res.redirect("/home?token="+token);
         }
