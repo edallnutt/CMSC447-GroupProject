@@ -63,6 +63,7 @@ function getAdmins(callback) {
     });
 }
 
+//Returns a list of student emails as defined in students.txt
 function getStudents(callback) {
     fs.readFile(path.join(__dirname,'students.txt'),'utf-8',function(err,data) {
         if (err) {
@@ -100,6 +101,7 @@ function verifyAdmin(id, callback) {
     });
 }
 
+//Use this function to verify if the user is a valid student as defined in student.txt
 function verifyStudent(id, callback) {
     var url = 'https://www.googleapis.com/oauth2/v3/tokeninfo?id_token='+id;
     exec(['curl '+url], function(err, out, code) {
@@ -110,9 +112,7 @@ function verifyStudent(id, callback) {
         if(email != null) {
             getStudents(function(list) {
                 for(var i = 0;i < list.length;i++) {
-                    console.log(list[i]+" : "+email);
-                    console.log(email.type);
-                    if(list[i] == email) {
+                    if(list[i] === email) {
                         callback(true);
                         return;
                     }
@@ -165,12 +165,6 @@ function isEmpty(obj) {
 }
 
 app.get('/', function(req,res) {
-
-    res.sendFile(path.join(__dirname,'public/html/login.html'));
-
-});
-
-app.get('/login', function(req,res) {
 
     res.sendFile(path.join(__dirname,'public/html/login.html'));
 
@@ -255,9 +249,12 @@ app.post('/submit-num', function(req, res) {
 });
 
 app.get('/submit-answer', function(req, res) {
-    checkSubmissionStatus(function(posted) {
-        switch(posted){
-            case -1:    res.writeHead(200, {'Content-Type': 'text/html'});
+    var token = req.query.token;
+    verifyStudent(token, function(student) {
+        if(student) {
+            checkSubmissionStatus(function(posted) {
+                switch(posted){
+                    case -1:    res.writeHead(200, {'Content-Type': 'text/html'});
                         view("header", {}, res);
                         view("nav", {}, res);
                         table_view("table", fs.readFileSync('./data.json', 'utf-8'), res);
@@ -265,22 +262,55 @@ app.get('/submit-answer', function(req, res) {
                         res.end();
                         /* BELOW IS THE ACTUAL CODE FOR THIS SECTION, ABOVE IS FOR TESTING */
                         /*res.writeHead(200, {'Content-Type': 'text/html'});
-                        view("header", {}, res);
-                        view("nav", {}, res);
-                        view("landing-page", {username:"Landing Page", description:"Answers will be posted soon"}, res);
-                        view("footer", {}, res);
-                        res.end();*/
+                         view("header", {}, res);
+                         view("nav", {}, res);
+                         view("landing-page", {username:"Landing Page", description:"Answers will be posted soon"}, res);
+                         view("footer", {}, res);
+                         res.end();*/
                         break;
-            case 1:     res.writeHead(200, {'Content-Type': 'text/html'});
+                    case 1:     res.writeHead(200, {'Content-Type': 'text/html'});
                         view("header", {}, res);
                         view("nav", {}, res);
                         table_view("table", fs.readFileSync('./data.json', 'utf-8'), res);
                         view("footer", {}, res);
                         res.end();
                         break;
+                }
+            });
+        } else {
+            verifyAdmin(token, function(admin) {
+                if(admin) {
+                    checkSubmissionStatus(function(posted) {
+                        switch(posted){
+                            case -1:    res.writeHead(200, {'Content-Type': 'text/html'});
+                                view("header", {}, res);
+                                view("nav", {}, res);
+                                table_view("table", fs.readFileSync('./data.json', 'utf-8'), res);
+                                view("footer", {}, res);
+                                res.end();
+                                /* BELOW IS THE ACTUAL CODE FOR THIS SECTION, ABOVE IS FOR TESTING */
+                                /*res.writeHead(200, {'Content-Type': 'text/html'});
+                                 view("header", {}, res);
+                                 view("nav", {}, res);
+                                 view("landing-page", {username:"Landing Page", description:"Answers will be posted soon"}, res);
+                                 view("footer", {}, res);
+                                 res.end();*/
+                                break;
+                            case 1:     res.writeHead(200, {'Content-Type': 'text/html'});
+                                view("header", {}, res);
+                                view("nav", {}, res);
+                                table_view("table", fs.readFileSync('./data.json', 'utf-8'), res);
+                                view("footer", {}, res);
+                                res.end();
+                                break;
+                        }
+                    });
+                } else {
+                    res.redirect('/');
+                }
+            });
         }
     });
-
 });
 
 app.get('/statistics', function(req, res) {
@@ -293,54 +323,100 @@ app.get('/statistics', function(req, res) {
 });
 
 app.get('/home', function(req,res) {
+    var token = req.query.token;
+    verifyStudent(token, function(student) {
+        if(student) {
+            checkSubmissionStatus(function(posted) {
+                switch(posted) {
+                    case -1: res.writeHead(200, {'Content-Type': 'text/html'});
+                        view("header", {}, res);
+                        view("nav", {}, res);
+                        view("submit_num", {}, res);
+                        view("footer", {}, res);
+                        res.end();
+                        break;
 
-    checkSubmissionStatus(function(posted) {
-        switch(posted) {
-            case -1: res.writeHead(200, {'Content-Type': 'text/html'});
-                     view("header", {}, res);
-                     view("nav", {}, res);
-                     view("submit_num", {}, res);
-                     view("footer", {}, res);
-                     res.end();
-                     break;
+                    case 0:  res.writeHead(200, {'Content-Type': 'text/html'});
+                        view("header", {}, res);
+                        view("nav", {}, res);
+                        view("landing-page",  {username:"Landing Page", description:"Submissions have been closed"}, res);
+                        view("footer", {}, res);
+                        res.end();
+                        break;
 
-            case 0:  res.writeHead(200, {'Content-Type': 'text/html'});
-                     view("header", {}, res);
-                     view("nav", {}, res);
-                     view("landing-page",  {username:"Landing Page", description:"Submissions have been closed"}, res);
-                     view("footer", {}, res);
-                     res.end();
-                     break;
+                    case 1:  res.writeHead(200, {'Content-Type': 'text/html'});
+                        view("header", {}, res);
+                        view("nav", {}, res);
+                        table_view("table", fs.readFileSync('./data.json', 'utf-8'), res);
+                        view("footer", {}, res);
+                        res.end();
+                        break;
 
-            case 1:  res.writeHead(200, {'Content-Type': 'text/html'});
-                     view("header", {}, res);
-                     view("nav", {}, res);
-                     table_view("table", fs.readFileSync('./data.json', 'utf-8'), res);
-                     view("footer", {}, res);
-                     res.end();
-                     break;
+                    default: res.writeHead(200, {'Content-Type': 'text/html'});
+                        view("header", {}, res);
+                        view("nav", {}, res);
+                        view("footer", {}, res);
+                        res.end();
+                        break;
+                }
+            });
+        } else {
+            verifyAdmin(token, function(admin) {
+                if(admin) {
+                    checkSubmissionStatus(function(posted) {
+                        switch(posted) {
+                            case -1: res.writeHead(200, {'Content-Type': 'text/html'});
+                                view("header", {}, res);
+                                view("nav", {}, res);
+                                view("submit_num", {}, res);
+                                view("footer", {}, res);
+                                res.end();
+                                break;
 
-            default: res.writeHead(200, {'Content-Type': 'text/html'});
-                     view("header", {}, res);
-                     view("nav", {}, res);
-                     view("footer", {}, res);
-                     res.end();
-                     break;
+                            case 0:  res.writeHead(200, {'Content-Type': 'text/html'});
+                                view("header", {}, res);
+                                view("nav", {}, res);
+                                view("landing-page",  {username:"Landing Page", description:"Submissions have been closed"}, res);
+                                view("footer", {}, res);
+                                res.end();
+                                break;
+
+                            case 1:  res.writeHead(200, {'Content-Type': 'text/html'});
+                                view("header", {}, res);
+                                view("nav", {}, res);
+                                table_view("table", fs.readFileSync('./data.json', 'utf-8'), res);
+                                view("footer", {}, res);
+                                res.end();
+                                break;
+
+                            default: res.writeHead(200, {'Content-Type': 'text/html'});
+                                view("header", {}, res);
+                                view("nav", {}, res);
+                                view("footer", {}, res);
+                                res.end();
+                                break;
+                        }
+                    });
+                } else {
+                    res.redirect('/');
+                }
+            });
         }
     });
+
+
 });
 
-//Where /login redirects to and check for admin status from config.json
-app.post('/admin', function(req, res) {
+
+app.post('/login', function(req, res) {
     var token = req.query.token;
-    verifyStudent(token, function(admin) {
+    verifyAdmin(token, function(admin) {
         var path = "/";
         if(admin) {
             path += "admin?token="+token;
         } else {
             path += "home";
         }
-
         res.send(path);
     });
 });
@@ -349,7 +425,7 @@ app.post('/admin', function(req, res) {
 app.get('/admin', function(req,res) {
 
     var token = req.query.token;
-    verifyStudent(token, function(admin) {
+    verifyAdmin(token, function(admin) {
         if(admin) {
             res.writeHead(200, {'Content-Type': 'text/html'});
             view("header", {}, res);

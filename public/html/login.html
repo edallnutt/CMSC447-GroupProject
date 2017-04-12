@@ -51,7 +51,7 @@
 
             } finally {
                 console.log('Logged in as: ' + tgoogleUser.getBasicProfile().getEmail());
-                $.post('/admin?token='+token, function(data) {
+                $.post('/login?token='+token, function(data) {
                     document.location.href = data;
                 });
             }
