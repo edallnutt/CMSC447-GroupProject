@@ -62,11 +62,11 @@ function deleteCookie(cname) {
 
 function adminLink(path) {
     var userToken = getUserToken();
-    document.location.href = path+"?token=" + userToken;
+    document.location.href = path+"token=" + userToken;
 }
 
 
 function studentLink(path) {
     var userToken = getUserToken();
-    document.location.href = path+"?token=" + userToken;
+    document.location.href = path+"token=" + userToken;
 }
