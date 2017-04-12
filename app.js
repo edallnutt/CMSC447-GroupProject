@@ -423,7 +423,6 @@ app.post('/login', function(req, res) {
 
 //TODO: Add admin html page
 app.get('/admin', function(req,res) {
-
     var token = req.query.token;
     verifyAdmin(token, function(admin) {
         if(admin) {
@@ -435,10 +434,9 @@ app.get('/admin', function(req,res) {
             res.end();
             res.send;
         } else {
-            res.redirect("/home");
+            res.redirect("/home?token="+token);
         }
     });
-
 });
 
 
