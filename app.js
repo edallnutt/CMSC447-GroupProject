@@ -391,8 +391,8 @@ app.get('/number-list', function(req, res) {
     fs.writeFile(path.join(__dirname, 'nums.txt'), body, function (err) {
         if (err) return console.log(err);
     });
-    //res.attachment('./nums.txt');
-    res.send();
+    res.attachment('./nums.txt');
+    //res.send();
 });
 
 // catch 404 and forward to error handler
