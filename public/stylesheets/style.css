@@ -42,9 +42,17 @@
     font-size: 16px;
 }
 
-/***********************/
-/*   Statistics Page   */
-/***********************/
+#tableSearch {
+    width: 100%; /* Full-width */
+    font-size: 16px; /* Increase font-size */
+    padding: 12px 20px 12px 40px; /* Add some padding */
+    border: 1px solid #ddd; /* Add a grey border */
+    margin-bottom: 12px; /* Add some space below the input */
+}
+
+/**********************/
+/* Statistics Page */
+/**********************/
 .graph {
     position: relative;
     border: 3px solid black;
