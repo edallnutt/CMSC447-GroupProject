@@ -21,20 +21,20 @@
 <div class="table-container-submit">
 	<input type="text" id="tableSearch" onkeyup="searchTable('tableSearch','tbl',0)" placeholder="Search for alias...">
 	<h1>Submit An Answer:</h1>
-	<table class="number-table" id="tbl" align="center">
+	<table id="tbl">
 		<tr>
-			<th onclick="sortTable(0,'tbl')"> Alias </th>
-			<th onclick="sortTable(1,'tbl')"> Part of Number </th>
-			<th onclick="sortTable(2,'tbl')"> Number Length </th>
-			<th onclick="sortTable(3,'tbl')"> Factorized Count </th>
-			<th onclick="sortTable(4,'tbl')"> First Factorized Time </th>
+			<th onclick="sortTable(0,'tbl')">Alias</th>
+			<th onclick="sortTable(1,'tbl')">Part of Number</th>
+			<th onclick="sortTable(2,'tbl')">Number Length</th>
+			<th onclick="sortTable(3,'tbl')">Factorized Count</th>
+			<th onclick="sortTable(4,'tbl')">First Factorized Time</th>
 		</tr>
 	</table>
 </div>
 
 <script>
 $(document).ready(function(){
-	var tbl  = document.getElementsByTagName('tbl');
+	var tbl  = document.getElementsByTagName('table');
 	var dat  = JSON.parse('{{course.JSON}}')
 	var show = -1
 
