@@ -25,11 +25,11 @@ function sortTable(col, tableID) {
     dir = "asc";
     while (switching) {
         switching = false;
-        rows = table.getElementsByTagName("TR");
+        rows = table.getElementsByTagName("tr");
         for (i = 1; i < (rows.length - 1); i++) {
             shouldSwitch = false;
-            x = rows[i].getElementsByTagName("TD")[col];
-            y = rows[i + 1].getElementsByTagName("TD")[col];
+            x = rows[i].getElementsByTagName("td")[col];
+            y = rows[i + 1].getElementsByTagName("td")[col];
             if (dir == "asc") {
                 if (x.innerHTML.toLowerCase() > y.innerHTML.toLowerCase()) {
                     shouldSwitch= true;
