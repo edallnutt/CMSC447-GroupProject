@@ -272,7 +272,7 @@ app.post('/submit-num', function(req, res) {
         fs.writeFileSync('./data.json', JSON.stringify(course), 'utf-8');
     }
 
-    res.writeHead(303, {"Location": "/submit-num?"+token});
+    res.writeHead(303, {"Location": "/submit-num?token="+token});
     res.end();
 
 });
