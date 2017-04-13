@@ -1,7 +1,55 @@
 <div style="margin-top: 100px">
+    <table class="number-table" id="adminTable" align="center">
+        <thead>
+        <tr>
+            <th onclick="sortTable(0,'adminTable')"> Email </th>
+            <th onclick="sortTable(1,'adminTable')"> Alias </th>
+            <th onclick="sortTable(2,'adminTable')"> Part of Number </th>
+            <th onclick="sortTable(3,'adminTable')"> Number Length </th>
+            <th onclick="sortTable(4,'adminTable')"> Factorized Count </th>
+            <th onclick="sortTable(5,'adminTable')"> First Factorized Time </th>
+        </tr>
+        </thead>
+    </table>
+</div>
+
+<div>
 <button type="button" onclick="adminLink('/close?status=true&')">Close Submissions</button>
 <button type="button" onclick="adminLink('/close?status=false&')">Open Submissions</button>
-
 <button type="button" onclick="adminLink('/publish?status=true&')">Publish Submissions</button>
 <button type="button" onclick="adminLink('/publish?status=false&')">Unpublish Submissions</button>
 </div>
+
+
+<script>
+    $(document).ready(function(){
+        var numTable = document.getElementById('numTable');
+
+        var numData = JSON.parse('{{course.JSON}}')
+
+        var i = 0
+        for(var key in numData){
+
+            var row                     = document.getElementById("adminTable").insertRow(1)
+            row.className               = "expand"
+            row.style.backgroundColor   = i%2==0?"#FFFFFF":"#F0F0F0"
+            row.insertCell(0).innerHTML = key
+            row.insertCell(1).innerHTML = numData[key][0].alias
+            row.insertCell(2).innerHTML = numData[key][0].num_submit
+            row.insertCell(3).innerHTML = numData[key][0].num_length
+            row.insertCell(4).innerHTML = numData[key][0].factor_count
+            row.insertCell(5).innerHTML = numData[key][0].first_factor_time
+
+            var tempRow = document.getElementById("adminTable").insertRow(2)
+            tempRow.insertCell(0)
+            tempRow.insertCell(1)
+            tempRow.insertCell(2)
+            tempRow.insertCell(3)
+            tempRow.insertCell(4)
+            tempRow.insertCell(5)
+
+            i++;
+        }
+
+    });
+</script>
