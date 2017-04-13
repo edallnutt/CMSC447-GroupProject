@@ -6,7 +6,7 @@ function searchTable(searchID, tableID, col) {
     table = document.getElementById(tableID);
     tr = table.getElementsByTagName("tr");
 
-    for (i = 0; i < tr.length; i++) {
+    for (i = 2; i < tr.length; i++) {
         td = tr[i].getElementsByTagName("td")[col];
         if (td) {
             if (td.innerHTML.toUpperCase().indexOf(filter) > -1) {
@@ -26,7 +26,7 @@ function sortTable(col, tableID) {
     while (switching) {
         switching = false;
         rows = table.getElementsByTagName("tr");
-        for (i = 1; i < (rows.length - 1); i++) {
+        for (i = 2; i < (rows.length - 1); i++) {
             shouldSwitch = false;
             x = rows[i].getElementsByTagName("td")[col];
             y = rows[i + 1].getElementsByTagName("td")[col];
