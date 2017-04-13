@@ -23,7 +23,7 @@
 	<h1>Submit An Answer:</h1>
 	<table id="tbl">
 		<tr>
-			<th onclick="sortTable(0,'tbl')">Alias</th>
+			<th onclick="sortTable(0,'tbl');">Alias</th>
 			<th onclick="sortTable(1,'tbl')">Part of Number</th>
 			<th onclick="sortTable(2,'tbl')">Number Length</th>
 			<th onclick="sortTable(3,'tbl')">Factorized Count</th>
@@ -55,15 +55,20 @@ $(document).ready(function(){
         show          = i
     }
 
-    for(var i=0;i<dat.length;i++){
-        var row                     = tbl.insertRow(-1)
-        row.onclick                 = function(j){return function(){expand(j+2)}}(i)
-        row.insertCell(0).innerHTML = dat[i][0].alias
-        row.insertCell(1).innerHTML = dat[i][0].num_submit
-        row.insertCell(2).innerHTML = dat[i][0].num_length
-        row.insertCell(3).innerHTML = dat[i][0].factor_count
-        row.insertCell(4).innerHTML = dat[i][0].first_factor_time
-        row.className               = dat[i][0].factorized_by_me?"ok":null
-    }
+    function refresh(i){
+    	for(var i=1;i<tbl.rows.length;i++)
+    		tbl.deleteRow(1)
+		for(var i=0;i<dat.length;i++){
+	        var row                     = tbl.insertRow(-1)
+	        row.onclick                 = function(j){return function(){expand(j+2)}}(i)
+	        row.insertCell(0).innerHTML = dat[i][0].alias
+	        row.insertCell(1).innerHTML = dat[i][0].num_submit
+	        row.insertCell(2).innerHTML = dat[i][0].num_length
+	        row.insertCell(3).innerHTML = dat[i][0].factor_count
+	        row.insertCell(4).innerHTML = dat[i][0].first_factor_time
+	        row.className               = dat[i][0].factorized_by_me?"ok":null
+	    }
+	}
+	refresh()
 });
 </script>
