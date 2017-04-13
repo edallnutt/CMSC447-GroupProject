@@ -2,7 +2,15 @@
     <table class="admin-table" id="adminTable" align="center">
         <thead>
         <tr>
-            <th onclick="sortTable(0,'adminTable')"><input type="text" id="tableSearch" onkeyup="searchTable('tableSearch','numTable',0)" placeholder="Search for alias..."><br> Email </th>
+            <th> <input type="text" id="tableSearch1" onkeyup="searchTable('tableSearch1','numTable',0)" placeholder="Search for email..."> </th>
+            <th> <input type="text" id="tableSearch2" onkeyup="searchTable('tableSearch2','numTable',1)" placeholder="Search for alias..."> </th>
+            <th> <input type="text" id="tableSearch3" onkeyup="searchTable('tableSearch3','numTable',2)" placeholder="Search for num..."> </th>
+            <th> <input type="text" id="tableSearch4" onkeyup="searchTable('tableSearch4','numTable',3)" placeholder="Search for length..."> </th>
+            <th> <input type="text" id="tableSearch5" onkeyup="searchTable('tableSearch5','numTable',4)" placeholder="Search for count..."> </th>
+            <th> <input type="text" id="tableSearch6" onkeyup="searchTable('tableSearch6','numTable',5)" placeholder="Search for time..."> </th>
+        </tr>
+        <tr>
+            <th onclick="sortTable(0,'adminTable')"> Email </th>
             <th onclick="sortTable(1,'adminTable')"> Alias </th>
             <th onclick="sortTable(2,'adminTable')"> Part of Number </th>
             <th onclick="sortTable(3,'adminTable')"> Number Length </th>
