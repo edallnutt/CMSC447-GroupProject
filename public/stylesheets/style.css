@@ -25,7 +25,7 @@
 /**********************/
 /* Submit Answer Page */
 /**********************/
-.table-container {
+.table-container-submit {
     display: block;
     padding: 100px 0;
     text-align: center
@@ -54,7 +54,7 @@
 /* Admin Page         */
 /**********************/
 
-.table-container {
+.table-container-admin {
     width: 75%;
     display: block;
     padding: 100px 0;
