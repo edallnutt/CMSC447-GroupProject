@@ -6,12 +6,14 @@
         <br>
         <button id="submit-num-button" onclick="submitting()">Submit</button>
         <textarea name="user_email" type="text" style="display:none"></textarea>
+        <textarea name="user_token" type="text" style="display:none"></textarea>
     </form>
 </div>
 
 <script>
     function submitting(){
         document.getElementsByName("user_email")[0].value = getUserEmail();
+        document.getElementsByName("user_token")[0].value = getUserToken();
         var submitted_num = document.getElementsByName("submit_num")[0].value.trim();
 
         if(!isNaN(submitted_num) && submitted_num.length > 0) {

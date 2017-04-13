@@ -223,6 +223,7 @@ app.get('/submit-num', function(req, res) {
 app.post('/submit-num', function(req, res) {
     var student_number = req.body.submit_num.trim();
     var student_email = req.body.user_email;
+    var token = req.body.user_token;
 
     if(!isNaN(student_number) && student_number.length > 0){
         var course = JSON.parse(fs.readFileSync('./data.json', 'utf-8'));
@@ -271,7 +272,7 @@ app.post('/submit-num', function(req, res) {
         fs.writeFileSync('./data.json', JSON.stringify(course), 'utf-8');
     }
 
-    res.writeHead(303, {"Location": "/submit-num"});
+    res.writeHead(303, {"Location": "/submit-num?"+token});
     res.end();
 
 });
