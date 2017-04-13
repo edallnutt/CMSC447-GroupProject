@@ -137,7 +137,13 @@ $(document).ready(function(){
 		row.insertCell(3).innerHTML = numData[key][0].factor_count
 	    row.insertCell(4).innerHTML = numData[key][0].first_factor_time
 
-		document.getElementById("numTable").insertRow(2).insertCell(0).innerHTML = ""
+		var tempRow = document.getElementById("numTable").insertRow(2)
+		tempRow.insertCell(0)
+        tempRow.insertCell(1)
+        tempRow.insertCell(2)
+        tempRow.insertCell(3)
+        tempRow.insertCell(4)
+
         i++;
 	}
 
