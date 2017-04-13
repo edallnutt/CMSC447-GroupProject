@@ -38,12 +38,20 @@ $(document).ready(function(){
 	var dat  = JSON.parse('{{course.JSON}}')
 	var show = -1
 
+	function submit(e){
+		if(!e)
+			e=window.event
+		if((e.keyCode||e.which)=='13'&&RegExp("^[0-9 ]*$").text(e.target.value)){
+			somehowSubmitToServer()
+		}
+	}
+
     function expand(i){
         if(show>=0)
             tbl.deleteRow(show)
         var col       = tbl.insertRow(i).insertCell(0)
         col.colSpan   = 5
-        col.innerHTML = "<input placeholder='"+(dat[i-2][0].factorized_by_me?"You have alraedy submitted. Submit again if you want":"Put factors spearated by space and hit enter to submit")+"'</input>"
+        col.innerHTML = "<input onkeypress='submit(this.id)' placeholder='"+(dat[i-2][0].factorized_by_me?"You have alraedy submitted. Submit again if you want":"Put factors spearated by space and hit enter to submit")+"'</input>"
         show          = i
     }
 
