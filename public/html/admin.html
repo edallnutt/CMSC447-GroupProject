@@ -2,7 +2,7 @@
     <table class="admin-table" id="adminTable" align="center">
         <thead>
         <tr>
-            <th onclick="sortTable(0,'adminTable')"> Email </th>
+            <th onclick="sortTable(0,'adminTable')"><input type="text" id="tableSearch" onkeyup="searchTable('tableSearch','numTable',0)" placeholder="Search for alias..."><br> Email </th>
             <th onclick="sortTable(1,'adminTable')"> Alias </th>
             <th onclick="sortTable(2,'adminTable')"> Part of Number </th>
             <th onclick="sortTable(3,'adminTable')"> Number Length </th>

@@ -1,5 +1,5 @@
 
-function searchTable(searchID, tableID) {
+function searchTable(searchID, tableID, col) {
     var input, filter, table, tr, td, i;
     input = document.getElementById(searchID);
     filter = input.value.toUpperCase();
@@ -7,7 +7,7 @@ function searchTable(searchID, tableID) {
     tr = table.getElementsByTagName("tr");
 
     for (i = 0; i < tr.length; i++) {
-        td = tr[i].getElementsByTagName("td")[0];
+        td = tr[i].getElementsByTagName("td")[col];
         if (td) {
             if (td.innerHTML.toUpperCase().indexOf(filter) > -1) {
                 tr[i].style.display = "";
