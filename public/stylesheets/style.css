@@ -1,8 +1,99 @@
-body {
-  padding: 50px;
-  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+/**********************/
+/* Submit Number Page */
+/**********************/
+#submit-num-form {
+    display: inline-block;
+    padding: 200px 0;
+    text-align: center
 }
 
-a {
-  color: #00B7FF;
+#submit-num-textarea {
+    margin-top: 25px;
+    min-width: 700px;
+    max-width: 100%;
+    min-height: 45px;
+    max-height: 300px;
+    font-size: 20pt
+}
+
+#submit-num-button {
+    margin-top: 25px;
+    height:40px;
+    width:100px
+}
+
+/**********************/
+/* Submit Answer Page */
+/**********************/
+.table-container {
+    display: block;
+    padding: 100px 0;
+    text-align: center
+}
+
+.number-table td {
+    padding: 15px;
+    text-align: center;
+}
+
+.number-table th {
+    padding: 15px 15px 0 15px;
+    text-align: center;
+    font-size: 16px;
+}
+
+/**********************/
+/* Statistics Page */
+/**********************/
+.graph {
+    position: relative;
+    border: 3px solid black;
+    border-radius: 5px 5px 0 0;
+    width: 80%;
+    margin: 100px auto;
+    min-height: 60vw;
+    max-height: 50vw;
+    min-width: 40%;
+    max-width: 60%;
+    z-index: 1;
+    background:#deeeed;
+ }
+
+.graph-title {
+    display: inline;
+    position: absolute;
+    width: 100%;
+    padding-top: 3px;
+    padding-bottom: 3px;
+    background: #663399;
+    border-bottom: 3px solid black;
+    font-size: 1.5em;
+    color: white;
+    text-align: center;
+    text-shadow: 3px 3px 5px black;
+    z-index: 0;
+  }
+
+.bar {
+    position: absolute;
+    display: inline-block;
+    bottom: 0;
+    border: 1px solid black;
+    border-radius: 6px 6px 0 0;
+    background: #4aaa99;
+    width: 12%;
+    text-align: center;
+    color: white;
+    text-shadow: 1px 1px 3px black;
+    box-shadow: 4px 0 8px #888;
+}
+
+.entry-name {
+    position: absolute;
+    border-top: 1px solid black;
+    background: #78aac8;
+    bottom: 0;
+    width: 100%;
+    text-shadow: 1px 1px 3px black;
+    color: white;
 }

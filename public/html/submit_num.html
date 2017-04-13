@@ -1,24 +1,24 @@
-<div style="display: block; text-align: center">
-    <form action="submit-num" method="post" style="display: inline-block; left-margin: auto; right-margin:auto; margin-top: 200px; text-align: center">
-      <h1>Submit A Number:</h1> <br>
-      <textarea name="submit_num" id="submit_num" rows="1" cols="70" style="margin-top: 25px; min-width: 700px; min-height: 45px; max-width: 100%; max-height: 300px; font-size: 20pt">
-      </textarea>
-      <br>
-      <button style="margin-top: 25px; height:40px; width:100px" onclick="submitting()">Submit</button>
-      <textarea name="user_email" id="user_email" type="text" style="display:none"></textarea>
+<div class="container text-center">
+    <form id="submit-num-form" action="submit-num" method="post">
+        <h1>Submit A Number:</h1>
+        <br>
+        <textarea name="submit_num" id="submit-num-textarea" rows="1" cols="70"></textarea>
+        <br>
+        <button id="submit-num-button" onclick="submitting()">Submit</button>
+        <textarea name="user_email" type="text" style="display:none"></textarea>
     </form>
 </div>
 
 <script>
-  function submitting(){
-      var submitted_num = document.getElementsByName("submit_num")[0].value.trim();
-      var email = getUserEmail();
-      document.getElementsByName("user_email")[0].value = email;
-      if(!isNaN(submitted_num) && submitted_num.length > 0) {
-          alert("Valid Sumbission: " + submitted_num);
-      }
-      else{
-          alert("Invalid Submission");
-      }
-  }
+    function submitting(){
+        document.getElementsByName("user_email")[0].value = getUserEmail();
+        var submitted_num = document.getElementsByName("submit_num")[0].value.trim();
+
+        if(!isNaN(submitted_num) && submitted_num.length > 0) {
+            alert("Valid Sumbission: " + submitted_num);
+        }
+        else{
+            alert("Invalid Submission");
+        }
+    }
 </script>

@@ -1,17 +1,16 @@
-<div class='graph'>
-  <div class='graphtitle'>
-    Number Results
-  </div>
+<div class="graph">
+    <div class="graph-title">
+        Number Results
+    </div>
 
-  <script>
-  var text = "";
-  var elements = [["Apple", 12, 4, 12],["Banana", 60, 21, 60],["Melon", 15, 36, 15],["Mango", 5, 51, 5],["Grape", 34, 66, 34], ["Orange", 80, 84, 80]];
+    <script>
+        var text = "";
+        var elements = [["Apple", 12, 4, 12],["Banana", 60, 21, 60],["Melon", 15, 36, 15],["Mango", 5, 51, 5],["Grape", 34, 66, 34], ["Orange", 80, 84, 80]];
 
-  for (i = 0; i < elements.length; i++) {
-  	text += "<div class='bar' style='height:" + elements[i][1] + "%;left:" + elements[i][2] + "%'>" + elements[i][3] + "<div class='entryname'>" + elements[i][0] + "</div></div>";
-	}
+        for (i = 0; i < elements.length; i++) {
+        text += "<div class='bar' style='height:" + elements[i][1] + "%;left:" + elements[i][2] + "%'>" + elements[i][3] + "<div class='entry-name'>" + elements[i][0] + "</div></div>";
+        }
 
-	document.write(text)
+        document.write(text)
     </script>
-  </div>
-  </div>
+</div>
