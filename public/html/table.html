@@ -127,7 +127,7 @@ $(document).ready(function(){
     var i = 0
 	for(var key in numData){
 
-		var row                     = document.getElementById("numTable").insertRow(1)
+		var row                     = document.getElementById("numTable").insertRow(0)
 		row.className               = "expand"
 		row.onclick                 = expand
 		row.style.backgroundColor   = i%2==0?"#FFFFFF":"#F0F0F0"
@@ -137,7 +137,7 @@ $(document).ready(function(){
 		row.insertCell(3).innerHTML = numData[key][0].factor_count
 	    row.insertCell(4).innerHTML = numData[key][0].first_factor_time
 
-		document.getElementById("numTable").insertRow(2).insertCell(0)
+		document.getElementById("numTable").insertRow(1).insertCell(0)
         i++;
 	}
 
