@@ -1,153 +1,61 @@
+<style type="text/css">
+    table{
+        border-collapse:collapse;
+        text-align:center;
+        width:100%
+    }
+    tr:nth-child(even){
+        background-color:#f2f2f2
+    }
+    tr:hover{
+        background-color:#abf2af
+    }
+    .ok{
+        color:#d0d0d0
+    }
+    input{
+        width:100%
+    }
+</style>
+
 <div class="table-container-submit">
-	<input type="text" id="tableSearch" onkeyup="searchTable('tableSearch','numTable',0)" placeholder="Search for alias...">
+	<input type="text" id="tableSearch" onkeyup="searchTable('tableSearch','tbl',0)" placeholder="Search for alias...">
 	<h1>Submit An Answer:</h1>
-	<table class="number-table" id="numTable" align="center">
-		<thead>
-			<tr>
-				<th onclick="sortTable(0,'numTable')"> Alias </th>
-				<th onclick="sortTable(1,'numTable')"> Part of Number </th>
-				<th onclick="sortTable(2,'numTable')"> Number Length </th>
-				<th onclick="sortTable(3,'numTable')"> Factorized Count </th>
-				<th onclick="sortTable(4,'numTable')"> First Factorized Time </th>
-			</tr>
-		</thead>
+	<table class="number-table" id="tbl" align="center">
+		<tr>
+			<th onclick="sortTable(0,'tbl')"> Alias </th>
+			<th onclick="sortTable(1,'tbl')"> Part of Number </th>
+			<th onclick="sortTable(2,'tbl')"> Number Length </th>
+			<th onclick="sortTable(3,'tbl')"> Factorized Count </th>
+			<th onclick="sortTable(4,'tbl')"> First Factorized Time </th>
+		</tr>
 	</table>
 </div>
 
 <script>
 $(document).ready(function(){
-	var numTable = document.getElementById('numTable');
+	var tbl  = document.getElementsByTagName('tbl');
+	var dat  = JSON.parse('{{course.JSON}}')
+	var show = -1
 
-	/*var numData  = [
-	["Plantain",24355675,433,0,""],
-	["Pineapple",24355675,433,0,""],
-	["Apricot",24355675,433,0,""],
-	["Grape",24355675,433,0,""],
-	["Guava",24355675,433,0,""],
-	["Tamarind",24355675,433,0,""],
-	["Elderberry",24355675,433,0,""],
-	["Redcurrant",24355675,433,0,""],
-	["Blackcurrant",24355675,433,0,""],
-	["Juniper",24355675,433,0,""],
-	["Peach",24355675,433,0,""],
-	["Star",24355675,433,0,""],
-	["Cucumber",24355675,433,0,""],
-	["Prune",24355675,433,0,""],
-	["Lychee",24355675,433,0,""],
-	["Coconut",24355675,433,0,""],
-	["Ugli",24355675,433,0,""],
-	["Kiwifruit",24355675,433,0,""],
-	["Blood",24355675,433,0,""],
-	["Mango",24355675,433,0,""],
-	["Tamarillo",24355675,433,0,""],
-	["Marionberry",24355675,433,0,""],
-	["Gooseberry",24355675,433,0,""],
-	["Cherimoya",24355675,433,0,""],
-	["Salmonberry",24355675,433,0,""],
-	["Kumquat",24355675,433,0,""],
-	["Honeyberry",24355675,433,0,""],
-	["Dragonfruit",24355675,433,0,""],
-	["Honeydew",24355675,433,0,""],
-	["Plum",24355675,433,0,""],
-	["Cantaloupe",24355675,433,0,""],
-	["Blueberry",24355675,433,0,""],
-	["Salak",24355675,433,0,""],
-	["Pear",24355675,433,0,""],
-	["Apple",24355675,433,0,""],
-	["Mulberry",24355675,433,0,""],
-	["Satsuma",24355675,433,0,""],
-	["Salal",24355675,433,0,""],
-	["Olive",24355675,433,0,""],
-	["Cloudberry",24355675,433,0,""],
-	["Fig",24355675,433,0,""],
-	["Quince",24355675,433,0,""],
-	["Feijoa",24355675,433,0,""],
-	["Bilberry",24355675,433,0,""],
-	["Boysenberry",24355675,433,0,""],
-	["Cherry",24355675,433,0,""],
-	["Tangerine",24355675,433,0,""],
-	["Loquat",24355675,433,0,""],
-	["Nectarine",24355675,433,0,""],
-	["Grapefruit",24355675,433,0,""],
-	["Melon",24355675,433,0,""],
-	["Lemon",24355675,433,0,""],
-	["Mandarine",24355675,433,0,""],
-	["Raspberry",24355675,433,0,""],
-	["Pomelo",24355675,433,0,""],
-	["Papaya",24355675,433,0,""],
-	["Damson",24355675,433,0,""],
-	["Rambutan",24355675,433,0,""],
-	["Miracle",24355675,433,0,""],
-	["Orange",24355675,433,0,""],
-	["Plumcot",24355675,433,0,""],
-	["Blackberry",24355675,433,0,""],
-	["Durian",24355675,433,0,""],
-	["Banana",24355675,433,0,""],
-	["Goji",24355675,433,0,""],
-	["Lime",24355675,433,0,""],
-	["Cranberry",24355675,433,0,""],
-	["Clementine",24355675,433,0,""],
-	["Currant",24355675,433,0,""],
-	["Passionfruit",24355675,433,0,""],
-	["Purple",24355675,433,0,""],
-	["Strawberry",24355675,433,0,""],
-	["Persimmon",24355675,433,0,""],
-	["Raisin",24355675,433,0,""],
-	["Huckleberry",24355675,433,0,""],
-	["Physalis",24355675,433,0,""],
-	["Jackfruit",24355675,433,0,""],
-	["Jujube",24355675,433,0,""],
-	["Soursop",24355675,433,0,""],
-	["Yuzu",24355675,433,0,""],
-	["Jambul",24355675,433,0,""],
-	["Watermelon",10000000,1000,30,"4/30 3:27:00"],
-	["Pomegranate",987654432,237,0,""],
-	["Avocado",12345678,1024,13,"4/30 3:27:64"],
-	["Challenge 3",65464356,2048,0,""],
-	["Challenge 2",54353453,2048,0,""],
-	["Challenge 1",28394723,2048,1,"4/30 3:27:54"],
-	["Pineapple(You)",43838484,432,0,""]
-];*/
+    function expand(i){
+        if(show>=0)
+            tbl.deleteRow(show)
+        var col       = tbl.insertRow(i).insertCell(0)
+        col.colSpan   = 5
+        col.innerHTML = "<input placeholder='"+(dat[i-2][0].factorized_by_me?"You have alraedy submitted. Submit again if you want":"Put factors spearated by space and hit enter to submit")+"'</input>"
+        show          = i
+    }
 
-	var numData = JSON.parse('{{course.JSON}}')
-	var show = null
-
-	function expand(){
-		var n=$(this).next()
-		if(n.is(":hidden")){
-			if(show)
-				show.toggle()
-			n.html("<td colspan=5 bgcolor='#42efd4' align='center'>The number is copied to your clipboard. Click again to submit factorization form clipboard</td>")
-			n.show()
-		}else
-			n.html("<td colspan=5 bgcolor='#42c8f4' align='center'>Factorization in clipboard is submitted</td>")
-		show=n
-	}
-
-    var i = 0
-	for(var key in numData){
-
-		var row                     = document.getElementById("numTable").insertRow(1)
-		row.className               = "expand"
-		row.onclick                 = expand
-		row.style.backgroundColor   = i%2==0?"#FFFFFF":"#F0F0F0"
-		row.insertCell(0).innerHTML = numData[key][0].alias
-		row.insertCell(1).innerHTML = numData[key][0].num_submit
-		row.insertCell(2).innerHTML = numData[key][0].num_length
-		row.insertCell(3).innerHTML = numData[key][0].factor_count
-	    row.insertCell(4).innerHTML = numData[key][0].first_factor_time
-
-		var tempRow = document.getElementById("numTable").insertRow(2)
-		tempRow.insertCell(0)
-        tempRow.insertCell(1)
-        tempRow.insertCell(2)
-        tempRow.insertCell(3)
-        tempRow.insertCell(4)
-
-        i++;
-	}
-
-	$(".expand").each(function(){$(this).next().toggle()})
-
+    for(var i=0;i<dat.length;i++){
+        var row                     = tbl.insertRow(-1)
+        row.onclick                 = function(j){return function(){expand(j+2)}}(i)
+        row.insertCell(0).innerHTML = dat[i][0].alias
+        row.insertCell(1).innerHTML = dat[i][0].num_submit
+        row.insertCell(2).innerHTML = dat[i][0].num_length
+        row.insertCell(3).innerHTML = dat[i][0].factor_count
+        row.insertCell(4).innerHTML = dat[i][0].first_factor_time
+        row.className               = dat[i][0].factorized_by_me?"ok":null
+    }
 });
 </script>
