@@ -1,13 +1,13 @@
 <div class="table-container">
 	<input type="text" id="tableSearch" onkeyup="searchTable('tableSearch','numTable')" placeholder="Search for alias...">
 	<h1>Submit An Answer:</h1>
-	<table class="number-table sortable" id="numTable" align="center">
+	<table class="number-table" id="numTable" align="center">
 		<tr>
-			<th> Alias </th>
-			<th> Part of Number </th>
-			<th> Number Length </th>
-			<th> Factorized Count </th>
-			<th> First Factorized Time </th>
+			<th onclick="sortTable(0,'numTable')"> Alias </th>
+			<th onclick="sortTable(1,'numTable')"> Part of Number </th>
+			<th onclick="sortTable(2,'numTable')"> Number Length </th>
+			<th onclick="sortTable(3,'numTable')"> Factorized Count </th>
+			<th onclick="sortTable(4,'numTable')"> First Factorized Time </th>
 		</tr>
 	</table>
 </div>

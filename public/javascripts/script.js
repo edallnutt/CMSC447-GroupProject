@@ -18,7 +18,6 @@ function searchTable(searchID, tableID) {
     }
 }
 
-/*
 function sortTable(col, tableID) {
     var table, rows, switching, i, x, y, shouldSwitch, dir, switchcount = 0;
     table = document.getElementById(tableID);
@@ -55,7 +54,6 @@ function sortTable(col, tableID) {
         }
     }
 }
-*/
 
 function getUserToken() {
     try {
