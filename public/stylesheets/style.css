@@ -55,6 +55,7 @@
 /**********************/
 
 .table-container {
+    width: 75%;
     display: block;
     padding: 100px 0;
     text-align: center
