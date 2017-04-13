@@ -4,10 +4,10 @@
 	<table class="number-table" id="numTable" align="center">
 		<tr>
 			<th onclick="sortTable(0,'numTable')"> Alias </th>
-			<th onclick="sortTable(0,'numTable')"> Part of Number </th>
-			<th onclick="sortTable(0,'numTable')"> Number Length </th>
-			<th onclick="sortTable(0,'numTable')"> Factorized Count </th>
-			<th onclick="sortTable(0,'numTable')"> First Factorized Time </th>
+			<th onclick="sortTable(1,'numTable')"> Part of Number </th>
+			<th onclick="sortTable(2,'numTable')"> Number Length </th>
+			<th onclick="sortTable(3,'numTable')"> Factorized Count </th>
+			<th onclick="sortTable(4,'numTable')"> First Factorized Time </th>
 		</tr>
 	</table>
 </div>
@@ -130,10 +130,10 @@ $(document).ready(function(){
 		row.onclick                 = expand
 		row.style.backgroundColor   = i%2==0?"#FFFFFF":"#F0F0F0"
 		row.insertCell(0).innerHTML = numData[key][0].alias
-		row.insertCell(1).innerHTML = numData[key][0].num_submit
-		row.insertCell(2).innerHTML = numData[key][0].num_length
-		row.insertCell(3).innerHTML = numData[key][0].factor_count
-	    row.insertCell(4).innerHTML = numData[key][0].first_factor_time
+		row.insertCell(1).innerHTML = numData[key][0].num_submit.toString()
+		row.insertCell(2).innerHTML = numData[key][0].num_length.toString()
+		row.insertCell(3).innerHTML = numData[key][0].factor_count.toString()
+	    row.insertCell(4).innerHTML = numData[key][0].first_factor_time.toString()
 
 		document.getElementById("numTable").insertRow(2).insertCell(0)
         i++;
