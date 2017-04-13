@@ -129,7 +129,7 @@ $(document).ready(function(){
 
 		var row                     = document.getElementById("numTable").insertRow(1)
 		row.className               = "expand"
-		row.onclick                 = expand
+		//row.onclick                 = expand
 		row.style.backgroundColor   = i%2==0?"#FFFFFF":"#F0F0F0"
 		row.insertCell(0).innerHTML = numData[key][0].alias
 		row.insertCell(1).innerHTML = numData[key][0].num_submit
@@ -137,7 +137,7 @@ $(document).ready(function(){
 		row.insertCell(3).innerHTML = numData[key][0].factor_count
 	    row.insertCell(4).innerHTML = numData[key][0].first_factor_time
 
-		document.getElementById("numTable").insertRow(2).insertCell(0)
+		document.getElementById("numTable").insertRow(2).insertCell(0).innerHTML = ""
         i++;
 	}
 
