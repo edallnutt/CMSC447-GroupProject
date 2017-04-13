@@ -2,7 +2,7 @@
 function searchTable() {
     // Declare variables
     var input, filter, table, tr, td, i;
-    input = document.getElementById("searchTable");
+    input = document.getElementById("tableSearch");
     filter = input.value.toUpperCase();
     table = document.getElementById("numTable");
     tr = table.getElementsByTagName("tr");
