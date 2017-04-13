@@ -2,14 +2,6 @@
     <table class="admin-table" id="adminTable" align="center">
         <thead>
         <tr>
-            <th> <input type="text" id="tableSearch1" onkeyup="searchTable('tableSearch1','numTable',0)" placeholder="Search for email..."> </th>
-            <th> <input type="text" id="tableSearch2" onkeyup="searchTable('tableSearch2','numTable',1)" placeholder="Search for alias..."> </th>
-            <th> <input type="text" id="tableSearch3" onkeyup="searchTable('tableSearch3','numTable',2)" placeholder="Search for num..."> </th>
-            <th> <input type="text" id="tableSearch4" onkeyup="searchTable('tableSearch4','numTable',3)" placeholder="Search for length..."> </th>
-            <th> <input type="text" id="tableSearch5" onkeyup="searchTable('tableSearch5','numTable',4)" placeholder="Search for count..."> </th>
-            <th> <input type="text" id="tableSearch6" onkeyup="searchTable('tableSearch6','numTable',5)" placeholder="Search for time..."> </th>
-        </tr>
-        <tr>
             <th onclick="sortTable(0,'adminTable')"> Email </th>
             <th onclick="sortTable(1,'adminTable')"> Alias </th>
             <th onclick="sortTable(2,'adminTable')"> Part of Number </th>
@@ -18,6 +10,16 @@
             <th onclick="sortTable(5,'adminTable')"> First Factorized Time </th>
         </tr>
         </thead>
+        <tfoot>
+            <tr>
+                <th> <input type="text" id="tableSearch1" onkeyup="searchTable('tableSearch1','numTable',0)" placeholder="Search for email..."> </th>
+                <th> <input type="text" id="tableSearch2" onkeyup="searchTable('tableSearch2','numTable',1)" placeholder="Search for alias..."> </th>
+                <th> <input type="text" id="tableSearch3" onkeyup="searchTable('tableSearch3','numTable',2)" placeholder="Search for num..."> </th>
+                <th> <input type="text" id="tableSearch4" onkeyup="searchTable('tableSearch4','numTable',3)" placeholder="Search for length..."> </th>
+                <th> <input type="text" id="tableSearch5" onkeyup="searchTable('tableSearch5','numTable',4)" placeholder="Search for count..."> </th>
+                <th> <input type="text" id="tableSearch6" onkeyup="searchTable('tableSearch6','numTable',5)" placeholder="Search for time..."> </th>
+            </tr>
+        </tfoot>
     </table>
 </div>
 
@@ -48,16 +50,18 @@
             row.insertCell(4).innerHTML = numData[key][0].factor_count
             row.insertCell(5).innerHTML = numData[key][0].first_factor_time
 
-//            var tempRow = document.getElementById("adminTable").insertRow(2)
-//            tempRow.insertCell(0)
-//            tempRow.insertCell(1)
-//            tempRow.insertCell(2)
-//            tempRow.insertCell(3)
-//            tempRow.insertCell(4)
-//            tempRow.insertCell(5)
+            var tempRow = document.getElementById("adminTable").insertRow(2)
+            tempRow.insertCell(0)
+            tempRow.insertCell(1)
+            tempRow.insertCell(2)
+            tempRow.insertCell(3)
+            tempRow.insertCell(4)
+            tempRow.insertCell(5)
 
             i++;
         }
+
+        $(".expand").each(function(){$(this).next().toggle()})
 
     });
 </script>
