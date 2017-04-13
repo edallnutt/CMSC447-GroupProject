@@ -49,19 +49,8 @@
             row.insertCell(3).innerHTML = numData[key][0].num_length
             row.insertCell(4).innerHTML = numData[key][0].factor_count
             row.insertCell(5).innerHTML = numData[key][0].first_factor_time
-
-            var tempRow = document.getElementById("adminTable").insertRow(2)
-            tempRow.insertCell(0)
-            tempRow.insertCell(1)
-            tempRow.insertCell(2)
-            tempRow.insertCell(3)
-            tempRow.insertCell(4)
-            tempRow.insertCell(5)
-
             i++;
         }
-
-        $(".expand").each(function(){$(this).next().toggle()})
 
     });
 </script>
