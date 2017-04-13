@@ -475,7 +475,7 @@ app.get('/admin', function(req,res) {
             res.writeHead(200, {'Content-Type': 'text/html'});
             view("header", {}, res);
             view("nav", {}, res);
-            view("admin", {}, res);
+            table_view("admin", fs.readFileSync('./data.json', 'utf-8'), res);
             view("footer", {}, res);
             res.end();
         } else {
