@@ -56,9 +56,13 @@
 
 .table-container-admin {
     width: 75%;
-    display: block;
+    /*display: block;*/
     padding: 100px 0;
-    text-align: center
+    text-align: center;
+    display: inline-block;
+    margin-left: auto;
+    margin-right: auto;
+
 }
 
 .admin-table td {

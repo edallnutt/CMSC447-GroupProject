@@ -1,23 +1,19 @@
 <div class="table-container-admin" style="margin-top: 100px">
     <table class="admin-table" id="adminTable" align="center">
         <thead>
-        <tr>
-            <th> <input class="adminSearch" type="text" id="tableSearch1" onkeyup="searchTable('tableSearch1','adminTable',0)" placeholder="Search"> </th>
-            <th> <input class="adminSearch" type="text" id="tableSearch2" onkeyup="searchTable('tableSearch2','adminTable',1)" placeholder="Search"> </th>
-            <th> <input class="adminSearch" type="text" id="tableSearch3" onkeyup="searchTable('tableSearch3','adminTable',2)" placeholder="Search"> </th>
-            <th> <input class="adminSearch" type="text" id="tableSearch4" onkeyup="searchTable('tableSearch4','adminTable',3)" placeholder="Search"> </th>
-            <th> <input class="adminSearch" type="text" id="tableSearch5" onkeyup="searchTable('tableSearch5','adminTable',4)" placeholder="Search"> </th>
-            <th> <input class="adminSearch" type="text" id="tableSearch6" onkeyup="searchTable('tableSearch6','adminTable',5)" placeholder="Search"> </th>
-        </tr>
-        <tr>
-            <th onclick="sortTable(0,'adminTable')"> Email </th>
-            <th onclick="sortTable(1,'adminTable')"> Alias </th>
-            <th onclick="sortTable(2,'adminTable')"> Part of Number </th>
-            <th onclick="sortTable(3,'adminTable')"> Number Length </th>
-            <th onclick="sortTable(4,'adminTable')"> Factorized Count </th>
-            <th onclick="sortTable(5,'adminTable')"> First Factorized Time </th>
-        </tr>
+            <tr>
+                <th> Email </th>
+                <th> Alias </th>
+                <th> Part of Number </th>
+                <th> Number Length </th>
+                <th> Factorized Count </th>
+                <th> First Factorized Time </th>
+            </tr>
         </thead>
+        <tfoot>
+        </tfoot>
+        <tbody>
+        </tbody>
     </table>
 </div>
 
@@ -31,24 +27,26 @@
 
 <script>
     $(document).ready(function(){
-        var adminTable = document.getElementById('adminTable');
+        var adminTable = document.getElementById('adminTable').getElementsByTagName('tbody')[0];
 
-        var numData = JSON.parse('{{course.JSON}}')
+        var numData = JSON.parse('{{course.JSON}}');
 
-        var i = 0
+        var i = 0;
         for(var key in numData){
 
-            var row                     = document.getElementById("adminTable").insertRow(2)
-            row.className               = "expand"
-            row.style.backgroundColor   = i%2==0?"#FFFFFF":"#F0F0F0"
-            row.insertCell(0).innerHTML = key
-            row.insertCell(1).innerHTML = numData[key][0].alias
-            row.insertCell(2).innerHTML = numData[key][0].num_submit
-            row.insertCell(3).innerHTML = numData[key][0].num_length
-            row.insertCell(4).innerHTML = numData[key][0].factor_count
-            row.insertCell(5).innerHTML = numData[key][0].first_factor_time
+            var row                     = adminTable.insertRow(0);
+            //row.className               = "expand";
+            //row.style.backgroundColor   = i%2==0?"#FFFFFF":"#F0F0F0";
+            row.insertCell(0).innerHTML = key;
+            row.insertCell(1).innerHTML = numData[key][0].alias;
+            row.insertCell(2).innerHTML = numData[key][0].num_submit;
+            row.insertCell(3).innerHTML = numData[key][0].num_length;
+            row.insertCell(4).innerHTML = numData[key][0].factor_count;
+            row.insertCell(5).innerHTML = numData[key][0].first_factor_time;
             i++;
         }
+
+        $('#adminTable').DataTable();
 
     });
 </script>

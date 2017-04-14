@@ -6,7 +6,7 @@ function searchTable(searchID, tableID, col) {
     table = document.getElementById(tableID);
     tr = table.getElementsByTagName("tr");
 
-    for (i = 2; i < tr.length; i++) {
+    for (i = 1; i < tr.length; i++) {
         td = tr[i].getElementsByTagName("td")[col];
         if (td) {
             if (td.innerHTML.toUpperCase().indexOf(filter) > -1) {

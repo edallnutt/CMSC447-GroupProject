@@ -286,7 +286,7 @@ app.get('/submit-answer', function(req, res) {
                     case -1:    res.writeHead(200, {'Content-Type': 'text/html'});
                         view("header", {}, res);
                         view("nav", {}, res);
-                        table_view("table", fs.readFileSync('./data.json', 'utf-8'), res);
+                        table_view("table-test", fs.readFileSync('./data.json', 'utf-8'), res);
                         view("footer", {}, res);
                         res.end();
                         /* BELOW IS THE ACTUAL CODE FOR THIS SECTION, ABOVE IS FOR TESTING */
@@ -300,7 +300,7 @@ app.get('/submit-answer', function(req, res) {
                     case 1:     res.writeHead(200, {'Content-Type': 'text/html'});
                         view("header", {}, res);
                         view("nav", {}, res);
-                        table_view("table", fs.readFileSync('./data.json', 'utf-8'), res);
+                        table_view("table-test", fs.readFileSync('./data.json', 'utf-8'), res);
                         view("footer", {}, res);
                         res.end();
                         break;
@@ -314,7 +314,7 @@ app.get('/submit-answer', function(req, res) {
                             case -1:    res.writeHead(200, {'Content-Type': 'text/html'});
                                 view("header", {}, res);
                                 view("nav", {}, res);
-                                table_view("table", fs.readFileSync('./data.json', 'utf-8'), res);
+                                table_view("table-test", fs.readFileSync('./data.json', 'utf-8'), res);
                                 view("footer", {}, res);
                                 res.end();
                                 /* BELOW IS THE ACTUAL CODE FOR THIS SECTION, ABOVE IS FOR TESTING */
@@ -328,7 +328,7 @@ app.get('/submit-answer', function(req, res) {
                             case 1:     res.writeHead(200, {'Content-Type': 'text/html'});
                                 view("header", {}, res);
                                 view("nav", {}, res);
-                                table_view("table", fs.readFileSync('./data.json', 'utf-8'), res);
+                                table_view("table-test", fs.readFileSync('./data.json', 'utf-8'), res);
                                 view("footer", {}, res);
                                 res.end();
                                 break;
