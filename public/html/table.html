@@ -33,47 +33,50 @@
 </div>
 
 <script>
-var tbl  = document.getElementById('tbl');
-var dat  = JSON.parse('{{course.JSON}}')//[[{alias:"apple",num_submit:"18234802394434524534250423423",num_length:"1024",factor_count:1,first_factor_time:"Apr 16 17:30",factorized_by_me:false}],[{alias:"apple",num_submit:"405924058245024545234543",num_length:"1024",factor_count:1,first_factor_time:"Apr 16 17:30",factorized_by_me:false}],[{alias:"apple",num_submit:"467645674567457464456",num_length:"1024",factor_count:1,first_factor_time:"Apr 16 17:30",factorized_by_me:false}],[{alias:"apple",num_submit:"465262624543554325425423452424524",num_length:"1024",factor_count:1,first_factor_time:"Apr 16 17:30",factorized_by_me:false}],[{alias:"banana",num_submit:"878567865875643543587567865867855",num_length:"1024",factor_count:1,first_factor_time:"Apr 16 17:30",factorized_by_me:true}],[{alias:"	pineapple",num_submit:"36356345634563456345634563456",num_length:"1024",factor_count:1,first_factor_time:"Apr 16 17:30",factorized_by_me:false}],[{alias:"apple",num_submit:"4352452345234524253445245234525",num_length:"1024",factor_count:1,first_factor_time:"Apr 16 17:30",factorized_by_me:false}],[{alias:"apple",num_submit:"3544544252345203948203482304238",num_length:"1024",factor_count:1,first_factor_time:"Apr 16 17:30",factorized_by_me:true}]]
-var show = -1
-function refresh(){
-	for(var i=1;i<tbl.rows.length;i++)
-		tbl.deleteRow(1)
-	for(var i=0;i<dat.length;i++){
-        var row                     = tbl.insertRow(-1)
-        row.onclick                 = function(r,j){return function(){expand(r,j+2)}}(row,i)
-        row.insertCell(0).innerHTML = dat[i][0].alias
-        row.insertCell(1).innerHTML = dat[i][0].num_submit
-        row.insertCell(2).innerHTML = dat[i][0].num_length
-        row.insertCell(3).innerHTML = dat[i][0].factor_count
-        row.insertCell(4).innerHTML = dat[i][0].first_factor_time
-        if(dat[i][0].factorized_by_me)
-        	row.className = "ok"
-    }
-}
-refresh()
+    $(document).ready(function(){
+        refresh()
+    });
 
-function submit(e){
-	if(!e)
-		e=window.event
-	if((e.keyCode||e.which)!='13')
-		return
-	if(RegExp("^[0-9]+ [0-9]+$").test(e.target.value)){
-		if(typeof somehowSubmitToServer === "function")
-			somehowSubmitToServer()
-		e.target.value = "Number submitted. Waiting for verification"
-	}else
-		e.target.value = 'Invalid number. Enter 2 or more factors spearated by space and hit enter to submit'
+	var tbl  = document.getElementById('tbl');
+	var dat  = JSON.parse('{{course.JSON}}'); //[[{alias:"apple",num_submit:"18234802394434524534250423423",num_length:"1024",factor_count:1,first_factor_time:"Apr 16 17:30",factorized_by_me:false}],[{alias:"apple",num_submit:"405924058245024545234543",num_length:"1024",factor_count:1,first_factor_time:"Apr 16 17:30",factorized_by_me:false}],[{alias:"apple",num_submit:"467645674567457464456",num_length:"1024",factor_count:1,first_factor_time:"Apr 16 17:30",factorized_by_me:false}],[{alias:"apple",num_submit:"465262624543554325425423452424524",num_length:"1024",factor_count:1,first_factor_time:"Apr 16 17:30",factorized_by_me:false}],[{alias:"banana",num_submit:"878567865875643543587567865867855",num_length:"1024",factor_count:1,first_factor_time:"Apr 16 17:30",factorized_by_me:true}],[{alias:"	pineapple",num_submit:"36356345634563456345634563456",num_length:"1024",factor_count:1,first_factor_time:"Apr 16 17:30",factorized_by_me:false}],[{alias:"apple",num_submit:"4352452345234524253445245234525",num_length:"1024",factor_count:1,first_factor_time:"Apr 16 17:30",factorized_by_me:false}],[{alias:"apple",num_submit:"3544544252345203948203482304238",num_length:"1024",factor_count:1,first_factor_time:"Apr 16 17:30",factorized_by_me:true}]]
+	var show = -1;
+	function refresh(){
+		for(var i=1;i<tbl.rows.length;i++)
+			tbl.deleteRow(1)
+		for(var i=0;i<dat.length;i++){
+			var row                     = tbl.insertRow(-1);
+			row.onclick                 = function(r,j){return function(){expand(r,j+2)}}(row,i);
+			row.insertCell(0).innerHTML = dat[i][0].alias;
+			row.insertCell(1).innerHTML = dat[i][0].num_submit;
+			row.insertCell(2).innerHTML = dat[i][0].num_length;
+			row.insertCell(3).innerHTML = dat[i][0].factor_count;
+			row.insertCell(4).innerHTML = dat[i][0].first_factor_time;
+			if(dat[i][0].factorized_by_me)
+				row.className = "ok"
+		}
+	}
+
+	function submit(e){
+		if(!e)
+			e=window.event;
+		if((e.keyCode||e.which)!='13')
+			return
+		if(RegExp("^[0-9]+ [0-9]+$").test(e.target.value)){
+			if(typeof somehowSubmitToServer === "function")
+				somehowSubmitToServer()
+			e.target.value = "Number submitted. Waiting for verification"
+		}else
+			e.target.value = 'Invalid number. Enter 2 or more factors spearated by space and hit enter to submit'
 
 
-}
+	}
 
-function expand(row,i){
-    if(show>=0)
-        tbl.deleteRow(show)
-    var col       = tbl.insertRow(row.rowIndex+1).insertCell(0)
-    col.colSpan   = 5
-    col.innerHTML = "<input onkeypress='submit()' placeholder='"+(dat[i-2][0].factorized_by_me?"You have alraedy submitted. Submit again if you want":"Enter 2 or more factors spearated by space and hit enter to submit")+"'></input>"
-    show          = row.rowIndex+1
-}
+	function expand(row,i){
+		if(show>=0)
+			tbl.deleteRow(show);
+		var col       = tbl.insertRow(row.rowIndex+1).insertCell(0);
+		col.colSpan   = 5;
+		col.innerHTML = "<input onkeypress='submit()' placeholder='"+(dat[i-2][0].factorized_by_me?"You have alraedy submitted. Submit again if you want":"Enter 2 or more factors spearated by space and hit enter to submit")+"'></input>";
+		show          = row.rowIndex+1
+	}
 </script>
