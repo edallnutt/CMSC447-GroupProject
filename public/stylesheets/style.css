@@ -25,31 +25,31 @@
 /**********************/
 /* Submit Answer Page */
 /**********************/
-.table-container-submit {
-    display: block;
-    padding: 100px 0;
-    text-align: center
+#tblTitle span:nth-child(1){
+    float:left
 }
-
-.number-table td {
-    padding: 15px;
-    text-align: center;
+#tblTitle span:nth-child(2){
+    float:right
 }
-
-.number-table th {
-    padding: 15px 15px 0 15px;
-    text-align: center;
-    font-size: 16px;
+#tbl{
+    text-align:center;
+    width:100%;
+    border-spacing:4 4; 
 }
-
-#tableSearch {
-    width: 65%;
-    font-size: 16px;
-    padding: 12px 20px 12px 40px;
-    border: 1px solid #ddd;
-    margin-bottom: 12px;
+#tbl .ok.ok{    /*this IS needed*/
+    background-color:#ffe033
 }
-
+#tbl tr:hover:hover{
+    background-color:#abf2af
+}
+#tbl tr:nth-child(even){
+    background-color:#dedede
+}
+#tbl input{
+    width:100%;
+    text-align:center;  
+    font-size:14
+}
 /**********************/
 /* Admin Page         */
 /**********************/
