@@ -1,0 +1,59 @@
+<h2 id='tblTitle'>
+    <span>Click a Row to Submit an Answer:</span>
+    <span>
+        <input type="text" id="tableSearch" onkeyup="searchTable('tableSearch','tbl',0)" placeholder="Search for alias...">
+    </span>
+</h2></br></br>
+<table id="tbl">
+    <tr>
+        <th onclick="if(show>=0)tbl.deleteRow(show);show=-1;sortTable(0,'tbl')">Alias</th>
+        <th onclick="if(show>=0)tbl.deleteRow(show);show=-1;sortTable(1,'tbl')">Part of Number</th>
+        <th onclick="if(show>=0)tbl.deleteRow(show);show=-1;sortTable(2,'tbl')">Number Length</th>
+        <th onclick="if(show>=0)tbl.deleteRow(show);show=-1;sortTable(3,'tbl')">Factorized Count</th>
+        <th onclick="if(show>=0)tbl.deleteRow(show);show=-1;sortTable(4,'tbl')">First Factorized Time</th>
+    </tr>
+</table>
+
+<script>
+var tbl  = document.getElementById('tbl')
+var dat  = JSON.parse('{{course.JSON}}')
+var show = -1
+for(var i=1;i<tbl.rows.length;i++)
+    tbl.deleteRow(1)
+for(var i=0;i<dat.length;i++){
+    var row                     = tbl.insertRow(-1)
+    row.onclick                 = function(r,j){return function(){expand(r,j+2)}}(row,i)
+    row.insertCell(0).innerHTML = dat[i][0].alias
+    row.insertCell(1).innerHTML = dat[i][0].num_submit
+    row.insertCell(2).innerHTML = dat[i][0].num_length
+    row.insertCell(3).innerHTML = dat[i][0].factor_count
+    row.insertCell(4).innerHTML = dat[i][0].first_factor_time
+    if(dat[i][0].factorized_by_me)
+        row.className = "ok"
+}
+
+function expand(row,i){
+    if(show>=0)
+        tbl.deleteRow(show)
+    var col       = tbl.insertRow(row.rowIndex+1).insertCell(0)
+    col.colSpan   = 5
+    col.innerHTML = "<form action='submit-answer' method='POST'><input onkeypress='submit()' name='submit_answer' placeholder='"+(dat[i-2][0].factorized_by_me?"You have alraedy submitted. Submit again if you want":"Enter 2 or more factors spearated by space and hit enter to submit")+"'></input><textarea name='user_email' style='display:none'></textarea><textarea name='user_token' style='display:none'></textarea><textarea name='alias' style='display:none'></textarea></form>"
+    show          = row.rowIndex+1
+}
+
+function submit(e){
+    if(!e)
+        e = window.event
+    if((e.keyCode||e.which)!='13')
+        return
+    if(RegExp("^[0-9]+ [0-9]+$").test(e.target.value)){
+        document.getElementsByTagName("input")[1].placeholder = "Anser submitted. Waiting for server response..."
+        document.getElementsByName("user_email")[0].value     = getUserEmail()
+        document.getElementsByName("user_token")[0].value     = getUserToken()
+        document.getElementsByName("alias")[0].value          = tbl.rows[e.target.parentElement.parentElement.rowIndex-1].cols[0]
+        e.target.parentElement.submit()
+    }else
+        document.getElementsByTagName("input")[1].placeholder = 'Invalid number. Enter 2 or more factors spearated by space and hit enter to submit'
+    e.target.value = ''    
+}
+</script>
