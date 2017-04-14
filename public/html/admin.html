@@ -42,7 +42,7 @@
         var i = 0
         for(var key in numData){
 
-            var row                     = document.getElementById("adminTable").insertRow(1)
+            var row                     = document.getElementById("adminTable").getElementsByTagName('tbody')[0];
             row.className               = "expand"
             row.style.backgroundColor   = i%2==0?"#FFFFFF":"#F0F0F0"
             row.insertCell(0).innerHTML = key
