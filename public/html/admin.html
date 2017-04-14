@@ -18,6 +18,10 @@
             <th onclick="sortTable(5,'adminTable')"> First Factorized Time </th>
         </tr>
         </thead>
+        <tfoot>
+        </tfoot>
+        <tbody>
+        </tbody>
     </table>
 </div>
 
@@ -49,8 +53,5 @@
             row.insertCell(5).innerHTML = numData[key][0].first_factor_time
             i++;
         }
-
-        $('#adminTable').DataTable();
-
     });
 </script>
