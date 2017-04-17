@@ -260,7 +260,7 @@ app.post('/submit-num', function(req, res) {
             course[student_email] = [];
 
             var student_data = {
-                ..alias: objAlias,
+                alias: objAlias,
                 num_submit: student_number,
                 num_length: student_number.length,
                 factor_count: 0,
