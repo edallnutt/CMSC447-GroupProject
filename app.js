@@ -344,41 +344,26 @@ app.get('/submit-answer', function(req, res) {
 
 /* Creates and stores student object who submitted an answer */
 // still working on it 
-/*app.post('/submit-answer', function(req, res) {
-    var student_email = req.body.user_email
-    var token         = req.body.user_token
-    var num1          = RegExp("[0-9]*").exec(str)
-    var num2          = RegExp("[0-9]*$").exec()
-
-    var course = JSON.parse(fs.readFileSync('./data.json', 'utf-8'))
-    for(var email in course)
-        if course[email].alias = 
-
-
-    if(num1!="1" && num2!="1" && product(num1,num2)== ) 
-    if(!isNaN(student_number) && student_number.length > 0){
-        var course = JSON.parse(fs.readFileSync('./data.json', 'utf-8'));
-
-        var objAlias = course[student_email][0].alias;
-        course[student_email] = [];
-
-            var student_data = {
-                alias: objAlias,
-                num_submit: student_number,
-                num_length: student_number.length,
-                factor_count: 0,
-                first_factor_time: ""
-            };
-        }
-
-        course[student_email].push(student_data);
+app.post('/submit-answer', function(req, res) {
+    var token = req.query.token;
+    verifyStudent(token, function(student) {
+        if(!student) break;
+        var answer_alias  = req.body.alias
+        var num1          = RegExp("[0-9]*").exec(str)
+        var num2          = RegExp("[0-9]*$").exec(str)
+        var course = JSON.parse(fs.readFileSync('./data.json', 'utf-8'))
+        for(var email in course)
+            for(var index in course[email])
+                if(course[email][index].alias == answer_alias){
+                    if(num1 != "1" && num2 != "1" && /*verify num1 * num2 == course[email][alias].number*/true)
+                        course[email][index].factorized_by[student] = true
+                    break
+                }
         fs.writeFileSync('./data.json', JSON.stringify(course), 'utf-8');
-    }
-
-    res.writeHead(303, {"Location": "/submit-num?token="+token});
+    });
+    res.writeHead(303, {"Location": "/submit-answer?token="+token});
     res.end();
-
-});*/
+});
 
 app.get('/statistics', function(req, res) {
     var token = req.query.token;
