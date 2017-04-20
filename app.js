@@ -349,19 +349,20 @@ app.get('/submit-answer', function(req, res) {
 app.post('/submit-answer', function(req, res) {
     var token = req.query.token;
     verifyStudent(token, function(student) {
-        if(!student) break;
-        var answer_alias  = req.body.alias
-        var num1          = RegExp("[0-9]*").exec(str)
-        var num2          = RegExp("[0-9]*$").exec(str)
-        var course = JSON.parse(fs.readFileSync('./data.json', 'utf-8'))
-        for(var email in course)
-            for(var index in course[email])
-                if(course[email][index].alias == answer_alias){
-                    if(num1 != "1" && num2 != "1" && /*verify num1 * num2 == course[email][alias].number*/true)
-                        course[email][index].factorized_by[student] = true
-                    break
-                }
-        fs.writeFileSync('./data.json', JSON.stringify(course), 'utf-8');
+        if(student) {
+            var answer_alias  = req.body.alias
+            var num1          = RegExp("[0-9]*").exec(str)
+            var num2          = RegExp("[0-9]*$").exec(str)
+            var course = JSON.parse(fs.readFileSync('./data.json', 'utf-8'))
+            for(var email in course)
+                for(var index in course[email])
+                    if(course[email][index].alias == answer_alias){
+                        if(num1 != "1" && num2 != "1" && /*verify num1 * num2 == course[email][alias].number*/true)
+                            course[email][index].factorized_by[student] = true
+                        break
+                    }
+            fs.writeFileSync('./data.json', JSON.stringify(course), 'utf-8');
+        }
     });
     res.writeHead(303, {"Location": "/submit-answer?token="+token});
     res.end();
