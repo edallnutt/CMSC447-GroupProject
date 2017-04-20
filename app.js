@@ -584,6 +584,12 @@ app.get('/number-list', function(req, res) {
     });
 });
 
+app.get('/get-admins', function(req, res) {
+   getAdmins(function(data) {
+       res.send(data);
+   })
+});
+
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
   var err = new Error('Not Found');
