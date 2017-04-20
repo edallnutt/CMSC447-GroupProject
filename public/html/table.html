@@ -1,18 +1,20 @@
-<h2 id='tblTitle'>
-    <span>Click a Row to Submit an Answer:</span>
-    <span>
-        <input type="text" id="tableSearch" onkeyup="searchTable('tableSearch','tbl',0)" placeholder="Search for alias...">
-    </span>
-</h2></br></br>
-<table id="tbl">
-    <tr>
-        <th onclick="if(show>=0)tbl.deleteRow(show);show=-1;sortTable(0,'tbl')">Alias</th>
-        <th onclick="if(show>=0)tbl.deleteRow(show);show=-1;sortTable(1,'tbl')">Part of Number</th>
-        <th onclick="if(show>=0)tbl.deleteRow(show);show=-1;sortTable(2,'tbl')">Number Length</th>
-        <th onclick="if(show>=0)tbl.deleteRow(show);show=-1;sortTable(3,'tbl')">Factorized Count</th>
-        <th onclick="if(show>=0)tbl.deleteRow(show);show=-1;sortTable(4,'tbl')">First Factorized Time</th>
-    </tr>
-</table>
+<div class="container text-center">
+    <h2 id='tblTitle'>
+        <span>Click a Row to Submit an Answer:</span>
+        <span>
+            <input type="text" id="tableSearch" onkeyup="searchTable('tableSearch','tbl',0)" placeholder="Search for alias...">
+        </span>
+    </h2></br></br>
+    <table id="tbl">
+        <tr>
+            <th onclick="if(show>=0)tbl.deleteRow(show);show=-1;sortTable(0,'tbl')">Alias</th>
+            <th onclick="if(show>=0)tbl.deleteRow(show);show=-1;sortTable(1,'tbl')">Part of Number</th>
+            <th onclick="if(show>=0)tbl.deleteRow(show);show=-1;sortTable(2,'tbl')">Number Length</th>
+            <th onclick="if(show>=0)tbl.deleteRow(show);show=-1;sortTable(3,'tbl')">Factorized Count</th>
+            <th onclick="if(show>=0)tbl.deleteRow(show);show=-1;sortTable(4,'tbl')">First Factorized Time</th>
+        </tr>
+    </table>
+</div>
 
 <script>
 var tbl  = document.getElementById('tbl')
@@ -51,6 +53,6 @@ function submit(e){
         submit(e.target.value)
     }else
         document.getElementsByTagName("input")[1].placeholder = 'Invalid number. Enter 2 or more factors spearated by space and hit enter to submit'
-    e.target.value = ''    
+    e.target.value = ''
 }
 </script>

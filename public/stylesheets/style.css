@@ -25,16 +25,22 @@
 /**********************/
 /* Submit Answer Page */
 /**********************/
-#tblTitle span:nth-child(1){
+
+#tblTitle{
+    margin-top: 100px
+}
+
+/* #tblTitle span:nth-child(1){
     float:left
 }
+
 #tblTitle span:nth-child(2){
     float:right
-}
+}*/
+
 #tbl{
-    text-align:center;
-    width:100%;
-    border-spacing:4 4; 
+    display: inline-block;
+    text-align: center
 }
 #tbl .ok.ok{    /*this IS needed*/
     background-color:#ffe033
@@ -47,22 +53,23 @@
 }
 #tbl input{
     width:100%;
-    text-align:center;  
+    text-align:center;
     font-size:14
 }
 /**********************/
 /* Admin Page         */
 /**********************/
 
+/* Use class="container text-center" for admin table
+   instead of table-container-admin */
+
 .table-container-admin {
     width: 75%;
     /*display: block;*/
-    padding: 100px 0;
+    padding-top: 100px;
     text-align: center;
-    display: inline-block;
     margin-left: auto;
     margin-right: auto;
-
 }
 
 .admin-table td {

@@ -225,6 +225,8 @@ app.post('/submit-num', function(req, res) {
     var student_email = req.body.user_email;
     var token = req.body.user_token;
 
+    // check bit length
+
     if(!isNaN(student_number) && student_number.length > 0){
         var course = JSON.parse(fs.readFileSync('./data.json', 'utf-8'));
         var fruits = JSON.parse(fs.readFileSync('./fruit.json', 'utf-8'));
@@ -286,7 +288,7 @@ app.get('/submit-answer', function(req, res) {
                     case -1:    res.writeHead(200, {'Content-Type': 'text/html'});
                         view("header", {}, res);
                         view("nav", {}, res);
-                        table_view("table-test", fs.readFileSync('./data.json', 'utf-8'), res);
+                        table_view("submit-answer", fs.readFileSync('./data.json', 'utf-8'), res);
                         view("footer", {}, res);
                         res.end();
                         /* BELOW IS THE ACTUAL CODE FOR THIS SECTION, ABOVE IS FOR TESTING */
@@ -300,7 +302,7 @@ app.get('/submit-answer', function(req, res) {
                     case 1:     res.writeHead(200, {'Content-Type': 'text/html'});
                         view("header", {}, res);
                         view("nav", {}, res);
-                        table_view("table-test", fs.readFileSync('./data.json', 'utf-8'), res);
+                        table_view("submit-answer", fs.readFileSync('./data.json', 'utf-8'), res);
                         view("footer", {}, res);
                         res.end();
                         break;
@@ -343,7 +345,7 @@ app.get('/submit-answer', function(req, res) {
 });
 
 /* Creates and stores student object who submitted an answer */
-// still working on it 
+// still working on it
 /*app.post('/submit-answer', function(req, res) {
     var student_email = req.body.user_email
     var token         = req.body.user_token
@@ -352,10 +354,10 @@ app.get('/submit-answer', function(req, res) {
 
     var course = JSON.parse(fs.readFileSync('./data.json', 'utf-8'))
     for(var email in course)
-        if course[email].alias = 
+        if course[email].alias =
 
 
-    if(num1!="1" && num2!="1" && product(num1,num2)== ) 
+    if(num1!="1" && num2!="1" && product(num1,num2)== )
     if(!isNaN(student_number) && student_number.length > 0){
         var course = JSON.parse(fs.readFileSync('./data.json', 'utf-8'));
 
@@ -405,6 +407,14 @@ app.get('/statistics', function(req, res) {
             });
         }
     });
+});
+
+app.get('/test-java', function(req, res){
+
+    // var i = exec
+
+    // console.log(i)
+    res.send(i);
 });
 
 app.get('/home', function(req,res) {
