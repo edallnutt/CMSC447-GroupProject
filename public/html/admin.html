@@ -18,10 +18,11 @@
 </div>
 
 <div style="text-align: center">
-<button type="button" onclick="adminLink('/close?status=true&')">Close Submissions</button>
-<button type="button" onclick="adminLink('/close?status=false&')">Open Submissions</button>
-<button type="button" onclick="adminLink('/publish?status=true&')">Publish Submissions</button>
-<button type="button" onclick="adminLink('/publish?status=false&')">Un-publish Submissions</button>
+    <button type="button" onclick="adminLink('/close?status=true&')">Close Submissions</button>
+    <button type="button" onclick="adminLink('/close?status=false&')">Open Submissions</button>
+    <button type="button" onclick="adminLink('/publish?status=true&')">Publish Submissions</button>
+    <button type="button" onclick="adminLink('/publish?status=false&')">Un-publish Submissions</button>
+    <button type="button" onclick="deleteSelection()">Delete Selection</button>
 </div>
 
 
@@ -86,6 +87,16 @@
             }
 
             $('#adminTable').DataTable();
+            $('#adminTable tbody').on( 'click', 'tr', function () {
+                if ( $(this).hasClass('selected') ) {
+                    $(this).removeClass('selected');
+                }
+                else {
+                    table.$('tr.selected').removeClass('selected');
+                    $(this).addClass('selected');
+                }
+            } );
+
         });
 
     });
