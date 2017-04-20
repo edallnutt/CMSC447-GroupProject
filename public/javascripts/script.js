@@ -128,17 +128,6 @@ function studentLink(path) {
 }
 
 function deleteSelection() {
-    var table = document.getElementById('adminTable')
-    $('#adminTable tbody').on( 'click', 'tr', function () {
-        if ( $(this).hasClass('selected') ) {
-            $(this).removeClass('selected');
-        }
-        else {
-            table.$('tr.selected').removeClass('selected');
-            $(this).addClass('selected');
-        }
-    } );
-
-
-
+    var table = $('#adminTable').DataTable();
+    table.row('.selected').remove().draw( false );
 }
