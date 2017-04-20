@@ -86,13 +86,13 @@
 
             }
 
-            $('#adminTable').DataTable();
+            var table = $('#adminTable').DataTable();
             $('#adminTable tbody').on( 'click', 'tr', function () {
                 if ( $(this).hasClass('selected') ) {
                     $(this).removeClass('selected');
                 }
                 else {
-                    $('#adminTable').$('tr.selected').removeClass('selected');
+                    table.$('tr.selected').removeClass('selected');
                     $(this).addClass('selected');
                 }
             } );
