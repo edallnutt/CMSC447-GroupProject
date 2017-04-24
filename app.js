@@ -148,8 +148,24 @@ function table_view(templateName, values, res){
     // Read from the template files
     var fileContents = fs.readFileSync("./public/html/" + templateName + ".html", {encoding: "utf-8"});
 
+    var obj = JSON.parse(values);
+    var newObj = [];
+    var i = 0;
+    for(var key in obj){
+        newObj[i] = [];
+        var student_data = {
+            alias: obj[key][0].alias,
+            num_submit: obj[key][0].num_submit,
+            num_length: obj[key][0].num_length,
+            factor_count: obj[key][0].factor_count,
+            first_factor_time: obj[key][0].first_factor_time
+        };
+        newObj[i].push(student_data);
+        i++;
+    };
+
     // Insert course JSON object into the Content
-    fileContents = fileContents.replace("{{course.JSON}}", values);
+    fileContents = fileContents.replace("{{course.JSON}}", JSON.stringify(newObj));
 
     // Write out the content to the response
     res.write(fileContents);
@@ -345,7 +361,7 @@ app.get('/submit-answer', function(req, res) {
 });
 
 /* Creates and stores student object who submitted an answer */
-// still working on it 
+// still working on it
 app.post('/submit-answer', function(req, res) {
     var token = req.query.token;
     verifyStudent(token, function(student) {
