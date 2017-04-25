@@ -33,9 +33,10 @@ for(var i = 0; i < dat.length; i++){
     row.insertCell(4).innerHTML = dat[i][0].first_factor_time
 
     // Highlight numbers you factored
-    for(var key in dat[email_num][0].factorized_by_me){
-        if(key === dat[i][0].alias && dat[email_num][0].factorized_by_me[key] === true)
+    for(var key in dat[i][0].factorized_by_me){
+        if(email_num === key && dat[i][0].factorized_by_me[key] === true)
             row.className = "ok"
+	break
     }
 }
 
@@ -44,25 +45,28 @@ function expand(row,i){
         tbl.deleteRow(show)
     var col       = tbl.insertRow(row.rowIndex+1).insertCell(0)
     col.colSpan   = 5
-    col.innerHTML = "<form action='submit-answer' method='post'><input name='submit_answer' placeholder='"+(row.className === "ok"?"You have already submitted. Submit again if you want":"Enter 2 or more factors separated by a space and hit enter to submit")+"'></input><textarea name='user_email'></textarea><textarea name='user_token'></textarea><textarea name='alias' style='display:none'></textarea><button onclick='submit()'>Submit</button></form>"
+    col.innerHTML = "\
+	<form action='submit-answer' onsubmit='return verify()' method='post'>\
+	<input name='submit_answer' placeholder='"+(row.className === "ok"?"You have already submitted. Submit again if you want":"Enter 2 or more factors separated by a space and hit enter to submit")+"'></input>\
+	<textarea name='user_email' style='display:none'></textarea>\
+	<textarea name='user_token' style='display:none'></textarea> \
+	<button>submit</button>\
+	</form>"
     show          = row.rowIndex+1
 }
 
-function submit(){
-    /*if(!e)
-        e = window.event
-    if((e.keyCode||e.which)!='13')
-        return*/
-    //if(RegExp("^[0-9]+ [0-9]+$").test(e.target.value)){
-        document.getElementsByTagName("input")[1].placeholder = "Answer submitted. Waiting for server response..."
-        document.getElementsByName("user_email")[0].value     = getUserEmail();
-        document.getElementsByName("user_token")[0].value     = getUserToken();
-        //document.getElementsByName("alias")[0].value          = tbl.rows[e.target.parentElement.parentElement.rowIndex-1].cols[0]
-        //e.target.parentElement.submit()
-    //}
-    //else{
-    //    document.getElementsByTagName("input")[1].placeholder = 'Invalid number. Enter 2 or more factors separated by a space and hit enter to submit'
-    //}
-    //e.target.value = ''
+function verify(){
+    var box = document.getElementsByTagName('input')[1]
+    if(RegExp("^[0-9]+ [0-9]+$").test(box.value)){
+	document.getElementsByName('user_email')[0].value = getUserEmail()
+	document.getElementsByName('user_token')[0].value = getUserToken()
+	document.getElementsByTagName('form')[0].submit()
+        box.value       = ''
+	box.placeholder = 'Answer submitted. Waiting for server response...'
+    }else{
+        box.value       = ''
+	box.placeholder = 'Invalid format. Enter 2 or more factors separated by a space and hit enter to submit'
+	return false
+    }
 }
 </script>
