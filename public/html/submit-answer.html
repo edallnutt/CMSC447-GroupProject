@@ -17,10 +17,12 @@
 </div>
 
 <script>
-var tbl  = document.getElementById('tbl')
-var dat  = JSON.parse('{{course.JSON}}')
-var show = -1
+var tbl  = document.getElementById('tbl')       // Submission table
+var email_num = '{{student_num}}';                // Number associated with user
+var dat  = JSON.parse('{{course.JSON}}')        // Project data
 
+/*      Insert student data into table      */
+var show = -1
 for(var i = 0; i < dat.length; i++){
     var row                     = tbl.insertRow(-1)
     row.onclick                 = function(r,j){return function(){expand(r,j+2)}}(row,i)
@@ -29,35 +31,38 @@ for(var i = 0; i < dat.length; i++){
     row.insertCell(2).innerHTML = dat[i][0].num_length
     row.insertCell(3).innerHTML = dat[i][0].factor_count
     row.insertCell(4).innerHTML = dat[i][0].first_factor_time
-    if(dat[i][0].factorized_by_me)
-        row.className = "ok"
+
+    // Highlight numbers you factored
+    for(var key in dat[email_num][0].factorized_by_me){
+        if(key === dat[i][0].alias && dat[email_num][0].factorized_by_me[key] === true)
+            row.className = "ok"
+    }
 }
 
-function expand(row,i,key){
+function expand(row,i){
     if(show>=0)
         tbl.deleteRow(show)
     var col       = tbl.insertRow(row.rowIndex+1).insertCell(0)
     col.colSpan   = 5
-    col.innerHTML = "<form action='submit-answer' method='POST'><input onkeypress='submit(event)' name='submit_answer' placeholder='"+(false?"You have alraedy submitted. Submit again if you want":"Enter 2 or more factors spearated by space and hit enter to submit")+"'></input><textarea name='user_email' style='display:none'></textarea><textarea name='user_token' style='display:none'></textarea><textarea name='alias' style='display:none'></textarea></form>"
+    col.innerHTML = "<form action='submit-answer' method='post'><input name='submit_answer' placeholder='"+(row.className === "ok"?"You have already submitted. Submit again if you want":"Enter 2 or more factors separated by a space and hit enter to submit")+"'></input><textarea name='user_email'></textarea><textarea name='user_token'></textarea><textarea name='alias' style='display:none'></textarea><button onclick='submit()'>Submit</button></form>"
     show          = row.rowIndex+1
 }
 
-function submit(e){
-
-    if(!e)
+function submit(){
+    /*if(!e)
         e = window.event
     if((e.keyCode||e.which)!='13')
-        return
-    //console.log(e.target.value)
-    if(RegExp("^[0-9]+ [0-9]+$").test(e.target.value)){
-
-        document.getElementsByTagName("input")[1].placeholder = "Anser submitted. Waiting for server response..."
-        document.getElementsByName("user_email")[0].value     = getUserEmail()
-        document.getElementsByName("user_token")[0].value     = getUserToken()
-        document.getElementsByName("alias")[0].value          = tbl.rows[e.target.parentElement.parentElement.rowIndex-1].cols[0]
-        e.target.parentElement.submit()
-    }else
-        document.getElementsByTagName("input")[1].placeholder = 'Invalid number. Enter 2 or more factors spearated by space and hit enter to submit'
-    e.target.value = ''
+        return*/
+    //if(RegExp("^[0-9]+ [0-9]+$").test(e.target.value)){
+        document.getElementsByTagName("input")[1].placeholder = "Answer submitted. Waiting for server response..."
+        document.getElementsByName("user_email")[0].value     = getUserEmail();
+        document.getElementsByName("user_token")[0].value     = getUserToken();
+        //document.getElementsByName("alias")[0].value          = tbl.rows[e.target.parentElement.parentElement.rowIndex-1].cols[0]
+        //e.target.parentElement.submit()
+    //}
+    //else{
+    //    document.getElementsByTagName("input")[1].placeholder = 'Invalid number. Enter 2 or more factors separated by a space and hit enter to submit'
+    //}
+    //e.target.value = ''
 }
 </script>

@@ -144,28 +144,38 @@ function view(templateName, values, res){
 }
 
 /* Displays html template with student data to the screen */
-function table_view(templateName, values, res){
+function table_view(templateName, values, email, res){
     // Read from the template files
     var fileContents = fs.readFileSync("./public/html/" + templateName + ".html", {encoding: "utf-8"});
 
+    /*      Changes email keys to number keys to        */
+    /*      hide student emails except the user email   */
     var obj = JSON.parse(values);
+    var email_num;
     var newObj = [];
     var i = 0;
     for(var key in obj){
-        newObj[i] = [];
         var student_data = {
             alias: obj[key][0].alias,
             num_submit: obj[key][0].num_submit,
             num_length: obj[key][0].num_length,
             factor_count: obj[key][0].factor_count,
-            first_factor_time: obj[key][0].first_factor_time
+            first_factor_time: obj[key][0].first_factor_time,
+            factorized_by_me: obj[key][0].factorized_by_me
         };
+
+        if(key === email){
+            email_num = i;
+        }
+
+        newObj[i] = [];
         newObj[i].push(student_data);
         i++;
     };
 
     // Insert course JSON object into the Content
     fileContents = fileContents.replace("{{course.JSON}}", JSON.stringify(newObj));
+    fileContents = fileContents.replace("{{student_num}}", email_num);
 
     // Write out the content to the response
     res.write(fileContents);
@@ -240,6 +250,7 @@ app.post('/submit-num', function(req, res) {
     var student_number = req.body.submit_num.trim();
     var student_email = req.body.user_email;
     var token = req.body.user_token;
+    var factorized_by_me_list = {};
 
     // check bit length
 
@@ -265,16 +276,23 @@ app.post('/submit-num', function(req, res) {
             }
             course[student_email] = [];
 
+            for(var key in fruits["fruits"]){
+                var name = fruits["fruits"][key].name;
+                factorized_by_me_list[name] = false;
+            }
+
             var student_data = {
                 alias: randomFruit,
                 num_submit: student_number,
                 num_length: student_number.length,
                 factor_count: 0,
-                first_factor_time: ""
+                first_factor_time: "",
+                factorized_by_me: factorized_by_me_list
             };
         }
         else{
             var objAlias = course[student_email][0].alias;
+            var objFactorizedList = course[student_email][0].factorized_by_me;
             course[student_email] = [];
 
             var student_data = {
@@ -282,7 +300,8 @@ app.post('/submit-num', function(req, res) {
                 num_submit: student_number,
                 num_length: student_number.length,
                 factor_count: 0,
-                first_factor_time: ""
+                first_factor_time: "",
+                factorized_by_me: objFactorizedList
             };
         }
 
@@ -297,6 +316,7 @@ app.post('/submit-num', function(req, res) {
 
 app.get('/submit-answer', function(req, res) {
     var token = req.query.token;
+    var email = req.query.email;
     verifyStudent(token, function(student) {
         if(student) {
             checkSubmissionStatus(function(posted) {
@@ -304,7 +324,7 @@ app.get('/submit-answer', function(req, res) {
                     case -1:    res.writeHead(200, {'Content-Type': 'text/html'});
                         view("header", {}, res);
                         view("nav", {}, res);
-                        table_view("submit-answer", fs.readFileSync('./data.json', 'utf-8'), res);
+                        table_view("submit-answer", fs.readFileSync('./data.json', 'utf-8'), email, res);
                         view("footer", {}, res);
                         res.end();
                         /* BELOW IS THE ACTUAL CODE FOR THIS SECTION, ABOVE IS FOR TESTING */
@@ -318,7 +338,7 @@ app.get('/submit-answer', function(req, res) {
                     case 1:     res.writeHead(200, {'Content-Type': 'text/html'});
                         view("header", {}, res);
                         view("nav", {}, res);
-                        table_view("submit-answer", fs.readFileSync('./data.json', 'utf-8'), res);
+                        table_view("submit-answer", fs.readFileSync('./data.json', 'utf-8'), email, res);
                         view("footer", {}, res);
                         res.end();
                         break;
@@ -332,7 +352,7 @@ app.get('/submit-answer', function(req, res) {
                             case -1:    res.writeHead(200, {'Content-Type': 'text/html'});
                                 view("header", {}, res);
                                 view("nav", {}, res);
-                                table_view("table-test", fs.readFileSync('./data.json', 'utf-8'), res);
+                                table_view("table-test", fs.readFileSync('./data.json', 'utf-8'), email, res);
                                 view("footer", {}, res);
                                 res.end();
                                 /* BELOW IS THE ACTUAL CODE FOR THIS SECTION, ABOVE IS FOR TESTING */
@@ -346,7 +366,7 @@ app.get('/submit-answer', function(req, res) {
                             case 1:     res.writeHead(200, {'Content-Type': 'text/html'});
                                 view("header", {}, res);
                                 view("nav", {}, res);
-                                table_view("table-test", fs.readFileSync('./data.json', 'utf-8'), res);
+                                table_view("table-test", fs.readFileSync('./data.json', 'utf-8'), email, res);
                                 view("footer", {}, res);
                                 res.end();
                                 break;
@@ -363,7 +383,8 @@ app.get('/submit-answer', function(req, res) {
 /* Creates and stores student object who submitted an answer */
 // still working on it
 app.post('/submit-answer', function(req, res) {
-    var token = req.query.token;
+    var token = req.body.user_token;
+    console.log(token);
     verifyStudent(token, function(student) {
         if(student) {
             var answer_alias  = req.body.alias
