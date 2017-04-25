@@ -50,19 +50,20 @@ function expand(row,i){
 	<input name='submit_answer' placeholder='"+(row.className === "ok"?"You have already submitted. Submit again if you want":"Enter 2 or more factors separated by a space and hit enter to submit")+"'></input>\
 	<textarea name='user_email' style='display:none'></textarea>\
 	<textarea name='user_token' style='display:none'></textarea> \
+	<textarea name='answer_to'  style='display:none'></textarea> \
 	<button>submit</button>\
 	</form>"
     show          = row.rowIndex+1
 }
 
 function verify(){
+
     var box = document.getElementsByTagName('input')[1]
     if(RegExp("^[0-9]+ [0-9]+$").test(box.value)){
 	document.getElementsByName('user_email')[0].value = getUserEmail()
 	document.getElementsByName('user_token')[0].value = getUserToken()
-	document.getElementsByTagName('form')[0].submit()
-        box.value       = ''
-	box.placeholder = 'Answer submitted. Waiting for server response...'
+	document.getElementsByName('answer_to') [0].value = tbl.rows[show-1].cells[0].innerHTML 
+	return true
     }else{
         box.value       = ''
 	box.placeholder = 'Invalid format. Enter 2 or more factors separated by a space and hit enter to submit'

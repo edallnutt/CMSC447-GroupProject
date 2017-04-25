@@ -381,28 +381,32 @@ app.get('/submit-answer', function(req, res) {
 });
 
 /* Creates and stores student object who submitted an answer */
-// still working on it
 app.post('/submit-answer', function(req, res) {
     var token = req.body.user_token;
-    console.log(token);
-    verifyStudent(token, function(student) {
-        if(student) {
-            var answer_alias  = req.body.alias
-            var num1          = RegExp("[0-9]*").exec(str)
-            var num2          = RegExp("[0-9]*$").exec(str)
-            var course = JSON.parse(fs.readFileSync('./data.json', 'utf-8'))
-            for(var email in course)
-                for(var index in course[email])
-                    if(course[email][index].alias == answer_alias){
-                        if(num1 != "1" && num2 != "1" && /*verify num1 * num2 == course[email][alias].number*/true)
-                            course[email][index].factorized_by[student] = true
-                        break
-                    }
-            fs.writeFileSync('./data.json', JSON.stringify(course), 'utf-8');
+    verifyStudent(token,function(student){
+    console.log( req.body.user_token + '\n'
+		+req.body.user_email + '\n'
+		+req.body.submit_answer + '\n'
+		+req.body.answer_to + '\n')
+	    if(student){
+            var num1 = RegExp("[0-9]*").exec(req.body.submit_answer)
+            var num2 = RegExp("[1-9]*$").exec(req.body.submit_answer)
+            if(/*verfiy(num1,num2)*/true){
+				var course = JSON.parse(fs.readFileSync('./data.json', 'utf-8'))
+				for(var i in course)
+                	for(var j in course[i])
+						if(course[i][j].alias == req.body.answer_to){
+                        	course[i][j].factorized_by_me[req.body.user_email] = true
+                        	fs.writeFileSync('./data.json',JSON.stringify(course),'utf-8')
+                       	 	res.writeHead(303,{"Location":"/submit-answer?pass=true&token="+token})
+						    res.end();
+							return
+                    	}
+			}
         }
+        res.writeHead(303,{"Location":"/submit-answer?pass=false&token="+token})
+ 	    res.end();
     });
-    res.writeHead(303, {"Location": "/submit-answer?token="+token});
-    res.end();
 });
 
 app.get('/statistics', function(req, res) {
