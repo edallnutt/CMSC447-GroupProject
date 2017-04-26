@@ -146,39 +146,77 @@ function view(templateName, values, res){
 /* Displays html template with student data to the screen */
 function table_view(templateName, values, email, res){
     // Read from the template files
-    var fileContents = fs.readFileSync("./public/html/" + templateName + ".html", {encoding: "utf-8"});
+    if(email === 'admin') {
+        var fileContents = fs.readFileSync("./public/html/" + templateName + ".html", {encoding: "utf-8"});
 
-    /*      Changes email keys to number keys to        */
-    /*      hide student emails except the user email   */
-    var obj = JSON.parse(values);
-    var email_num;
-    var newObj = [];
-    var i = 0;
-    for(var key in obj){
-        var student_data = {
-            alias: obj[key][0].alias,
-            num_submit: obj[key][0].num_submit,
-            num_length: obj[key][0].num_length,
-            factor_count: obj[key][0].factor_count,
-            first_factor_time: obj[key][0].first_factor_time,
-            factorized_by_me: obj[key][0].factorized_by_me
+        /*      Changes email keys to number keys to        */
+        /*      hide student emails except the user email   */
+        var obj = JSON.parse(values);
+        var email_num;
+        var newObj = [];
+        var i = 0;
+        for(var key in obj){
+            var student_data = {
+                email: key,
+                alias: obj[key][0].alias,
+                num_submit: obj[key][0].num_submit,
+                num_length: obj[key][0].num_length,
+                factor_count: obj[key][0].factor_count,
+                first_factor_time: obj[key][0].first_factor_time,
+                factorized_by_me: obj[key][0].factorized_by_me
+            };
+
+            if(key === email){
+                email_num = i;
+            }
+
+            newObj[i] = [];
+            newObj[i].push(student_data);
+            i++;
         };
 
-        if(key === email){
-            email_num = i;
-        }
+        // Insert course JSON object into the Content
+        fileContents = fileContents.replace("{{course.JSON}}", JSON.stringify(newObj));
+        fileContents = fileContents.replace("{{student_num}}", email_num);
 
-        newObj[i] = [];
-        newObj[i].push(student_data);
-        i++;
-    };
+        // Write out the content to the response
+        res.write(fileContents);
+    } else {
+        var fileContents = fs.readFileSync("./public/html/" + templateName + ".html", {encoding: "utf-8"});
 
-    // Insert course JSON object into the Content
-    fileContents = fileContents.replace("{{course.JSON}}", JSON.stringify(newObj));
-    fileContents = fileContents.replace("{{student_num}}", email_num);
+        /*      Changes email keys to number keys to        */
+        /*      hide student emails except the user email   */
+        var obj = JSON.parse(values);
+        var email_num;
+        var newObj = [];
+        var i = 0;
+        for(var key in obj){
+            var student_data = {
+                alias: obj[key][0].alias,
+                num_submit: obj[key][0].num_submit,
+                num_length: obj[key][0].num_length,
+                factor_count: obj[key][0].factor_count,
+                first_factor_time: obj[key][0].first_factor_time,
+                factorized_by_me: obj[key][0].factorized_by_me
+            };
 
-    // Write out the content to the response
-    res.write(fileContents);
+            if(key === email){
+                email_num = i;
+            }
+
+            newObj[i] = [];
+            newObj[i].push(student_data);
+            i++;
+        };
+
+        // Insert course JSON object into the Content
+        fileContents = fileContents.replace("{{course.JSON}}", JSON.stringify(newObj));
+        fileContents = fileContents.replace("{{student_num}}", email_num);
+
+        // Write out the content to the response
+        res.write(fileContents);
+    }
+
 }
 
 /* Checks if an object is empty */

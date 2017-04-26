@@ -4,7 +4,7 @@
             <tr>
                 <th> Email </th>
                 <th> Alias </th>
-                <th> Part of Number </th>
+                <th> Last 10 Digits </th>
                 <th> Number Length </th>
                 <th> Factorized Count </th>
                 <th> First Factorized Time </th>
@@ -64,7 +64,7 @@
 
                 if(data.indexOf(key) != -1) {
                     var row = adminTable.insertRow(0);
-                    row.insertCell(0).innerHTML = numData[key][0];
+                    row.insertCell(0).innerHTML = numData[key][0].email];
                     row.insertCell(1).innerHTML = numData[key][0].alias;
                     row.insertCell(2).innerHTML = numData[key][0].num_submit.substr(numData[key][0].num_submit.length - 10);
                     row.insertCell(3).innerHTML = numData[key][0].num_length;
@@ -74,7 +74,7 @@
                 } else {
                     for(var sub in numData[key]) {
                         var row = adminTable.insertRow(0);
-                        row.insertCell(0).innerHTML = numData[key][0];
+                        row.insertCell(0).innerHTML = numData[key][0].email;
                         row.insertCell(1).innerHTML = numData[key][sub].alias;
                         row.insertCell(2).innerHTML = numData[key][sub].num_submit.substr(numData[key][0].num_submit.length - 10);
                         row.insertCell(3).innerHTML = numData[key][sub].num_length;
