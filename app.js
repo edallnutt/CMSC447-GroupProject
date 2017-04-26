@@ -788,9 +788,9 @@ app.get('/delete-num', function(req, res) {
                                 json[admins[i]] = file[admins[i]];
                             } else {
                                 var newNums = [];
-                                for(var num in file[admins[i]][0].nums) {
-                                    if(file[admins[i]][0].nums[num].num_submit !== num) {
-                                        newNums.push(file[admins[i]][0].nums[num]);
+                                for(var n in file[admins[i]][0].nums) {
+                                    if(file[admins[i]][0].nums[n].num_submit != num) {
+                                        newNums.push(file[admins[i]][0].nums[n]);
                                     }
                                 }
                                 var newObj = [{
