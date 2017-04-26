@@ -253,6 +253,12 @@ app.post('/submit-num', function(req, res) {
     var factorized_by_me_list = {};
 
     // check bit length
+    /*
+    var args = [];
+    args.push("-jar");
+    args.push("/home/ec2-user/CMSC447/CMSC447-GroupProject/public/Java/verify_numbers.jar");
+    args.push('check');
+    */
 
     if(!isNaN(student_number) && student_number.length > 0){
         var course = JSON.parse(fs.readFileSync('./data.json', 'utf-8'));
@@ -309,6 +315,20 @@ app.post('/submit-num', function(req, res) {
         fs.writeFileSync('./data.json', JSON.stringify(course), 'utf-8');
     }
 
+    // This block runs the java program to check the num of bits
+    /*
+    var output = spawn('java',args);
+    output.stdout.on('data', (data) => {
+            if (${data} === "0")
+                {
+                    res.send("Wrong num of bits");
+                }
+            else
+                {
+                    res.send("Right num of bits");
+                }
+        });
+    */
     res.writeHead(303, {"Location": "/submit-num?token="+token});
     res.end();
 
@@ -316,6 +336,23 @@ app.post('/submit-num', function(req, res) {
 
 app.get('/submit-answer', function(req, res) {
     var token = req.query.token;
+    
+    // This Comment block initializes the arguments for the java program to check the 
+    // Answer the student submits. *CHANGE VARIABLE TO GET THE VARIABLE student_answer*
+    /*
+    var student_answer = req.body.submit_answer.trim();
+    var two_nums = student_answer.split(" ");
+    var args = [];
+     args.push("-jar");
+    args.push("/home/ec2-user/CMSC447/CMSC447-GroupProject/public/Java/verify_numbers.jar");
+    args.push('answer');
+    for (int i = 0; i < two_nums.length; i ++)
+        {
+            //exec_string = exec_string + two_nums[i] + ' ';        
+            args.push(two_nums[i]);
+        }
+    */
+
     var email = req.query.email;
     verifyStudent(token, function(student) {
         if(student) {
@@ -378,6 +415,25 @@ app.get('/submit-answer', function(req, res) {
             });
         }
     });
+
+    // This comment block runs the java program to check the factorization
+    /*
+    if (two_nums.length >= 2)
+        {
+            res.send("Please enter 2 numbers seperated by space");    
+        }
+    var output = spawn('java',args);
+    output.stdout.on('data', (data) => {
+            if (${data} === "0")
+                {
+                    res.send("Correct factorization");
+                }
+            else
+                {
+                    res.send("Incorrect factorization");
+                }
+        });
+    */
 });
 
 /* Creates and stores student object who submitted an answer */
@@ -601,6 +657,30 @@ app.get('/publish', function(req,res) {
         } else {
             res.redirect("/home?token="+token);
         }
+    });
+});
+
+//Admin function for deleting submissions
+app.get('/delete-num', function(req, res) {
+    //fs.writeFileSync('./data.json', JSON.stringify(file), 'utf-8');
+    var token = req.query.token;
+    var email = req.query.email;
+    var alias = req.query.alias;
+    var num = req.query.num;
+    var file = JSON.parse(fs.readFileSync('./data.json', 'utf-8'));
+    verifyAdmin(token, function(admin) {
+       if(admin) {
+           getStudents(function(list) {
+               for(var i = 0;i < list.length;i++) {
+                   if(list[i] === email) {
+                       file.pop(email);
+                       res.send();
+                   }
+               }
+
+               res.send();
+           });
+       }
     });
 });
 

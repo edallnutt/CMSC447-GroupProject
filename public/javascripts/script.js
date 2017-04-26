@@ -129,6 +129,13 @@ function studentLink(path) {
 }
 
 function deleteSelection() {
+    var token = getUserToken();
     var table = $('#adminTable').DataTable();
+    var email = table.row('.selected').data()[0];
+    var alias = table.row('.selected').data()[1];
+    var num = table.row('.selected').data()[2];
     table.row('.selected').remove().draw( false );
+    $.get('/delete-num?email='+email+'&alias='+alias+'&num='+num+'&token='+token, function() {
+
+    });
 }
