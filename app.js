@@ -711,7 +711,7 @@ app.get('/delete-num', function(req, res) {
            getStudents(function(list) {
                for(var i = 0;i < list.length;i++) {
                    if(list[i] === email) {
-                       file.pop(email);
+                       //file.pop(email);
                        res.send();
                    }
                }
