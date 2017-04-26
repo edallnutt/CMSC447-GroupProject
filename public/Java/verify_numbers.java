@@ -8,23 +8,29 @@ public class verify_bits {
 	
 	public static void main(String[] args) {
 		// Get numbers from args
-		int num_of_bits = check_bits("5093509490509348654098354");
-		if ((num_of_bits >= 80) && (num_of_bits <= 240))
+	    
+	    if (args[0].equals("check") == true)
 		{
-			System.out.println("Correct Number of Bits");
-			// Pass valid Bit to javascript
+		    check_bits(args[1]);
 		}
-		else
+	    else
 		{
-			System.out.println("Invalid number of bits");	
-			// Pass invalid bit to javascript and stop
-			return;
-		}
-		Boolean checking = check_factors("832409","227","3667");
-		System.out.println(checking);
+		    String[] nums_to_check = new String[args.length - 2];
+		    for (int i = 2; i < args.length; i ++)
+			{
+			    nums_to_check[i-2] =  args[i];
+			}
 		
+		    // args[1] is the number to check against
+		    // nums to check holds the numbers you multiply together
+		    // to see if they equal the number at args[1]
+		    check_factors(args[1],nums_to_check);
+		   
+		    
+		}	
+	    return;
 	}
-	public static int check_bits (String num) {
+	public static void check_bits (String num) {
 		Apfloat test_num = new Apfloat(num);
 		Apfloat base = new Apfloat(2);
 		
@@ -33,20 +39,35 @@ public class verify_bits {
 		Apint floor_log = ApfloatMath.floor(log_num);
 		Apint one = new Apint(1);
 		floor_log = floor_log.add(one);
-		return floor_log.intValue();
+		int num_bits = floor_log.intValue();
+		if ((num_bits < 80) || (num_bits > 240))
+		    {
+			System.out.println('0');
+		    }
+		else
+		    {
+			System.out.println('1');
+		    }
+		
 	}
-	public static Boolean check_factors(String check_num, String factor1, String factor2)
+	public static void check_factors(String check_num, String[] numbers)
 	{
-		Apint fac1 = new Apint(factor1);
-		Apint fac2 = new Apint(factor2);
+	
 		Apint num_check = new Apint(check_num);
-		if ((fac1.multiply(fac2)).equals(num_check))
+		
+		Apint answer = new Apint(numbers[0]);
+		for (int i = 1; i < numbers.length; i ++)
+		    {
+			Apint fac2 = new Apint(numbers[i]);
+			answer = answer.multiply(fac2);
+		    }
+		if (answer.equals(num_check))
 		{
-			return true;
+		    System.out.println('1');
 		}
 		else
 		{
-			return false;
+		    System.out.println('0');
 		}
 	}
 }

@@ -144,12 +144,38 @@ function view(templateName, values, res){
 }
 
 /* Displays html template with student data to the screen */
-function table_view(templateName, values, res){
+function table_view(templateName, values, email, res){
     // Read from the template files
     var fileContents = fs.readFileSync("./public/html/" + templateName + ".html", {encoding: "utf-8"});
 
+    /*      Changes email keys to number keys to        */
+    /*      hide student emails except the user email   */
+    var obj = JSON.parse(values);
+    var email_num;
+    var newObj = [];
+    var i = 0;
+    for(var key in obj){
+        var student_data = {
+            alias: obj[key][0].alias,
+            num_submit: obj[key][0].num_submit,
+            num_length: obj[key][0].num_length,
+            factor_count: obj[key][0].factor_count,
+            first_factor_time: obj[key][0].first_factor_time,
+            factorized_by_me: obj[key][0].factorized_by_me
+        };
+
+        if(key === email){
+            email_num = i;
+        }
+
+        newObj[i] = [];
+        newObj[i].push(student_data);
+        i++;
+    };
+
     // Insert course JSON object into the Content
-    fileContents = fileContents.replace("{{course.JSON}}", values);
+    fileContents = fileContents.replace("{{course.JSON}}", JSON.stringify(newObj));
+    fileContents = fileContents.replace("{{student_num}}", email_num);
 
     // Write out the content to the response
     res.write(fileContents);
@@ -224,8 +250,15 @@ app.post('/submit-num', function(req, res) {
     var student_number = req.body.submit_num.trim();
     var student_email = req.body.user_email;
     var token = req.body.user_token;
+    var factorized_by_me_list = {};
 
     // check bit length
+    /*
+    var args = [];
+    args.push("-jar");
+    args.push("/home/ec2-user/CMSC447/CMSC447-GroupProject/public/Java/verify_numbers.jar");
+    args.push('check');
+    */
 
     if(!isNaN(student_number) && student_number.length > 0){
         var course = JSON.parse(fs.readFileSync('./data.json', 'utf-8'));
@@ -249,16 +282,23 @@ app.post('/submit-num', function(req, res) {
             }
             course[student_email] = [];
 
+            for(var key in fruits["fruits"]){
+                var name = fruits["fruits"][key].name;
+                factorized_by_me_list[name] = false;
+            }
+
             var student_data = {
                 alias: randomFruit,
                 num_submit: student_number,
                 num_length: student_number.length,
                 factor_count: 0,
-                first_factor_time: ""
+                first_factor_time: "",
+                factorized_by_me: factorized_by_me_list
             };
         }
         else{
             var objAlias = course[student_email][0].alias;
+            var objFactorizedList = course[student_email][0].factorized_by_me;
             course[student_email] = [];
 
             var student_data = {
@@ -266,7 +306,8 @@ app.post('/submit-num', function(req, res) {
                 num_submit: student_number,
                 num_length: student_number.length,
                 factor_count: 0,
-                first_factor_time: ""
+                first_factor_time: "",
+                factorized_by_me: objFactorizedList
             };
         }
 
@@ -274,6 +315,20 @@ app.post('/submit-num', function(req, res) {
         fs.writeFileSync('./data.json', JSON.stringify(course), 'utf-8');
     }
 
+    // This block runs the java program to check the num of bits
+    /*
+    var output = spawn('java',args);
+    output.stdout.on('data', (data) => {
+            if (${data} === "0")
+                {
+                    res.send("Wrong num of bits");
+                }
+            else
+                {
+                    res.send("Right num of bits");
+                }
+        });
+    */
     res.writeHead(303, {"Location": "/submit-num?token="+token});
     res.end();
 
@@ -281,6 +336,24 @@ app.post('/submit-num', function(req, res) {
 
 app.get('/submit-answer', function(req, res) {
     var token = req.query.token;
+    
+    // This Comment block initializes the arguments for the java program to check the 
+    // Answer the student submits. *CHANGE VARIABLE TO GET THE VARIABLE student_answer*
+    /*
+    var student_answer = req.body.submit_answer.trim();
+    var two_nums = student_answer.split(" ");
+    var args = [];
+     args.push("-jar");
+    args.push("/home/ec2-user/CMSC447/CMSC447-GroupProject/public/Java/verify_numbers.jar");
+    args.push('answer');
+    for (int i = 0; i < two_nums.length; i ++)
+        {
+            //exec_string = exec_string + two_nums[i] + ' ';        
+            args.push(two_nums[i]);
+        }
+    */
+
+    var email = req.query.email;
     verifyStudent(token, function(student) {
         if(student) {
             checkSubmissionStatus(function(posted) {
@@ -288,7 +361,7 @@ app.get('/submit-answer', function(req, res) {
                     case -1:    res.writeHead(200, {'Content-Type': 'text/html'});
                         view("header", {}, res);
                         view("nav", {}, res);
-                        table_view("submit-answer", fs.readFileSync('./data.json', 'utf-8'), res);
+                        table_view("submit-answer", fs.readFileSync('./data.json', 'utf-8'), email, res);
                         view("footer", {}, res);
                         res.end();
                         /* BELOW IS THE ACTUAL CODE FOR THIS SECTION, ABOVE IS FOR TESTING */
@@ -302,7 +375,7 @@ app.get('/submit-answer', function(req, res) {
                     case 1:     res.writeHead(200, {'Content-Type': 'text/html'});
                         view("header", {}, res);
                         view("nav", {}, res);
-                        table_view("submit-answer", fs.readFileSync('./data.json', 'utf-8'), res);
+                        table_view("submit-answer", fs.readFileSync('./data.json', 'utf-8'), email, res);
                         view("footer", {}, res);
                         res.end();
                         break;
@@ -316,7 +389,7 @@ app.get('/submit-answer', function(req, res) {
                             case -1:    res.writeHead(200, {'Content-Type': 'text/html'});
                                 view("header", {}, res);
                                 view("nav", {}, res);
-                                table_view("table-test", fs.readFileSync('./data.json', 'utf-8'), res);
+                                table_view("table-test", fs.readFileSync('./data.json', 'utf-8'), email, res);
                                 view("footer", {}, res);
                                 res.end();
                                 /* BELOW IS THE ACTUAL CODE FOR THIS SECTION, ABOVE IS FOR TESTING */
@@ -330,7 +403,7 @@ app.get('/submit-answer', function(req, res) {
                             case 1:     res.writeHead(200, {'Content-Type': 'text/html'});
                                 view("header", {}, res);
                                 view("nav", {}, res);
-                                table_view("table-test", fs.readFileSync('./data.json', 'utf-8'), res);
+                                table_view("table-test", fs.readFileSync('./data.json', 'utf-8'), email, res);
                                 view("footer", {}, res);
                                 res.end();
                                 break;
@@ -342,30 +415,54 @@ app.get('/submit-answer', function(req, res) {
             });
         }
     });
+
+    // This comment block runs the java program to check the factorization
+    /*
+    if (two_nums.length >= 2)
+        {
+            res.send("Please enter 2 numbers seperated by space");    
+        }
+    var output = spawn('java',args);
+    output.stdout.on('data', (data) => {
+            if (${data} === "0")
+                {
+                    res.send("Correct factorization");
+                }
+            else
+                {
+                    res.send("Incorrect factorization");
+                }
+        });
+    */
 });
 
 /* Creates and stores student object who submitted an answer */
-// still working on it 
 app.post('/submit-answer', function(req, res) {
-    var token = req.query.token;
-    verifyStudent(token, function(student) {
-        if(student) {
-            var answer_alias  = req.body.alias
-            var num1          = RegExp("[0-9]*").exec(str)
-            var num2          = RegExp("[0-9]*$").exec(str)
-            var course = JSON.parse(fs.readFileSync('./data.json', 'utf-8'))
-            for(var email in course)
-                for(var index in course[email])
-                    if(course[email][index].alias == answer_alias){
-                        if(num1 != "1" && num2 != "1" && /*verify num1 * num2 == course[email][alias].number*/true)
-                            course[email][index].factorized_by[student] = true
-                        break
-                    }
-            fs.writeFileSync('./data.json', JSON.stringify(course), 'utf-8');
+    var token = req.body.user_token;
+    verifyStudent(token,function(student){
+    console.log( req.body.user_token + '\n'
+		+req.body.user_email + '\n'
+		+req.body.submit_answer + '\n'
+		+req.body.answer_to + '\n')
+	    if(student){
+            var num1 = RegExp("[0-9]*").exec(req.body.submit_answer)
+            var num2 = RegExp("[1-9]*$").exec(req.body.submit_answer)
+            if(/*verfiy(num1,num2)*/true){
+				var course = JSON.parse(fs.readFileSync('./data.json', 'utf-8'))
+				for(var i in course)
+                	for(var j in course[i])
+						if(course[i][j].alias == req.body.answer_to){
+                        	course[i][j].factorized_by_me[req.body.user_email] = true
+                        	fs.writeFileSync('./data.json',JSON.stringify(course),'utf-8')
+                       	 	res.writeHead(303,{"Location":"/submit-answer?pass=true&token="+token})
+						    res.end();
+							return
+                    	}
+			}
         }
+        res.writeHead(303,{"Location":"/submit-answer?pass=false&token="+token})
+ 	    res.end();
     });
-    res.writeHead(303, {"Location": "/submit-answer?token="+token});
-    res.end();
 });
 
 app.get('/statistics', function(req, res) {

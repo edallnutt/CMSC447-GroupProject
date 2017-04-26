@@ -124,7 +124,8 @@ function adminLink(path) {
 
 function studentLink(path) {
     var userToken = getUserToken();
-    document.location.href = path+"token=" + userToken;
+    var email = getUserEmail();
+    document.location.href = path+"token=" + userToken + "&email=" + email;
 }
 
 function deleteSelection() {
