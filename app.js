@@ -355,8 +355,8 @@ app.post('/submit-num', function(req, res) {
 
                 if(admin) {
 
-                    var aliasr = course[student_email].alias;
-                    var oldNums = course[student_email].nums;
+                    var aliasr = course[student_email][0].alias;
+                    var oldNums = course[student_email][0].nums;
 
 
                     var num_data = {
