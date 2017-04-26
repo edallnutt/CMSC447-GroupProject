@@ -21,25 +21,25 @@
 </div>
 
 <script>
-var tbl   = document.getElementById('tbl')       // Submission table
+var tbl   = document.getElementById('tbl').getElementsByTagName('tbody')[0];       // Submission table
 var email_num = '{{student_num}}';                // Number associated with user
-var dat   = JSON.parse('{{course.JSON}}')        // Project data
-var alias = dat[email_num]
+var dat   = JSON.parse('{{course.JSON}}');        // Project data
+var alias = dat[email_num];
 if(alias)
-	alias = alias[0].alias 
+	alias = alias[0].alias;
 else
-	alias = 'unknown'
-document.write('hello, '+alias)
+	alias = 'unknown';
+document.write('hello, '+alias);
 /*      Insert student data into table      */
-var show = -1
+var show = -1;
 for(var i = 0; i < dat.length; i++){
-    var row                     = tbl.insertRow(-1)
-    row.onclick                 = function(r,j){return function(){expand(r,j+2)}}(row,i)
-    row.insertCell(0).innerHTML = dat[i][0].alias
-    row.insertCell(1).innerHTML = dat[i][0].num_submit.substring(0,10)
-    row.insertCell(2).innerHTML = dat[i][0].num_length
-    row.insertCell(3).innerHTML = dat[i][0].factor_count
-    row.insertCell(4).innerHTML = dat[i][0].first_factor_time
+    var row                     = tbl.insertRow(-1);
+    row.onclick                 = function(r,j){return function(){expand(r,j+2)}}(row,i);
+    row.insertCell(0).innerHTML = dat[i][0].alias;
+    row.insertCell(1).innerHTML = dat[i][0].num_submit.substring(0,10);
+    row.insertCell(2).innerHTML = dat[i][0].num_length;
+    row.insertCell(3).innerHTML = dat[i][0].factor_count;
+    row.insertCell(4).innerHTML = dat[i][0].first_factor_time;
 
     // Highlight numbers you factored
     for(var key in dat[i][0].factorized_by_me)
