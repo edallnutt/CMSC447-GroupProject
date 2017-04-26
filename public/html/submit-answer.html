@@ -54,7 +54,7 @@ var table = $('#tbl').DataTable();
 function expand(row,i){
     if(show>=0)
         tbl.deleteRow(show)
-    var col       = tbl.insertRow(row.rowIndex).insertCell(0)
+    var col       = tbl.insertRow(row.rowIndex+1).insertCell(0)
     col.colSpan   = 5
     col.innerHTML = "\
 	<form action='submit-answer' onsubmit='return verify()' method='post'>\
