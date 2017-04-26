@@ -373,7 +373,7 @@ app.post('/submit-num', function(req, res) {
 
                     var aliasr = course[student_email][0].alias;
                     var oldNums = course[student_email][0].nums;
-                    var lastLabel = oldNums[oldNums.length-1].split("_")[1];
+                    var lastLabel = oldNums[oldNums.length-1].alias.split("_")[1];
                     var nextLabel = parseInt(lastLabel) + 1;
 
 
