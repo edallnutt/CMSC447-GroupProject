@@ -328,7 +328,7 @@ app.post('/submit-num', function(req, res) {
                 if(admin) {
 
                     student_data = {
-                        alias_root: randomFruit,
+                        alias: randomFruit,
                         nums:[{
                             alias: randomFruit+"_1",
                             num_submit: student_number,
@@ -355,7 +355,7 @@ app.post('/submit-num', function(req, res) {
 
                 if(admin) {
 
-                    var aliasr = course[student_email].alias_root;
+                    var aliasr = course[student_email].alias;
                     var oldNums = course[student_email].nums;
 
 
