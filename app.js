@@ -793,12 +793,12 @@ app.get('/delete-num', function(req, res) {
                                         newNums.push(file[admins[i]][0].nums[num]);
                                     }
                                 }
-                                var newObj = {
+                                var newObj = [{
                                     type : 'admin',
                                     alias : file[admins[i]][0].alias,
                                     num : newNums,
                                     factorized_by_me : file[admins[i]][0].factorized_by_me
-                                };
+                                }];
                                 json[admins[i]] = newObj;
                             }
                         }
