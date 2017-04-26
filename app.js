@@ -790,7 +790,6 @@ app.get('/delete-num', function(req, res) {
                                 var newNums = [];
                                 for(var n in file[admins[i]][0].nums) {
                                     if(file[admins[i]][0].nums[n].num_submit != num && file[admins[i]][0].nums[n].alias != alias) {
-                                        console.log(file[admins[i]][0].nums[n]);
                                         newNums.push(file[admins[i]][0].nums[n]);
                                     }
                                 }
