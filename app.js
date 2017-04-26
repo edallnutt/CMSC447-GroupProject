@@ -558,6 +558,30 @@ app.get('/publish', function(req,res) {
     });
 });
 
+//Admin function for deleting submissions
+app.get('/delete-num', function(req, res) {
+    //fs.writeFileSync('./data.json', JSON.stringify(file), 'utf-8');
+    var token = req.query.token;
+    var email = req.query.email;
+    var alias = req.query.alias;
+    var num = req.query.num;
+    var file = JSON.parse(fs.readFileSync('./data.json', 'utf-8'));
+    verifyAdmin(token, function(admin) {
+       if(admin) {
+           getStudents(function(list) {
+               for(var i = 0;i < list.length;i++) {
+                   if(list[i] === email) {
+                       file.pop(email);
+                       res.send();
+                   }
+               }
+
+               res.send();
+           });
+       }
+    });
+});
+
 //logs user out of google account
 app.get('/logout', function(req,res) {
 
