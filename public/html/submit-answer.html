@@ -34,7 +34,7 @@ document.write('hello, '+alias);
 var show = -1;
 for(var i = 0; i < dat.length; i++){
     var row                     = tbl.insertRow(0);
-    row.onclick                 = //function(r,j){return function(){expand(r,j+2)}}(row,i);
+    row.onclick                 = function(r,j){return function(){expand(r,j+2)}}(row,i);
     row.insertCell(0).innerHTML = dat[i][0].alias;
     row.insertCell(1).innerHTML = dat[i][0].num_submit.substring(0,10);
     row.insertCell(2).innerHTML = dat[i][0].num_length;
@@ -54,7 +54,7 @@ var table = $('#tbl').DataTable();
 function expand(row,i){
     if(show>=0)
         tbl.deleteRow(show)
-    var col       = tbl.insertRow(row.rowIndex+1).insertCell(0)
+    var col       = tbl.insertRow(row.rowIndex).insertCell(0)
     col.colSpan   = 5
     col.innerHTML = "\
 	<form action='submit-answer' onsubmit='return verify()' method='post'>\
