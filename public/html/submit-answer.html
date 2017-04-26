@@ -33,7 +33,7 @@ document.write('hello, '+alias);
 /*      Insert student data into table      */
 var show = -1;
 for(var i = 0; i < dat.length; i++){
-    var row                     = tbl.insertRow(-1);
+    var row                     = tbl.insertRow(0);
     row.onclick                 = function(r,j){return function(){expand(r,j+2)}}(row,i);
     row.insertCell(0).innerHTML = dat[i][0].alias;
     row.insertCell(1).innerHTML = dat[i][0].num_submit.substring(0,10);
