@@ -52,8 +52,11 @@ for(var i = 0; i < dat.length; i++){
 var table = $('#tbl').DataTable();
 
 function expand(row,i){
-    if(show>=0)
-        tbl.deleteRow(show)
+    if(show>=0) {
+        tbl.deleteRow(show);
+        show = -1;
+    }
+
     if(row.getAttribute("expanded") == "false") {
         row.setAttribute("expanded", "true");
         var col = tbl.insertRow(row.rowIndex).insertCell(0)
@@ -67,8 +70,6 @@ function expand(row,i){
 	<button>submit</button>\
 	</form>"
         show = row.rowIndex;
-    } else {
-
     }
 }
 
