@@ -55,6 +55,7 @@ function expand(row,i){
     if(show>=0) {
         tbl.deleteRow(show);
         show = -1;
+        row.setAttribute("expanded", "false");
     } else {
 
         if (row.getAttribute("expanded") == "false") {
