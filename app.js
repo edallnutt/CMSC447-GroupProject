@@ -712,7 +712,7 @@ app.get('/delete-num', function(req, res) {
                var json = {};
                for(var i = 0;i < list.length;i++) {
                    if(list[i] !== email) {
-                       json[emai] = push(file[email]);
+                       json[email] = file[email];
                    }
                }
                fs.writeFileSync('./data.json', JSON.stringify(json), 'utf-8');
