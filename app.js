@@ -366,7 +366,7 @@ app.post('/submit-num', function(req, res) {
                             factor_count: 0,
                             first_factor_time: ""
                     };
-                    course[student_email].nums.push(num_data);
+                    course[student_email][0].nums.push(num_data);
 
 
                 } else {
