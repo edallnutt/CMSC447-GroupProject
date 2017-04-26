@@ -709,17 +709,19 @@ app.get('/delete-num', function(req, res) {
     verifyAdmin(token, function(admin) {
        if(admin) {
            getStudents(function(list) {
+               var json = {};
                for(var i = 0;i < list.length;i++) {
-                   if(list[i] === email) {
-                       //file.pop(email);
-                       res.send();
+                   if(list[i] !== email) {
+                       json[emai] = push(file[email]);
                    }
                }
-
+               fs.writeFileSync('./data.json', JSON.stringify(json), 'utf-8');
                res.send();
            });
        }
+       res.send();
     });
+    res.send();
 });
 
 //logs user out of google account

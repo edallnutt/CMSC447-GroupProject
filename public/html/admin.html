@@ -45,7 +45,6 @@
 
         var numData = JSON.parse('{{course.JSON}}');
 
-        console.log(numData);
         $.get('/get-admins', function(data) {
             var i = 0;
             for(var key in numData){
