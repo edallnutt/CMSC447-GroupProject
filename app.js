@@ -780,46 +780,55 @@ app.get('/delete-num', function(req, res) {
     verifyAdmin(token, function(admin) {
        if(admin) {
             getAdmins(function(admins) {
-                var json = {};
-                if(admins.indexOf(email) != -1) {
-                    for (var i = 0; i < admins.length; i++) {
-                        if (admins[i] !== email && !isEmpty(file[admins[i]])) {
-                            json[admins[i]] = file[admins[i]];
-                        } else {
-                            var newNums = [];
-                            for(var num in file[admins[i]][0].nums) {
-                                if(file[admins[i]][0].nums[num] !== num) {
-                                    newNums.push(file[admins[i]][0].nums[num]);
+                getStudents(function(students) {
+                    var json = {};
+                    if(admins.indexOf(email) != -1) {
+                        for (var i = 0; i < admins.length; i++) {
+                            if (admins[i] !== email && !isEmpty(file[admins[i]])) {
+                                json[admins[i]] = file[admins[i]];
+                            } else {
+                                var newNums = [];
+                                for(var num in file[admins[i]][0].nums) {
+                                    if(file[admins[i]][0].nums[num] !== num) {
+                                        newNums.push(file[admins[i]][0].nums[num]);
+                                    }
                                 }
+                                var newObj = {
+                                    type : 'admin',
+                                    alias : alias,
+                                    num : newNums,
+                                    factorized_by_me : file[admins[i]][0].factorized_by_me
+                                };
+                                json[admins[i]] = newObj;
                             }
-                            var newObj = {
-                                type : 'admin',
-                                alias : alias,
-                                num : newNums,
-                                factorized_by_me : file[admins[i]][0].factorized_by_me
-                            };
-                            json[admins[i]] = newObj;
                         }
-                    }
 
-                    for (var i = 0; i < students.length; i++) {
-                        if (!isEmpty(file[students[i]])) {
-                            json[students[i]] = file[students[i]];
-                        }
-                    }
-                    fs.writeFileSync('./data.json', JSON.stringify(json), 'utf-8');
-                    res.send();
-                } else {
-                    getStudents(function(students) {
                         for (var i = 0; i < students.length; i++) {
-                            if (students[i] !== email && !isEmpty(file[students[i]])) {
+                            if (!isEmpty(file[students[i]])) {
                                 json[students[i]] = file[students[i]];
                             }
                         }
                         fs.writeFileSync('./data.json', JSON.stringify(json), 'utf-8');
                         res.send();
-                    });
-                }
+                    } else {
+
+                        for (var i = 0; i < students.length; i++) {
+                            if (students[i] !== email && !isEmpty(file[students[i]])) {
+                                json[students[i]] = file[students[i]];
+                            }
+                        }
+
+                        for (var i = 0; i < admins.length; i++) {
+                            if (!isEmpty(file[admins[i]])) {
+                                json[admins[i]] = file[admins[i]];
+                            }
+                        }
+
+                        fs.writeFileSync('./data.json', JSON.stringify(json), 'utf-8');
+                        res.send();
+                    }
+
+                });
             });
        }
        res.send();
