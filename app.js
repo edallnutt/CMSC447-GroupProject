@@ -782,14 +782,14 @@ app.get('/delete-num', function(req, res) {
             getAdmins(function(admins) {
                 getStudents(function(students) {
                     var json = {};
-                    if(admins.indexOf(email) != -1) {
+                    if(admins.indexOf(email) !== -1) {
                         for (var i = 0; i < admins.length; i++) {
                             if (admins[i] !== email && !isEmpty(file[admins[i]])) {
                                 json[admins[i]] = file[admins[i]];
                             } else {
                                 var newNums = [];
                                 for(var num in file[admins[i]][0].nums) {
-                                    if(file[admins[i]][0].nums[num] !== num) {
+                                    if(file[admins[i]][0].nums[num].num_submit !== num) {
                                         newNums.push(file[admins[i]][0].nums[num]);
                                     }
                                 }
