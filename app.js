@@ -711,8 +711,8 @@ app.get('/delete-num', function(req, res) {
            getStudents(function(list) {
                var json = {};
                for(var i = 0;i < list.length;i++) {
-                   if(list[i] !== email) {
-                       json[email] = file[email];
+                   if(list[i] !== email && !isEmpty(file[list[i]])) {
+                       json[list[i]] = file[list[i]];
                    }
                }
                fs.writeFileSync('./data.json', JSON.stringify(json), 'utf-8');
