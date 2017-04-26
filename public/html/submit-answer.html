@@ -6,13 +6,17 @@
         </span>
     </h2></br></br>
     <table id="tbl">
-        <tr>
-            <th onclick="if(show>=0)tbl.deleteRow(show);show=-1;sortTable(0,'tbl')">Alias</th>
-            <th onclick="if(show>=0)tbl.deleteRow(show);show=-1;sortTable(1,'tbl')">Part of Number</th>
-            <th onclick="if(show>=0)tbl.deleteRow(show);show=-1;sortTable(2,'tbl')">Number Length</th>
-            <th onclick="if(show>=0)tbl.deleteRow(show);show=-1;sortTable(3,'tbl')">Factorized Count</th>
-            <th onclick="if(show>=0)tbl.deleteRow(show);show=-1;sortTable(4,'tbl')">First Factorized Time</th>
-        </tr>
+        <thead>
+            <tr>
+                <th onclick="if(show>=0)tbl.deleteRow(show);show=-1;sortTable(0,'tbl')">Alias</th>
+                <th onclick="if(show>=0)tbl.deleteRow(show);show=-1;sortTable(1,'tbl')">Part of Number</th>
+                <th onclick="if(show>=0)tbl.deleteRow(show);show=-1;sortTable(2,'tbl')">Number Length</th>
+                <th onclick="if(show>=0)tbl.deleteRow(show);show=-1;sortTable(3,'tbl')">Factorized Count</th>
+                <th onclick="if(show>=0)tbl.deleteRow(show);show=-1;sortTable(4,'tbl')">First Factorized Time</th>
+            </tr>
+        </thead>
+        <tfoot></tfoot>
+        <tbody></tbody>
     </table>
 </div>
 
