@@ -383,11 +383,11 @@ app.get('/submit-answer', function(req, res) {
 /* Creates and stores student object who submitted an answer */
 app.post('/submit-answer', function(req, res) {
     var token = req.body.user_token;
+    	console.log( req.body.user_token + '\n'
+				+req.body.user_email + '\n'
+				+req.body.submit_answer + '\n'
+				+req.body.answer_to + '\n')
     verifyStudent(token,function(student){
-    console.log( req.body.user_token + '\n'
-		+req.body.user_email + '\n'
-		+req.body.submit_answer + '\n'
-		+req.body.answer_to + '\n')
 	    if(student){
             var num1 = RegExp("[0-9]*").exec(req.body.submit_answer)
             var num2 = RegExp("[1-9]*$").exec(req.body.submit_answer)
@@ -396,16 +396,21 @@ app.post('/submit-answer', function(req, res) {
 				for(var i in course)
                 	for(var j in course[i])
 						if(course[i][j].alias == req.body.answer_to){
-                        	course[i][j].factorized_by_me[req.body.user_email] = true
+							alias = course[req.body.user_email]
+							if(alias)
+								alias = alias[0].alias
+							else
+								alias = 'unknown'	 
+							course[i][j].factorized_by_me[alias] = true
                         	fs.writeFileSync('./data.json',JSON.stringify(course),'utf-8')
                        	 	res.writeHead(303,{"Location":"/submit-answer?pass=true&token="+token})
-						    res.end();
+						    res.end()
 							return
                     	}
 			}
         }
         res.writeHead(303,{"Location":"/submit-answer?pass=false&token="+token})
- 	    res.end();
+ 	    res.end()
     });
 });
 
