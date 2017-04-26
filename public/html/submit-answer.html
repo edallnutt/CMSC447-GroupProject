@@ -40,7 +40,7 @@ for(var i = 0; i < dat.length; i++){
     row.insertCell(2).innerHTML = dat[i][0].num_length;
     row.insertCell(3).innerHTML = dat[i][0].factor_count;
     row.insertCell(4).innerHTML = dat[i][0].first_factor_time;
-
+    row.setAttribute("expanded","false");
     // Highlight numbers you factored
     for(var key in dat[i][0].factorized_by_me)
         if(alias == key && dat[i][0].factorized_by_me[key] == true){
@@ -54,17 +54,22 @@ var table = $('#tbl').DataTable();
 function expand(row,i){
     if(show>=0)
         tbl.deleteRow(show)
-    var col       = tbl.insertRow(row.rowIndex).insertCell(0)
-    col.colSpan   = 5
-    col.innerHTML = "\
+    if(row.getAttribute("expanded") == "false") {
+        row.setAttribute("expanded", "true");
+        var col = tbl.insertRow(row.rowIndex).insertCell(0)
+        col.colSpan = 5
+        col.innerHTML = "\
 	<form action='submit-answer' onsubmit='return verify()' method='post'>\
-	<input name='submit_answer' placeholder='"+(row.className === "ok"?"You have already submitted. Submit again if you want":"Enter 2 or more factors separated by a space and hit enter to submit")+"'></input>\
+	<input name='submit_answer' placeholder='" + (row.className === "ok" ? "You have already submitted. Submit again if you want" : "Enter 2 or more factors separated by a space and hit enter to submit") + "'></input>\
 	<textarea name='user_email' style='display:none'></textarea>\
 	<textarea name='user_token' style='display:none'></textarea> \
 	<textarea name='answer_to'  style='display:none'></textarea> \
 	<button>submit</button>\
 	</form>"
-    show          = row.rowIndex+1
+        show = row.rowIndex + 1
+    } else {
+
+    }
 }
 
 function verify(){
