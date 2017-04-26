@@ -143,9 +143,8 @@ function view(templateName, values, res){
 }
 
 /* Displays html template with student data to the screen */
-function table_view(templateName, values, email, res){
+function table_view(templateName, values, email, res, admins){
     // Read from the template files
-    getAdmins(function(admins) {
         var fileContents = fs.readFileSync("./public/html/" + templateName + ".html", {encoding: "utf-8"});
         var obj = JSON.parse(values);
         var email_num;
@@ -234,7 +233,6 @@ function table_view(templateName, values, email, res){
             // Write out the content to the response
             res.write(fileContents);
         }
-    });
 }
 
 /* Checks if an object is empty */
@@ -455,68 +453,75 @@ app.get('/submit-answer', function(req, res) {
     */
 
     var email = req.query.email;
-    verifyStudent(token, function(student) {
-        if(student) {
-            checkSubmissionStatus(function(posted) {
-                switch(posted){
-                    case -1:    res.writeHead(200, {'Content-Type': 'text/html'});
-                        view("header", {}, res);
-                        view("nav", {}, res);
-                        table_view("submit-answer", fs.readFileSync('./data.json', 'utf-8'), email, res);
-                        view("footer", {}, res);
-                        res.end();
-                        /* BELOW IS THE ACTUAL CODE FOR THIS SECTION, ABOVE IS FOR TESTING */
-                        /*res.writeHead(200, {'Content-Type': 'text/html'});
-                         view("header", {}, res);
-                         view("nav", {}, res);
-                         view("landing-page", {username:"Landing Page", description:"Answers will be posted soon"}, res);
-                         view("footer", {}, res);
-                         res.end();*/
-                        break;
-                    case 1:     res.writeHead(200, {'Content-Type': 'text/html'});
-                        view("header", {}, res);
-                        view("nav", {}, res);
-                        table_view("submit-answer", fs.readFileSync('./data.json', 'utf-8'), email, res);
-                        view("footer", {}, res);
-                        res.end();
-                        break;
-                }
-            });
-        } else {
-            verifyAdmin(token, function(admin) {
-                if(admin) {
-                    checkSubmissionStatus(function(posted) {
-                        switch(posted){
-                            case -1:    res.writeHead(200, {'Content-Type': 'text/html'});
-                                view("header", {}, res);
-                                view("nav", {}, res);
-                                table_view("submit-answer", fs.readFileSync('./data.json', 'utf-8'), email, res);
-                                view("footer", {}, res);
-                                res.end();
-                                /* BELOW IS THE ACTUAL CODE FOR THIS SECTION, ABOVE IS FOR TESTING */
-                                /*res.writeHead(200, {'Content-Type': 'text/html'});
-                                 view("header", {}, res);
-                                 view("nav", {}, res);
-                                 view("landing-page", {username:"Landing Page", description:"Answers will be posted soon"}, res);
-                                 view("footer", {}, res);
-                                 res.end();*/
-                                break;
-                            case 1:     res.writeHead(200, {'Content-Type': 'text/html'});
-                                view("header", {}, res);
-                                view("nav", {}, res);
-                                table_view("submit-answer", fs.readFileSync('./data.json', 'utf-8'), email, res);
-                                view("footer", {}, res);
-                                res.end();
-                                break;
-                        }
-                    });
-                } else {
-                    res.sendFile(path.join(__dirname,'public/html/invalid-login.html'));
-                }
-            });
-        }
-    });
 
+    getAdmins(function(adminList) {
+        verifyStudent(token, function (student) {
+            if (student) {
+                checkSubmissionStatus(function (posted) {
+                    switch (posted) {
+                        case -1:
+                            res.writeHead(200, {'Content-Type': 'text/html'});
+                            view("header", {}, res);
+                            view("nav", {}, res);
+                            table_view("submit-answer", fs.readFileSync('./data.json', 'utf-8'), email, res, adminList);
+                            view("footer", {}, res);
+                            res.end();
+                            /* BELOW IS THE ACTUAL CODE FOR THIS SECTION, ABOVE IS FOR TESTING */
+                            /*res.writeHead(200, {'Content-Type': 'text/html'});
+                             view("header", {}, res);
+                             view("nav", {}, res);
+                             view("landing-page", {username:"Landing Page", description:"Answers will be posted soon"}, res);
+                             view("footer", {}, res);
+                             res.end();*/
+                            break;
+                        case 1:
+                            res.writeHead(200, {'Content-Type': 'text/html'});
+                            view("header", {}, res);
+                            view("nav", {}, res);
+                            table_view("submit-answer", fs.readFileSync('./data.json', 'utf-8'), email, res, adminList);
+                            view("footer", {}, res);
+                            res.end();
+                            break;
+                    }
+                });
+            } else {
+                verifyAdmin(token, function (admin) {
+                    if (admin) {
+                        checkSubmissionStatus(function (posted) {
+                            switch (posted) {
+                                case -1:
+                                    res.writeHead(200, {'Content-Type': 'text/html'});
+                                    view("header", {}, res);
+                                    view("nav", {}, res);
+                                    table_view("submit-answer", fs.readFileSync('./data.json', 'utf-8'), email, res, adminList);
+                                    view("footer", {}, res);
+                                    res.end();
+                                    /* BELOW IS THE ACTUAL CODE FOR THIS SECTION, ABOVE IS FOR TESTING */
+                                    /*res.writeHead(200, {'Content-Type': 'text/html'});
+                                     view("header", {}, res);
+                                     view("nav", {}, res);
+                                     view("landing-page", {username:"Landing Page", description:"Answers will be posted soon"}, res);
+                                     view("footer", {}, res);
+                                     res.end();*/
+                                    break;
+                                case 1:
+                                    res.writeHead(200, {'Content-Type': 'text/html'});
+                                    view("header", {}, res);
+                                    view("nav", {}, res);
+                                    table_view("submit-answer", fs.readFileSync('./data.json', 'utf-8'), email, res, adminList);
+                                    view("footer", {}, res);
+                                    res.end();
+                                    break;
+                            }
+                        });
+                    } else {
+                        res.sendFile(path.join(__dirname, 'public/html/invalid-login.html'));
+                    }
+                });
+            }
+        });
+
+    });
     // This comment block runs the java program to check the factorization
     /*
     if (two_nums.length >= 2)
@@ -707,17 +712,19 @@ app.post('/login', function(req, res) {
 
 app.get('/admin', function(req,res) {
     var token = req.query.token;
-    verifyAdmin(token, function(admin) {
-        if(admin) {
-            res.writeHead(200, {'Content-Type': 'text/html'});
-            view("header", {}, res);
-            view("nav", {}, res);
-            table_view("admin", fs.readFileSync('./data.json', 'utf-8'), 'admin', res);
-            view("footer", {}, res);
-            res.end();
-        } else {
-            res.redirect("/home?token="+token);
-        }
+    getAdmins(function(adminList) {
+        verifyAdmin(token, function (admin) {
+            if (admin) {
+                res.writeHead(200, {'Content-Type': 'text/html'});
+                view("header", {}, res);
+                view("nav", {}, res);
+                table_view("admin", fs.readFileSync('./data.json', 'utf-8'), 'admin', res, adminList);
+                view("footer", {}, res);
+                res.end();
+            } else {
+                res.redirect("/home?token=" + token);
+            }
+        });
     });
 });
 
