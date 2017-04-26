@@ -373,10 +373,12 @@ app.post('/submit-num', function(req, res) {
 
                     var aliasr = course[student_email][0].alias;
                     var oldNums = course[student_email][0].nums;
+                    var lastLabel = oldNums[oldNums.length-1].split("_")[1];
+                    var nextLabel = parseInt(lastLabel) + 1;
 
 
                     var num_data = {
-                            alias: aliasr+"_"+(oldNums.length+1),
+                            alias: aliasr+"_"+nextLabel,
                             num_submit: student_number,
                             num_length: student_number.length,
                             factor_count: 0,
@@ -768,7 +770,6 @@ app.get('/publish', function(req,res) {
     });
 });
 
-//TODO: make it work for an admin with mutliple subs
 //Admin function for deleting submissions
 app.get('/delete-num', function(req, res) {
     //fs.writeFileSync('./data.json', JSON.stringify(file), 'utf-8');
