@@ -698,6 +698,7 @@ app.get('/publish', function(req,res) {
     });
 });
 
+//TODO: make it work for an admin with mutliple subs
 //Admin function for deleting submissions
 app.get('/delete-num', function(req, res) {
     //fs.writeFileSync('./data.json', JSON.stringify(file), 'utf-8');
