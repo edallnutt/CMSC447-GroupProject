@@ -794,9 +794,8 @@ app.get('/delete-num', function(req, res) {
                                     }
                                 }
                                 var newObj = [{
-                                    type : 'admin',
                                     alias : file[admins[i]][0].alias,
-                                    num : newNums,
+                                    nums : newNums,
                                     factorized_by_me : file[admins[i]][0].factorized_by_me
                                 }];
                                 json[admins[i]] = newObj;
