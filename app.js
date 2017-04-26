@@ -59,7 +59,6 @@ function getAdmins(callback) {
         }
         var config = JSON.parse(data);
         callback(config.adminEmails);
-
     });
 }
 
@@ -147,18 +146,19 @@ function view(templateName, values, res){
 function table_view(templateName, values, email, res){
     // Read from the template files
     getAdmins(function(admins) {
+        var fileContents = fs.readFileSync("./public/html/" + templateName + ".html", {encoding: "utf-8"});
+        var obj = JSON.parse(values);
+        var email_num;
+        var newObj = [];
+        var i = 0;
         if(email === 'admin') {
-            var fileContents = fs.readFileSync("./public/html/" + templateName + ".html", {encoding: "utf-8"});
 
             /*      Changes email keys to number keys to        */
             /*      hide student emails except the user email   */
-            var obj = JSON.parse(values);
-            var email_num;
-            var newObj = [];
-            var i = 0;
+
             for(var key in obj){
                 var student_data;
-                if(admins.indexOf(key) == -1) {
+                if(admins.indexOf(key) === -1) {
                     student_data = {
                         type: "student",
                         email: key,
@@ -194,17 +194,13 @@ function table_view(templateName, values, email, res){
             // Write out the content to the response
             res.write(fileContents);
         } else {
-            var fileContents = fs.readFileSync("./public/html/" + templateName + ".html", {encoding: "utf-8"});
+
 
             /*      Changes email keys to number keys to        */
             /*      hide student emails except the user email   */
-            var obj = JSON.parse(values);
-            var email_num;
-            var newObj = [];
-            var i = 0;
             for(var key in obj){
                 var student_data;
-                if(admins.indexOf(key) == -1) {
+                if(admins.indexOf(key) === -1) {
                     student_data = {
                         type: "student",
                         alias: obj[key][0].alias,
