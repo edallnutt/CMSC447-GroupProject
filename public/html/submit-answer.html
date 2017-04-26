@@ -55,13 +55,13 @@ function expand(row,i){
     if(show>=0) {
         tbl.deleteRow(show);
         show = -1;
-    }
+    } else {
 
-    if(row.getAttribute("expanded") == "false") {
-        row.setAttribute("expanded", "true");
-        var col = tbl.insertRow(row.rowIndex).insertCell(0)
-        col.colSpan = 5
-        col.innerHTML = "\
+        if (row.getAttribute("expanded") == "false") {
+            row.setAttribute("expanded", "true");
+            var col = tbl.insertRow(row.rowIndex).insertCell(0)
+            col.colSpan = 5
+            col.innerHTML = "\
 	<form action='submit-answer' onsubmit='return verify()' method='post'>\
 	<input name='submit_answer' placeholder='" + (row.className === "ok" ? "You have already submitted. Submit again if you want" : "Enter 2 or more factors separated by a space and hit enter to submit") + "'></input>\
 	<textarea name='user_email' style='display:none'></textarea>\
@@ -69,7 +69,8 @@ function expand(row,i){
 	<textarea name='answer_to'  style='display:none'></textarea> \
 	<button>submit</button>\
 	</form>"
-        show = row.rowIndex;
+            show = row.rowIndex;
+        }
     }
 }
 
