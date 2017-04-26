@@ -63,7 +63,7 @@
 
                 if(data.indexOf(key) != -1) {
                     var row = adminTable.insertRow(0);
-                    row.insertCell(0).innerHTML = key;
+                    row.insertCell(0).innerHTML = numData[key][0];
                     row.insertCell(1).innerHTML = numData[key][0].alias;
                     row.insertCell(2).innerHTML = numData[key][0].num_submit;
                     row.insertCell(3).innerHTML = numData[key][0].num_length;
