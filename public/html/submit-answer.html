@@ -22,70 +22,67 @@
 
 <script>
 
-    $(document).ready(function() {
-        var tbl   = document.getElementById('tbl').getElementsByTagName('tbody')[0];       // Submission table
-        var email_num = '{{student_num}}';                // Number associated with user
-        var data   = JSON.parse('{{course.JSON}}');        // Project data
-        var alias = data[email_num];
+    var tbl   = document.getElementById('tbl').getElementsByTagName('tbody')[0];       // Submission table
+    var email_num = '{{student_num}}';                // Number associated with user
+    var data   = JSON.parse('{{course.JSON}}');        // Project data
+    var alias = data[email_num];
 
-        if(alias)
-            alias = alias[0].alias;
-        else
-            alias = 'unknown';
-        document.write('hello, '+alias);
-        /*      Insert student data into table      */
+    if(alias)
+        alias = alias[0].alias;
+    else
+        alias = 'unknown';
+    document.write('hello, '+alias);
+    /*      Insert student data into table      */
 
-        for(var i = 0; i < data.length; i++){
-            if (data[i][0].type === 'student') {
+    for(var i = 0; i < data.length; i++){
+        if (data[i][0].type === 'student') {
+            var row = tbl.insertRow(0);
+            row.onclick = function (r, j) {
+                return function () {
+                    expand(r, j + 2);
+                }
+            }(row, i);
+            row.insertCell(0).innerHTML = data[i][0].alias;
+            row.insertCell(1).innerHTML = data[i][0].num_submit.slice(-10);
+            row.insertCell(2).innerHTML = data[i][0].num_length;
+            row.insertCell(3).innerHTML = data[i][0].factor_count;
+            row.insertCell(4).innerHTML = data[i][0].first_factor_time;
+            row.setAttribute("expanded", "false");
+            // Highlight numbers you factored
+            for (var key in data[i][0].factorized_by_me) {
+                if (alias == key && data[i][0].factorized_by_me[key] == true) {
+                    row.className = "ok"
+                    break
+                }
+            }
+        } else {
+            for (var sub in data[i][0].nums) {
                 var row = tbl.insertRow(0);
                 row.onclick = function (r, j) {
                     return function () {
                         expand(r, j + 2);
                     }
                 }(row, i);
-                row.insertCell(0).innerHTML = data[i][0].alias;
-                row.insertCell(1).innerHTML = data[i][0].num_submit.slice(-10);
-                row.insertCell(2).innerHTML = data[i][0].num_length;
-                row.insertCell(3).innerHTML = data[i][0].factor_count;
-                row.insertCell(4).innerHTML = data[i][0].first_factor_time;
+
+                row.insertCell(0).innerHTML = data[i][0].nums[sub].alias;
+                row.insertCell(1).innerHTML = data[i][0].nums[sub].num_submit.slice(-10);
+                row.insertCell(2).innerHTML = data[i][0].nums[sub].num_length;
+                row.insertCell(3).innerHTML = data[i][0].nums[sub].factor_count;
+                row.insertCell(4).innerHTML = data[i][0].nums[sub].first_factor_time;
                 row.setAttribute("expanded", "false");
                 // Highlight numbers you factored
-                for (var key in data[i][0].factorized_by_me) {
-                    if (alias == key && data[i][0].factorized_by_me[key] == true) {
+                for (var key in data[i][0].nums[sub].factorized_by_me) {
+                    if (alias == key && data[i][0].nums[sub].factorized_by_me[key] == true) {
                         row.className = "ok"
                         break
                     }
                 }
-            } else {
-                for (var sub in data[i][0].nums) {
-                    var row = tbl.insertRow(0);
-                    row.onclick = function (r, j) {
-                        return function () {
-                            expand(r, j + 2);
-                        }
-                    }(row, i);
 
-                    row.insertCell(0).innerHTML = data[i][0].nums[sub].alias;
-                    row.insertCell(1).innerHTML = data[i][0].nums[sub].num_submit.slice(-10);
-                    row.insertCell(2).innerHTML = data[i][0].nums[sub].num_length;
-                    row.insertCell(3).innerHTML = data[i][0].nums[sub].factor_count;
-                    row.insertCell(4).innerHTML = data[i][0].nums[sub].first_factor_time;
-                    row.setAttribute("expanded", "false");
-                    // Highlight numbers you factored
-                    for (var key in data[i][0].nums[sub].factorized_by_me) {
-                        if (alias == key && data[i][0].nums[sub].factorized_by_me[key] == true) {
-                            row.className = "ok"
-                            break
-                        }
-                    }
-
-                }
             }
         }
+    }
 
-        $('#tbl').DataTable();
-
-    });
+    $('#tbl').DataTable();
 
     var show = -1;
     function expand(row,i){
