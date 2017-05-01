@@ -40,7 +40,9 @@
 
 #tbl{
     display: inline-block;
-    text-align: center
+    text-align: center;
+    margin-left: auto;
+    margin-right: auto;
 }
 #tbl .ok.ok{    /*this IS needed*/
     background-color:#ffe033
@@ -54,7 +56,7 @@
 #tbl input{
     width:100%;
     text-align:center;
-    font-size:14
+    /*font-size: 14*/
 }
 /**********************/
 /* Admin Page         */
@@ -81,14 +83,6 @@
     padding: 15px 15px 0 15px;
     text-align: center;
     font-size: 16px;
-}
-
-.adminSearch {
-    width: 100%;
-    font-size: 16px;
-    padding: 12px 20px 12px 40px;
-    border: 1px solid #ddd;
-    margin-bottom: 12px;
 }
 
 /**********************/
