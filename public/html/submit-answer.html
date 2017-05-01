@@ -36,7 +36,7 @@
         /*      Insert student data into table      */
 
         for(var i = 0; i < data.length; i++){
-            if (numData[i][0].type === 'student') {
+            if (data[i][0].type === 'student') {
                 var row = tbl.insertRow(0);
                 row.onclick = function (r, j) {
                     return function () {
@@ -57,7 +57,7 @@
                     }
                 }
             } else {
-                for (var sub in numData[i][0].nums) {
+                for (var sub in data[i][0].nums) {
                     var row = tbl.insertRow(0);
                     row.onclick = function (r, j) {
                         return function () {
