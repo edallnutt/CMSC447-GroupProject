@@ -46,10 +46,11 @@
     margin-right: auto;
 }
 
-#tbl{
+/*#tbl{
     display: inline-block;
     text-align: center;
-}
+}*/
+
 #tbl .ok.ok{    /*this IS needed*/
     background-color:#ffe033
 }
