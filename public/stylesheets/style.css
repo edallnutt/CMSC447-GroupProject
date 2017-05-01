@@ -37,12 +37,14 @@
 #tblTitle span:nth-child(2){
     float:right
 }*/
+.sub-ans-table {
+    margin-left: auto;
+    margin-right: auto;
+}
 
 #tbl{
     display: inline-block;
     text-align: center;
-    margin-left: auto;
-    margin-right: auto;
 }
 #tbl .ok.ok{    /*this IS needed*/
     background-color:#ffe033
