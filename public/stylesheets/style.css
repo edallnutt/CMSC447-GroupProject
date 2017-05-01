@@ -38,6 +38,10 @@
     float:right
 }*/
 .sub-ans-table {
+    width: 75%;
+    /*display: block;*/
+    padding-top: 100px;
+    text-align: center;
     margin-left: auto;
     margin-right: auto;
 }
