@@ -547,6 +547,7 @@ app.get('/submit-answer', function(req, res) {
 /* Creates and stores student object who submitted an answer */
 app.post('/submit-answer', function(req, res) {
     var token = req.body.user_token;
+    var email = req.body.user_email;
     	console.log( req.body.user_token + '\n'
 				+req.body.user_email + '\n'
 				+req.body.submit_answer + '\n'
@@ -567,14 +568,16 @@ app.post('/submit-answer', function(req, res) {
 								alias = 'unknown'	 
 							course[i][j].factorized_by_me[alias] = true
                         	fs.writeFileSync('./data.json',JSON.stringify(course),'utf-8')
-                       	 	res.writeHead(303,{"Location":"/submit-answer?pass=true&token="+token})
-						    res.end()
+                       	 	// res.writeHead(303,{"Location":"/submit-answer?pass=true&token="+token})
+						    // res.end()
+                            res.redirect("/submit-answer?token="+token+"&email="+email);
 							return
                     	}
 			}
         }
-        res.writeHead(303,{"Location":"/submit-answer?pass=false&token="+token})
- 	    res.end()
+        // res.writeHead(303,{"Location":"/submit-answer?pass=false&token="+token})
+ 	    // res.end()
+        res.redirect("/submit-answer?token="+token+"&email="+email);
     });
 });
 
