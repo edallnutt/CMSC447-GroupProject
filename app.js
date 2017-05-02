@@ -551,7 +551,7 @@ app.post('/submit-answer', function(req, res) {
     	console.log( req.body.user_token + '\n'
 				+req.body.user_email + '\n'
 				+req.body.submit_answer + '\n'
-				+req.body.answer_to + '\n')
+				+req.body.answer_to + '\n');
     verifyStudent(token,function(student){
 	    if(student){
             var num1 = RegExp("[0-9]*").exec(req.body.submit_answer)
@@ -561,21 +561,21 @@ app.post('/submit-answer', function(req, res) {
 				for(var i in course)
                 	for(var j in course[i])
 						if(course[i][j].alias == req.body.answer_to){
-							alias = course[req.body.user_email]
+							var alias = course[req.body.user_email]
 							if(alias)
 								alias = alias[0].alias
 							else
 								alias = 'unknown'	 
 							course[i][j].factorized_by_me[alias] = true
                         	fs.writeFileSync('./data.json',JSON.stringify(course),'utf-8')
-                       	 	// res.writeHead(303,{"Location":"/submit-answer?pass=true&token="+token})
+                       	 	res.writeHead(303,{"Location":"/submit-answer?pass=true&token="+token})
 						    // res.end()
                             res.redirect("/submit-answer?token="+token+"&email="+email);
 							return
                     	}
 			}
         }
-        // res.writeHead(303,{"Location":"/submit-answer?pass=false&token="+token})
+        res.writeHead(303,{"Location":"/submit-answer?pass=false&token="+token})
  	    // res.end()
         res.redirect("/submit-answer?token="+token+"&email="+email);
     });
