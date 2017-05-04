@@ -364,10 +364,11 @@ app.post('/submit-num', function(req, res) {
                             }
                             course[student_email] = [];
 
-                            for(var key in fruits["fruits"]){
+                            /*for(var key in fruits["fruits"]){
                                 var name = fruits["fruits"][key].name;
                                 factorized_by_me_list[name] = false;
-                            }
+                            }*/
+                            //factorized_by_me_list = [];
                             if(admin) {
 
                                 student_data = {
@@ -545,24 +546,6 @@ app.get('/submit-answer', function(req, res) {
         });
 
     });
-    // This comment block runs the java program to check the factorization
-    /*
-    if (two_nums.length >= 2)
-        {
-            res.send("Please enter 2 numbers seperated by space");
-        }
-    var output = spawn('java',args);
-    output.stdout.on('data', (data) => {
-            if (${data} === "0")
-                {
-                    res.send("Correct factorization");
-                }
-            else
-                {
-                    res.send("Incorrect factorization");
-                }
-        });
-    */
 });
 
 /* Creates and stores student object who submitted an answer */
@@ -596,6 +579,23 @@ app.post('/submit-answer', function(req, res) {
                 console.log("stdout: " + stdout);
                 if(stdout === '1'){
                     console.log("Correct Factor");
+                    for(var key in course){
+                        if(course[key][0].alias === number_to_answer_alias){
+                            if(course[key][0].first_factor_time === ""){
+                                var currentdate = new Date();
+                                var datetime =  currentdate.getMonth() + "/"
+                                                + currentdate.getDate() + "/"
+                                                + currentdate.getFullYear() + " @ "
+                                                + currentdate.getHours() + ":"
+                                                + currentdate.getMinutes() + ":"
+                                                + currentdate.getSeconds();
+                                course[key][0].first_factor_time = datetime;
+                            }
+                            course[key][0].factor_count++;
+                        }
+                    }
+                    course[email][0].factorized_by_me[number_to_answer_alias] = true;
+                    fs.writeFileSync('./data.json', JSON.stringify(course), 'utf-8');
                 }
                 else{
                     console.log("Incorrect Factor");
