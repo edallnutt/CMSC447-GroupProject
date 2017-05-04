@@ -8,7 +8,7 @@
             <tr>
                 <th>Alias</th>
                 <th>Last 10 Digits</th>
-                <th>Number Length</th>
+                <th>Bit Length</th>
                 <th>Factorized Count</th>
                 <th>First Factorized Time</th>
             </tr>
@@ -99,7 +99,8 @@
         <input name='submit_answer' placeholder='" + (row.className === "ok" ? "You have already submitted. Submit again if you want" : "Enter 2 or more factors separated by a space and hit enter to submit") + "'></input>\
         <textarea name='user_email' style='display:none'></textarea>\
         <textarea name='user_token' style='display:none'></textarea> \
-        <textarea name='answer_to'  style='display:none'></textarea> \
+        <textarea name='num_to_answer'  style='display:none'></textarea> \
+        <textarea name='num_to_answer_alias'  style='display:none'></textarea> \
         <button>submit</button>\
         </form>"
                 show = row.rowIndex;
@@ -110,14 +111,15 @@
     function verify(){
         var box = document.getElementsByTagName('input')[1]
         if(RegExp("^[0-9]+ [0-9]+$").test(box.value)){
-        document.getElementsByName('user_email')[0].value = getUserEmail()
-        document.getElementsByName('user_token')[0].value = getUserToken()
-        document.getElementsByName('answer_to') [0].value = tbl.rows[show-1].cells[0].innerHTML
-        return true
+            document.getElementsByName('user_email')[0].value = getUserEmail()
+            document.getElementsByName('user_token')[0].value = getUserToken()
+            document.getElementsByName('num_to_answer_alias') [0].value = tbl.rows[show-1].cells[0].innerHTML
+            document.getElementsByName('num_to_answer') [0].value = tbl.rows[show-1].cells[1].innerHTML
+            return true
         }else{
             box.value       = ''
-        box.placeholder = 'Invalid format. Enter 2 or more factors separated by a space and hit enter to submit'
-        return false
+            box.placeholder = 'Invalid format. Enter 2 or more factors separated by a space and hit enter to submit'
+            return false
         }
     }
 </script>

@@ -257,11 +257,18 @@ app.get('/submit-num', function(req, res) {
                     case -1:    res.writeHead(200, {'Content-Type': 'text/html'});
                         view("header", {}, res);
                         view("nav", {}, res);
-                        view("submit_num", {}, res);
+                        view("submit_num", {error:""}, res);
                         view("footer", {}, res);
                         res.end();
                         break;
                     case 0:     res.writeHead(200, {'Content-Type': 'text/html'});
+                        view("header", {}, res);
+                        view("nav", {}, res);
+                        view("landing-page",  {username:"Landing Page", description:"Submissions have been closed"}, res);
+                        view("footer", {}, res);
+                        res.end();
+                        break;
+                    case 1:
                         view("header", {}, res);
                         view("nav", {}, res);
                         view("landing-page",  {username:"Landing Page", description:"Submissions have been closed"}, res);
@@ -278,11 +285,18 @@ app.get('/submit-num', function(req, res) {
                             case -1:    res.writeHead(200, {'Content-Type': 'text/html'});
                                 view("header", {}, res);
                                 view("nav", {}, res);
-                                view("submit_num", {}, res);
+                                view("submit_num", {error:""}, res);
                                 view("footer", {}, res);
                                 res.end();
                                 break;
                             case 0:     res.writeHead(200, {'Content-Type': 'text/html'});
+                                view("header", {}, res);
+                                view("nav", {}, res);
+                                view("landing-page",  {username:"Landing Page", description:"Submissions have been closed"}, res);
+                                view("footer", {}, res);
+                                res.end();
+                                break;
+                            case 1:
                                 view("header", {}, res);
                                 view("nav", {}, res);
                                 view("landing-page",  {username:"Landing Page", description:"Submissions have been closed"}, res);
@@ -306,154 +320,146 @@ app.post('/submit-num', function(req, res) {
     var token = req.body.user_token;
     var factorized_by_me_list = {};
 
-    // check bit length
-    /*
-    var args = [];
-    args.push("-jar");
-    args.push("/home/ec2-user/CMSC447/CMSC447-GroupProject/public/Java/verify_numbers.jar");
-    args.push('check');
-    */
-
     if(!isNaN(student_number) && student_number.length > 0){
-        verifyAdmin(token, function(admin) {
-            var course = JSON.parse(fs.readFileSync('./data.json', 'utf-8'));
-            var fruits = JSON.parse(fs.readFileSync('./fruit.json', 'utf-8'));
-            var student_data;
-            var randomFruit;
-            var counter = 0;
-            if(isEmpty(course[student_email])){
-                randomFruit = fruits["fruits"][Math.floor((Math.random() * Object.keys(fruits["fruits"]).length))].name;
-                while(counter != Object.keys(course).length){
-                    counter = 0;
-                    for(var student in course){
-                        if(course[student][0].alias === randomFruit){
+        // Get bit length of student number submission
+        var cmd = 'java -jar /home/ec2-user/CMSC447/CMSC447-GroupProject/public/Java/verify_numbers.jar check ' + student_number;
+        var output = exec(cmd,
+            function (error, stdout, stderr){
+                if(parseInt(stdout) < 4){
+                    res.writeHead(200, {'Content-Type': 'text/html'});
+                    view("header", {}, res);
+                    view("nav", {}, res);
+                    view("submit_num",  {error:"Invalid Bit length (< 80): " + stdout}, res);
+                    view("footer", {}, res);
+                    res.end();
+                }
+                else if(parseInt(stdout) > 240){
+                    res.writeHead(200, {'Content-Type': 'text/html'});
+                    view("header", {}, res);
+                    view("nav", {}, res);
+                    view("submit_num",  {error:"Invalid Bit length (> 240): " + stdout}, res);
+                    view("footer", {}, res);
+                    res.end();
+                }
+                else{
+                    verifyAdmin(token, function(admin) {
+                        var course = JSON.parse(fs.readFileSync('./data.json', 'utf-8'));
+                        var fruits = JSON.parse(fs.readFileSync('./fruit.json', 'utf-8'));
+                        var student_data;
+                        var randomFruit;
+                        var counter = 0;
+                        if(isEmpty(course[student_email])){
                             randomFruit = fruits["fruits"][Math.floor((Math.random() * Object.keys(fruits["fruits"]).length))].name;
+                            while(counter != Object.keys(course).length){
+                                counter = 0;
+                                for(var student in course){
+                                    if(course[student][0].alias === randomFruit){
+                                        randomFruit = fruits["fruits"][Math.floor((Math.random() * Object.keys(fruits["fruits"]).length))].name;
+                                    }
+                                    else{
+                                        counter++;
+                                        console.log(counter);
+                                    }
+                                }
+                            }
+                            course[student_email] = [];
+
+                            for(var key in fruits["fruits"]){
+                                var name = fruits["fruits"][key].name;
+                                factorized_by_me_list[name] = false;
+                            }
+                            if(admin) {
+
+                                student_data = {
+                                    alias: randomFruit,
+                                    nums:[{
+                                        alias: randomFruit+"_1",
+                                        num_submit: student_number,
+                                        num_length: stdout,
+                                        factor_count: 0,
+                                        first_factor_time: ""}],
+                                    factorized_by_me: factorized_by_me_list
+                                };
+                                course[student_email].push(student_data);
+
+                            } else {
+                                student_data = {
+                                    alias: randomFruit,
+                                    num_submit: student_number,
+                                    num_length: stdout,
+                                    factor_count: 0,
+                                    first_factor_time: "",
+                                    factorized_by_me: factorized_by_me_list
+                                };
+                                course[student_email].push(student_data);
+                            }
                         }
                         else{
-                            counter++;
-                            console.log(counter);
+
+                            if(admin) {
+
+                                var aliasr = course[student_email][0].alias;
+                                var oldNums = course[student_email][0].nums;
+                                var lastLabel = oldNums[oldNums.length-1].alias.split("_")[1];
+                                var nextLabel = parseInt(lastLabel) + 1;
+
+
+                                var num_data = {
+                                        alias: aliasr+"_"+nextLabel,
+                                        num_submit: student_number,
+                                        num_length: stdout,
+                                        factor_count: 0,
+                                        first_factor_time: ""
+                                };
+                                course[student_email][0].nums.push(num_data);
+
+
+                            } else {
+                                var objAlias = course[student_email][0].alias;
+                                var objFactorizedList = course[student_email][0].factorized_by_me;
+                                course[student_email] = [];
+                                student_data = {
+                                    alias: objAlias,
+                                    num_submit: student_number,
+                                    num_length: stdout,
+                                    factor_count: 0,
+                                    first_factor_time: "",
+                                    factorized_by_me: objFactorizedList
+                                };
+
+                                course[student_email].push(student_data);
+                            }
                         }
-                    }
+
+                        fs.writeFileSync('./data.json', JSON.stringify(course), 'utf-8');
+
+                        res.writeHead(200, {'Content-Type': 'text/html'});
+                        view("header", {}, res);
+                        view("nav", {}, res);
+                        view("submit_num",  {error:"Valid Bit length: " + stdout}, res);
+                        view("footer", {}, res);
+                        res.end();
+                        /*res.writeHead(303, {"Location": "/submit-num?token=" + token});
+                        res.end();*/
+                    });
                 }
-                course[student_email] = [];
-
-                for(var key in fruits["fruits"]){
-                    var name = fruits["fruits"][key].name;
-                    factorized_by_me_list[name] = false;
+                if(error !== null){
+                  console.log("Error -> "+error);
                 }
-                if(admin) {
-
-                    student_data = {
-                        alias: randomFruit,
-                        nums:[{
-                            alias: randomFruit+"_1",
-                            num_submit: student_number,
-                            num_length: student_number.length,
-                            factor_count: 0,
-                            first_factor_time: ""}],
-                        factorized_by_me: factorized_by_me_list
-                    };
-                    course[student_email].push(student_data);
-
-                } else {
-                    student_data = {
-                        alias: randomFruit,
-                        num_submit: student_number,
-                        num_length: student_number.length,
-                        factor_count: 0,
-                        first_factor_time: "",
-                        factorized_by_me: factorized_by_me_list
-                    };
-                    course[student_email].push(student_data);
-                }
-            }
-            else{
-
-                if(admin) {
-
-                    var aliasr = course[student_email][0].alias;
-                    var oldNums = course[student_email][0].nums;
-                    var lastLabel = oldNums[oldNums.length-1].alias.split("_")[1];
-                    var nextLabel = parseInt(lastLabel) + 1;
-
-
-                    var num_data = {
-                            alias: aliasr+"_"+nextLabel,
-                            num_submit: student_number,
-                            num_length: student_number.length,
-                            factor_count: 0,
-                            first_factor_time: ""
-                    };
-                    course[student_email][0].nums.push(num_data);
-
-
-                } else {
-                    var objAlias = course[student_email][0].alias;
-                    var objFactorizedList = course[student_email][0].factorized_by_me;
-                    course[student_email] = [];
-                    student_data = {
-                        alias: objAlias,
-                        num_submit: student_number,
-                        num_length: student_number.length,
-                        factor_count: 0,
-                        first_factor_time: "",
-                        factorized_by_me: objFactorizedList
-                    };
-
-                    course[student_email].push(student_data);
-                }
-            }
-
-
-            fs.writeFileSync('./data.json', JSON.stringify(course), 'utf-8');
-
-            res.writeHead(303, {"Location": "/submit-num?token=" + token});
-            res.end();
-
         });
-
-
-    } else {
-
-        // This block runs the java program to check the num of bits
-        /*
-         var output = spawn('java',args);
-         output.stdout.on('data', (data) => {
-         if (${data} === "0")
-         {
-         res.send("Wrong num of bits");
-         }
-         else
-         {
-         res.send("Right num of bits");
-         }
-         });
-         */
-        res.writeHead(303, {"Location": "/submit-num?token=" + token});
+    }
+    else {
+        res.writeHead(200, {'Content-Type': 'text/html'});
+        view("header", {}, res);
+        view("nav", {}, res);
+        view("submit_num",  {error:"Invalid Submission"}, res);
+        view("footer", {}, res);
         res.end();
     }
-
 });
 
 app.get('/submit-answer', function(req, res) {
     var token = req.query.token;
-    
-    // This Comment block initializes the arguments for the java program to check the 
-    // Answer the student submits. *CHANGE VARIABLE TO GET THE VARIABLE student_answer*
-    /*
-    var student_answer = req.body.submit_answer.trim();
-    var two_nums = student_answer.split(" ");
-    var args = [];
-     args.push("-jar");
-    args.push("/home/ec2-user/CMSC447/CMSC447-GroupProject/public/Java/verify_numbers.jar");
-    args.push('answer');
-    for (int i = 0; i < two_nums.length; i ++)
-        {
-            //exec_string = exec_string + two_nums[i] + ' ';        
-            args.push(two_nums[i]);
-        }
-    */
-
     var email = req.query.email;
 
     getAdmins(function(adminList) {
@@ -475,6 +481,14 @@ app.get('/submit-answer', function(req, res) {
                              view("landing-page", {username:"Landing Page", description:"Answers will be posted soon"}, res);
                              view("footer", {}, res);
                              res.end();*/
+                            break;
+                        case 0:
+                            res.writeHead(200, {'Content-Type': 'text/html'});
+                            view("header", {}, res);
+                            view("nav", {}, res);
+                            view("landing-page",  {username:"Landing Page", description:"Submissions will be posted soon"}, res);
+                            view("footer", {}, res);
+                            res.end();
                             break;
                         case 1:
                             res.writeHead(200, {'Content-Type': 'text/html'});
@@ -506,6 +520,13 @@ app.get('/submit-answer', function(req, res) {
                                      view("footer", {}, res);
                                      res.end();*/
                                     break;
+                                case 0:
+                                    res.writeHead(200, {'Content-Type': 'text/html'});
+                                    view("header", {}, res);
+                                    view("nav", {}, res);
+                                    view("landing-page",  {username:"Landing Page", description:"Submissions will be posted soon"}, res);
+                                    view("footer", {}, res);
+                                    res.end();
                                 case 1:
                                     res.writeHead(200, {'Content-Type': 'text/html'});
                                     view("header", {}, res);
@@ -528,7 +549,7 @@ app.get('/submit-answer', function(req, res) {
     /*
     if (two_nums.length >= 2)
         {
-            res.send("Please enter 2 numbers seperated by space");    
+            res.send("Please enter 2 numbers seperated by space");
         }
     var output = spawn('java',args);
     output.stdout.on('data', (data) => {
@@ -548,7 +569,49 @@ app.get('/submit-answer', function(req, res) {
 app.post('/submit-answer', function(req, res) {
     var token = req.body.user_token;
     var email = req.body.user_email;
-    	console.log( req.body.user_token + '\n'
+    var student_answer = req.body.submit_answer;
+    var number_to_answer = req.body.num_to_answer;
+    var number_to_answer_alias = req.body.num_to_answer_alias;
+    var course = JSON.parse(fs.readFileSync('./data.json', 'utf-8'));
+    console.log( req.body.user_email + '\n'
+				+req.body.submit_answer + '\n'
+				+req.body.num_to_answer + '\n'
+                +req.body.num_to_answer_alias + '\n');
+    // This Comment block initializes the arguments for the java program to check the
+    // Answer the student submits. *CHANGE VARIABLE TO GET THE VARIABLE student_answer*
+    var two_nums = student_answer.split(" ");
+    var cmd = 'java -jar /home/ec2-user/CMSC447/CMSC447-GroupProject/public/Java/verify_numbers.jar answer ' + number_to_answer + ' ';
+    for (var i = 0; i < two_nums.length; i ++){
+        cmd += two_nums[i] + ' ';
+        //args.push(two_nums[i]);
+    }
+    console.log("cmd: " + cmd);
+    // This comment block runs the java program to check the factorization
+    if (two_nums.length < 2){
+        console.log("Please enter 2 numbers seperated by space");
+    }
+    else{
+        var output = exec(cmd,
+            function (error, stdout, stderr){
+                console.log("stdout: " + stdout);
+                if(stdout === '1'){
+                    console.log("Correct Factor");
+                }
+                else{
+                    console.log("Incorrect Factor");
+                }
+
+                if(error !== null){
+                  console.log("Error -> "+error);
+                }
+            }
+        );
+    }
+
+    res.writeHead(303, {"Location": "/submit-answer?token=" + token + "&email=" + email});
+    res.end();
+    /*  CHENGZHI'S CODE  */
+    /*	console.log( req.body.user_token + '\n'
 				+req.body.user_email + '\n'
 				+req.body.submit_answer + '\n'
 				+req.body.answer_to + '\n');
@@ -556,7 +619,7 @@ app.post('/submit-answer', function(req, res) {
 	    if(student){
             var num1 = RegExp("[0-9]*").exec(req.body.submit_answer)
             var num2 = RegExp("[1-9]*$").exec(req.body.submit_answer)
-            if(/*verfiy(num1,num2)*/true){
+            if(verfiy(num1,num2)true){
 				var course = JSON.parse(fs.readFileSync('./data.json', 'utf-8'))
 				for(var i in course)
                 	for(var j in course[i])
@@ -565,7 +628,7 @@ app.post('/submit-answer', function(req, res) {
 							if(alias)
 								alias = alias[0].alias
 							else
-								alias = 'unknown'	 
+								alias = 'unknown'
 							course[i][j].factorized_by_me[alias] = true
                         	fs.writeFileSync('./data.json',JSON.stringify(course),'utf-8')
                        	 	res.writeHead(303,{"Location":"/submit-answer?pass=true&token="+token})
@@ -578,7 +641,7 @@ app.post('/submit-answer', function(req, res) {
         res.writeHead(303,{"Location":"/submit-answer?pass=false&token="+token})
  	    // res.end()
         res.redirect("/submit-answer?token="+token+"&email="+email);
-    });
+    });*/
 });
 
 app.get('/statistics', function(req, res) {
@@ -625,7 +688,7 @@ app.get('/home', function(req,res) {
                     case -1: res.writeHead(200, {'Content-Type': 'text/html'});
                         view("header", {}, res);
                         view("nav", {}, res);
-                        view("submit_num", {}, res);
+                        view("submit_num", {error:""}, res);
                         view("footer", {}, res);
                         res.end();
                         break;
@@ -662,7 +725,7 @@ app.get('/home', function(req,res) {
                             case -1: res.writeHead(200, {'Content-Type': 'text/html'});
                                 view("header", {}, res);
                                 view("nav", {}, res);
-                                view("submit_num", {}, res);
+                                view("submit_num", {error:""}, res);
                                 view("footer", {}, res);
                                 res.end();
                                 break;
@@ -762,7 +825,7 @@ app.get('/publish', function(req,res) {
     var token = req.query.token;
     verifyAdmin(token, function(data) {
         if(data) {
-            file.submissionsClosed = val;
+            file.submissionsPublished = val;
             fs.writeFile(path.join(__dirname, 'config.json'), JSON.stringify(file), function (err) {
                 if (err) return console.log(err);
                 res.redirect('/admin?token='+token);
