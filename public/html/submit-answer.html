@@ -9,6 +9,7 @@
                 <th>Alias</th>
                 <th>Last 10 Digits</th>
                 <th>Bit Length</th>
+                <th>Prime Number</th>
                 <th>Factorized Count</th>
                 <th>First Factorized Time</th>
             </tr>
@@ -16,6 +17,7 @@
         <tfoot></tfoot>
         <tbody></tbody>
     </table>
+    <h2 id="alias"></h2>
 </div>
 
 <script>
@@ -29,7 +31,7 @@
         alias = alias[0].alias;
     else
         alias = 'unknown';
-    document.write('hello, '+alias);
+    document.getElementById('alias').innerHTML = "Your alias is: " + alias;
     /*      Insert student data into table      */
 
     for(var i = 0; i < data.length; i++){
@@ -43,8 +45,9 @@
             row.insertCell(0).innerHTML = data[i][0].alias;
             row.insertCell(1).innerHTML = data[i][0].num_submit.slice(-10);
             row.insertCell(2).innerHTML = data[i][0].num_length;
-            row.insertCell(3).innerHTML = data[i][0].factor_count;
-            row.insertCell(4).innerHTML = data[i][0].first_factor_time;
+            row.insertCell(3).innerHTML = data[i][0].num_prime;
+            row.insertCell(4).innerHTML = data[i][0].factor_count;
+            row.insertCell(5).innerHTML = data[i][0].first_factor_time;
             row.setAttribute("expanded", "false");
             // Highlight numbers you factored
             for (var key in data[email_num][0].factorized_by_me) {
@@ -70,8 +73,9 @@
                 row.insertCell(0).innerHTML = data[i][0].nums[sub].alias;
                 row.insertCell(1).innerHTML = data[i][0].nums[sub].num_submit.slice(-10);
                 row.insertCell(2).innerHTML = data[i][0].nums[sub].num_length;
-                row.insertCell(3).innerHTML = data[i][0].nums[sub].factor_count;
-                row.insertCell(4).innerHTML = data[i][0].nums[sub].first_factor_time;
+                row.insertCell(3).innerHTML = data[i][0].nums[sub].num_prime;
+                row.insertCell(4).innerHTML = data[i][0].nums[sub].factor_count;
+                row.insertCell(5).innerHTML = data[i][0].nums[sub].first_factor_time;
                 row.setAttribute("expanded", "false");
                 // Highlight numbers you factored
                 for (var key in data[email_num][0].factorized_by_me){
@@ -104,7 +108,7 @@
             if (row.getAttribute("expanded") == "false") {
                 row.setAttribute("expanded", "true");
                 var col = tbl.insertRow(row.rowIndex).insertCell(0)
-                col.colSpan = 5
+                col.colSpan = 6
                 col.innerHTML = "\
         <form action='submit-answer' onsubmit='return verify()' method='post'>\
         <input name='submit_answer' placeholder='" + (row.className === "ok" ? "You have already submitted. Submit again if you want" : "Enter 2 or more factors separated by a space and hit enter to submit") + "'></input>\

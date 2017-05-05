@@ -164,6 +164,7 @@ function table_view(templateName, values, email, res, admins){
                         alias: obj[key][0].alias,
                         num_submit: obj[key][0].num_submit,
                         num_length: obj[key][0].num_length,
+                        num_prime: obj[key][0].num_prime,
                         factor_count: obj[key][0].factor_count,
                         first_factor_time: obj[key][0].first_factor_time,
                         factorized_by_me: obj[key][0].factorized_by_me
@@ -206,6 +207,7 @@ function table_view(templateName, values, email, res, admins){
                         alias: obj[key][0].alias,
                         num_submit: obj[key][0].num_submit,
                         num_length: obj[key][0].num_length,
+                        num_prime: obj[key][0].num_prime,
                         factor_count: obj[key][0].factor_count,
                         first_factor_time: obj[key][0].first_factor_time,
                         factorized_by_me: obj[key][0].factorized_by_me
@@ -327,13 +329,14 @@ app.post('/submit-num', function(req, res) {
         var cmd = 'java -jar /home/ec2-user/CMSC447/CMSC447-GroupProject/public/Java/verify_numbers.jar check ' + student_number;
         var output = exec(cmd,
             function (error, stdout, stderr){
-                if(parseInt(stdout) < 80){
+                var bit_length = stdout;
+                if(parseInt(stdout) < 2){
                     verifyAdmin(token, function(admin) {
                         if(admin){
                             res.writeHead(200, {'Content-Type': 'text/html'});
                             view("header", {}, res);
                             view("nav-admin", {}, res);
-                            view("submit_num",  {error:"Invalid Bit length (< 80): " + stdout}, res);
+                            view("submit_num",  {error:"Invalid Bit length (< 80): " + bit_length}, res);
                             view("footer", {}, res);
                             res.end();
                         }
@@ -341,7 +344,7 @@ app.post('/submit-num', function(req, res) {
                             res.writeHead(200, {'Content-Type': 'text/html'});
                             view("header", {}, res);
                             view("nav", {}, res);
-                            view("submit_num",  {error:"Invalid Bit length (< 80): " + stdout}, res);
+                            view("submit_num",  {error:"Invalid Bit length (< 80): " + bit_length}, res);
                             view("footer", {}, res);
                             res.end();
                         }
@@ -353,7 +356,7 @@ app.post('/submit-num', function(req, res) {
                             res.writeHead(200, {'Content-Type': 'text/html'});
                             view("header", {}, res);
                             view("nav-admin", {}, res);
-                            view("submit_num",  {error:"Invalid Bit length (> 2000): " + stdout}, res);
+                            view("submit_num",  {error:"Invalid Bit length (> 2000): " + bit_length}, res);
                             view("footer", {}, res);
                             res.end();
                         }
@@ -361,136 +364,156 @@ app.post('/submit-num', function(req, res) {
                             res.writeHead(200, {'Content-Type': 'text/html'});
                             view("header", {}, res);
                             view("nav", {}, res);
-                            view("submit_num",  {error:"Invalid Bit length (> 2000): " + stdout}, res);
+                            view("submit_num",  {error:"Invalid Bit length (> 2000): " + bit_length}, res);
                             view("footer", {}, res);
                             res.end();
                         }
                     });
                 }
                 else{
-                    verifyAdmin(token, function(admin) {
-                        var course = JSON.parse(fs.readFileSync('./data.json', 'utf-8'));
-                        var fruits = JSON.parse(fs.readFileSync('./fruit.json', 'utf-8'));
-                        var student_data;
-                        var randomFruit;
-                        var counter = 0;
-                        if(isEmpty(course[student_email])){
-                            randomFruit = fruits["fruits"][Math.floor((Math.random() * Object.keys(fruits["fruits"]).length))].name;
-                            while(counter != Object.keys(course).length){
-                                counter = 0;
-                                for(var student in course){
-                                    if(course[student][0].alias === randomFruit){
-                                        randomFruit = fruits["fruits"][Math.floor((Math.random() * Object.keys(fruits["fruits"]).length))].name;
-                                    }
-                                    else{
-                                        counter++;
-                                    }
-                                }
-                            }
-                            course[student_email] = [];
-
-                            /*for(var key in fruits["fruits"]){
-                                var name = fruits["fruits"][key].name;
-                                factorized_by_me_list[name] = false;
-                            }*/
-                            //factorized_by_me_list = [];
-                            if(admin) {
-
-                                student_data = {
-                                    alias: randomFruit,
-                                    nums:[{
-                                        alias: randomFruit+"_1",
-                                        num_submit: student_number,
-                                        num_length: stdout,
-                                        factor_count: 0,
-                                        first_factor_time: ""}],
-                                    factorized_by_me: factorized_by_me_list
-                                };
-                                course[student_email].push(student_data);
-
-                            } else {
-                                student_data = {
-                                    alias: randomFruit,
-                                    num_submit: student_number,
-                                    num_length: stdout,
-                                    factor_count: 0,
-                                    first_factor_time: "",
-                                    factorized_by_me: factorized_by_me_list
-                                };
-                                course[student_email].push(student_data);
-                            }
-                        }
-                        else{
-
-                            if(admin) {
-
-                                var aliasr = course[student_email][0].alias;
-                                var oldNums = course[student_email][0].nums;
-
-                                if(oldNums.length === 0){
-                                    var num_data = {
-                                            alias: aliasr+"_1",
-                                            num_submit: student_number,
-                                            num_length: stdout,
-                                            factor_count: 0,
-                                            first_factor_time: ""
-                                    };
-                                    course[student_email][0].nums.push(num_data);
-                                }
-                                else{
-                                    var lastLabel = oldNums[oldNums.length-1].alias.split("_")[1];
-                                    var nextLabel = parseInt(lastLabel) + 1;
-
-                                    var num_data = {
-                                            alias: aliasr+"_"+nextLabel,
-                                            num_submit: student_number,
-                                            num_length: stdout,
-                                            factor_count: 0,
-                                            first_factor_time: ""
-                                    };
-                                    course[student_email][0].nums.push(num_data);
-                                }
-
-                            } else {
-                                var objAlias = course[student_email][0].alias;
-                                var objFactorizedList = course[student_email][0].factorized_by_me;
-                                course[student_email] = [];
-                                student_data = {
-                                    alias: objAlias,
-                                    num_submit: student_number,
-                                    num_length: stdout,
-                                    factor_count: 0,
-                                    first_factor_time: "",
-                                    factorized_by_me: objFactorizedList
-                                };
-
-                                course[student_email].push(student_data);
-                            }
-                        }
-
-                        fs.writeFileSync('./data.json', JSON.stringify(course), 'utf-8');
-
-                        verifyAdmin(token, function(admin) {
-                            if(admin){
-                                res.writeHead(200, {'Content-Type': 'text/html'});
-                                view("header", {}, res);
-                                view("nav-admin", {}, res);
-                                view("submit_num",  {error:"Valid Bit length " + stdout}, res);
-                                view("footer", {}, res);
-                                res.end();
+                    var isPrimeCmd = "python /home/ec2-user/CMSC447/CMSC447-GroupProject/public/python/prime.py 10 " + student_number;
+                    var outputIsPrime = exec(isPrimeCmd,
+                        function (error, stdout, stderr){
+                            var isPrime;
+                            console.log(stdout);
+                            if(stdout === "True\n"){
+                                isPrime = "Yes";
                             }
                             else{
-                                res.writeHead(200, {'Content-Type': 'text/html'});
-                                view("header", {}, res);
-                                view("nav", {}, res);
-                                view("submit_num",  {error:"Valid Bit length " + stdout}, res);
-                                view("footer", {}, res);
-                                res.end();
+                                isPrime = "No";
+                            }
+                            verifyAdmin(token, function(admin) {
+                                var course = JSON.parse(fs.readFileSync('./data.json', 'utf-8'));
+                                var fruits = JSON.parse(fs.readFileSync('./fruit.json', 'utf-8'));
+                                var student_data;
+                                var randomFruit;
+                                var counter = 0;
+                                if(isEmpty(course[student_email])){
+                                    randomFruit = fruits["fruits"][Math.floor((Math.random() * Object.keys(fruits["fruits"]).length))].name;
+                                    while(counter != Object.keys(course).length){
+                                        counter = 0;
+                                        for(var student in course){
+                                            if(course[student][0].alias === randomFruit){
+                                                randomFruit = fruits["fruits"][Math.floor((Math.random() * Object.keys(fruits["fruits"]).length))].name;
+                                            }
+                                            else{
+                                                counter++;
+                                            }
+                                        }
+                                    }
+                                    course[student_email] = [];
+
+                                    /*for(var key in fruits["fruits"]){
+                                        var name = fruits["fruits"][key].name;
+                                        factorized_by_me_list[name] = false;
+                                    }*/
+                                    //factorized_by_me_list = [];
+                                    if(admin) {
+
+                                        student_data = {
+                                            alias: randomFruit,
+                                            nums:[{
+                                                alias: randomFruit+"_1",
+                                                num_submit: student_number,
+                                                num_length: bit_length,
+                                                num_prime: isPrime,
+                                                factor_count: 0,
+                                                first_factor_time: ""}],
+                                            factorized_by_me: factorized_by_me_list
+                                        };
+                                        course[student_email].push(student_data);
+
+                                    } else {
+                                        student_data = {
+                                            alias: randomFruit,
+                                            num_submit: student_number,
+                                            num_length: bit_length,
+                                            num_prime: isPrime,
+                                            factor_count: 0,
+                                            first_factor_time: "",
+                                            factorized_by_me: factorized_by_me_list
+                                        };
+                                        course[student_email].push(student_data);
+                                    }
+                                }
+                                else{
+
+                                    if(admin) {
+
+                                        var aliasr = course[student_email][0].alias;
+                                        var oldNums = course[student_email][0].nums;
+
+                                        if(oldNums.length === 0){
+                                            var num_data = {
+                                                    alias: aliasr+"_1",
+                                                    num_submit: student_number,
+                                                    num_length: bit_length,
+                                                    num_prime: isPrime,
+                                                    factor_count: 0,
+                                                    first_factor_time: ""
+                                            };
+                                            course[student_email][0].nums.push(num_data);
+                                        }
+                                        else{
+                                            var lastLabel = oldNums[oldNums.length-1].alias.split("_")[1];
+                                            var nextLabel = parseInt(lastLabel) + 1;
+
+                                            var num_data = {
+                                                    alias: aliasr+"_"+nextLabel,
+                                                    num_submit: student_number,
+                                                    num_length: bit_length,
+                                                    num_prime: isPrime,
+                                                    factor_count: 0,
+                                                    first_factor_time: ""
+                                            };
+                                            course[student_email][0].nums.push(num_data);
+                                        }
+
+                                    } else {
+                                        var objAlias = course[student_email][0].alias;
+                                        var objFactorizedList = course[student_email][0].factorized_by_me;
+                                        course[student_email] = [];
+                                        student_data = {
+                                            alias: objAlias,
+                                            num_submit: student_number,
+                                            num_length: bit_length,
+                                            num_prime: isPrime,
+                                            factor_count: 0,
+                                            first_factor_time: "",
+                                            factorized_by_me: objFactorizedList
+                                        };
+
+                                        course[student_email].push(student_data);
+                                    }
+                                }
+
+                                fs.writeFileSync('./data.json', JSON.stringify(course), 'utf-8');
+
+                                verifyAdmin(token, function(admin) {
+                                    if(admin){
+                                        res.writeHead(200, {'Content-Type': 'text/html'});
+                                        view("header", {}, res);
+                                        view("nav-admin", {}, res);
+                                        view("submit_num",  {error:"Valid Bit length: " + bit_length}, res);
+                                        view("footer", {}, res);
+                                        res.end();
+                                    }
+                                    else{
+                                        res.writeHead(200, {'Content-Type': 'text/html'});
+                                        view("header", {}, res);
+                                        view("nav", {}, res);
+                                        view("submit_num",  {error:"Valid Bit length: " + bit_length}, res);
+                                        view("footer", {}, res);
+                                        res.end();
+                                    }
+                                });
+                                /*res.writeHead(303, {"Location": "/submit-num?token=" + token});
+                                res.end();*/
+                            });
+                            if(error !== null){
+                              console.log("Error -> "+error);
                             }
                         });
-                        /*res.writeHead(303, {"Location": "/submit-num?token=" + token});
-                        res.end();*/
-                    });
                 }
                 if(error !== null){
                   console.log("Error -> "+error);
@@ -503,7 +526,7 @@ app.post('/submit-num', function(req, res) {
                 res.writeHead(200, {'Content-Type': 'text/html'});
                 view("header", {}, res);
                 view("nav-admin", {}, res);
-                view("submit_num",  {error:"Invalid Submission" + stdout}, res);
+                view("submit_num",  {error:"Invalid Submission" + bit_length}, res);
                 view("footer", {}, res);
                 res.end();
             }
@@ -511,7 +534,7 @@ app.post('/submit-num', function(req, res) {
                 res.writeHead(200, {'Content-Type': 'text/html'});
                 view("header", {}, res);
                 view("nav", {}, res);
-                view("submit_num",  {error:"Invalid Submission" + stdout}, res);
+                view("submit_num",  {error:"Invalid Submission" + bit_length}, res);
                 view("footer", {}, res);
                 res.end();
             }
@@ -641,7 +664,7 @@ app.post('/submit-answer', function(req, res) {
                 if(stdout === '1'){
                     console.log("Correct Factor");
                     for(var key in course){
-                        if(course[key][0].type === "admin"){
+                        if(!isEmpty(course[key][0].nums)){
                             for(var sub in course[key][0].nums){
                                 console.log("nums alias" + course[key][0].nums[sub].alias);
                                 if(course[key][0].nums[sub].alias === number_to_answer_alias){

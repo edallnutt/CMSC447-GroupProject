@@ -6,6 +6,7 @@
                 <th> Alias </th>
                 <th> Last 10 Digits </th>
                 <th> Bit Length </th>
+                <th> Prime Number </th>
                 <th> Factorized Count </th>
                 <th> First Factorized Time </th>
             </tr>
@@ -53,8 +54,9 @@
                 row.insertCell(1).innerHTML = numData[key][0].alias;
                 row.insertCell(2).innerHTML = numData[key][0].num_submit.slice(-10);
                 row.insertCell(3).innerHTML = numData[key][0].num_length;
-                row.insertCell(4).innerHTML = numData[key][0].factor_count;
-                row.insertCell(5).innerHTML = numData[key][0].first_factor_time;
+                row.insertCell(4).innerHTML = numData[key][0].num_prime;
+                row.insertCell(5).innerHTML = numData[key][0].factor_count;
+                row.insertCell(6).innerHTML = numData[key][0].first_factor_time;
                 i++;
             } else {
                 for (var sub in numData[key][0].nums) {
@@ -63,8 +65,9 @@
                     row.insertCell(1).innerHTML = numData[key][0].nums[sub].alias;
                     row.insertCell(2).innerHTML = numData[key][0].nums[sub].num_submit.slice(-10);
                     row.insertCell(3).innerHTML = numData[key][0].nums[sub].num_length;
-                    row.insertCell(4).innerHTML = numData[key][0].nums[sub].factor_count;
-                    row.insertCell(5).innerHTML = numData[key][0].nums[sub].first_factor_time;
+                    row.insertCell(4).innerHTML = numData[key][0].nums[sub].num_prime;
+                    row.insertCell(5).innerHTML = numData[key][0].nums[sub].factor_count;
+                    row.insertCell(6).innerHTML = numData[key][0].nums[sub].first_factor_time;
                     i++;
                 }
             }

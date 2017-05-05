@@ -8,7 +8,7 @@ import sys
 def rabMill(num, reps):
     if num % 2 == 0:
         return False
-    
+
     s = num - 1
     t = 0
     while s % 2 == 0:
@@ -52,5 +52,5 @@ if(__name__ == '__main__'):
     for i in range(2,argc):
         if not rabMill(int(argv[i]),int(argv[1])):
             print False
-            sys.exit(0)    
+            sys.exit(0)
     print True
