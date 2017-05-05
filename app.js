@@ -173,7 +173,8 @@ function table_view(templateName, values, email, res, admins){
                         type: "admin",
                         email: key,
                         alias: obj[key][0].alias,
-                        nums: obj[key][0].nums
+                        nums: obj[key][0].nums,
+                        factorized_by_me: obj[key][0].factorized_by_me
                     };
                 }
 
@@ -213,7 +214,8 @@ function table_view(templateName, values, email, res, admins){
                     student_data = {
                         type: "admin",
                         alias: obj[key][0].alias,
-                        nums: obj[key][0].nums
+                        nums: obj[key][0].nums,
+                        factorized_by_me: obj[key][0].factorized_by_me
                     };
                 }
 
@@ -373,7 +375,6 @@ app.post('/submit-num', function(req, res) {
 
                                 student_data = {
                                     alias: randomFruit,
-                                    type: "admin",
                                     nums:[{
                                         alias: randomFruit+"_1",
                                         num_submit: student_number,
@@ -387,7 +388,6 @@ app.post('/submit-num', function(req, res) {
                             } else {
                                 student_data = {
                                     alias: randomFruit,
-                                    type: "student",
                                     num_submit: student_number,
                                     num_length: stdout,
                                     factor_count: 0,
@@ -409,7 +409,6 @@ app.post('/submit-num', function(req, res) {
 
                                 var num_data = {
                                         alias: aliasr+"_"+nextLabel,
-                                        type: "admin",
                                         num_submit: student_number,
                                         num_length: stdout,
                                         factor_count: 0,
@@ -424,7 +423,6 @@ app.post('/submit-num', function(req, res) {
                                 course[student_email] = [];
                                 student_data = {
                                     alias: objAlias,
-                                    type: "student",
                                     num_submit: student_number,
                                     num_length: stdout,
                                     factor_count: 0,

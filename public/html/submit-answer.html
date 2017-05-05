@@ -48,11 +48,14 @@
             row.insertCell(4).innerHTML = data[i][0].first_factor_time;
             row.setAttribute("expanded", "false");
             // Highlight numbers you factored
+            console.log("Entered 4");
             for (var key in data[email_num][0].factorized_by_me) {
                 /*if(key.includes("_")){
                     for(var numKey in data[i][0])
                 }*/
-                if (data[i][0].alias == key && data[email_num][0].factorized_by_me[key] == true) {
+                console.log(key);
+                if (data[i][0].alias === key && data[email_num][0].factorized_by_me[key] === true) {
+                    console.log("Entered 3");
                     row.className = "ok"
                     break
                 }
@@ -76,7 +79,7 @@
                 row.setAttribute("expanded", "false");
                 // Highlight numbers you factored
                 for (var key in data[email_num][0].factorized_by_me){
-                    if (data[i][0].nums[sub].alias == key && data[email_num][0].factorized_by_me[key] == true) {
+                    if (data[i][0].nums[sub].alias === key && data[email_num][0].factorized_by_me[key] === true) {
                         row.className = "ok"
                         break
                     }
