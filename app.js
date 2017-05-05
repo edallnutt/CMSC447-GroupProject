@@ -374,7 +374,6 @@ app.post('/submit-num', function(req, res) {
                         var student_data;
                         var randomFruit;
                         var counter = 0;
-                        console.log("email: " + student_email);
                         if(isEmpty(course[student_email])){
                             randomFruit = fruits["fruits"][Math.floor((Math.random() * Object.keys(fruits["fruits"]).length))].name;
                             while(counter != Object.keys(course).length){
@@ -385,7 +384,6 @@ app.post('/submit-num', function(req, res) {
                                     }
                                     else{
                                         counter++;
-                                        console.log(counter);
                                     }
                                 }
                             }
@@ -701,70 +699,18 @@ app.post('/submit-answer', function(req, res) {
 
     res.writeHead(303, {"Location": "/submit-answer?token=" + token + "&email=" + email});
     res.end();
-    /*  CHENGZHI'S CODE  */
-    /*	console.log( req.body.user_token + '\n'
-				+req.body.user_email + '\n'
-				+req.body.submit_answer + '\n'
-				+req.body.answer_to + '\n');
-    verifyStudent(token,function(student){
-	    if(student){
-            var num1 = RegExp("[0-9]*").exec(req.body.submit_answer)
-            var num2 = RegExp("[1-9]*$").exec(req.body.submit_answer)
-            if(verfiy(num1,num2)true){
-				var course = JSON.parse(fs.readFileSync('./data.json', 'utf-8'))
-				for(var i in course)
-                	for(var j in course[i])
-						if(course[i][j].alias == req.body.answer_to){
-							var alias = course[req.body.user_email]
-							if(alias)
-								alias = alias[0].alias
-							else
-								alias = 'unknown'
-							course[i][j].factorized_by_me[alias] = true
-                        	fs.writeFileSync('./data.json',JSON.stringify(course),'utf-8')
-                       	 	res.writeHead(303,{"Location":"/submit-answer?pass=true&token="+token})
-						    // res.end()
-                            res.redirect("/submit-answer?token="+token+"&email="+email);
-							return
-                    	}
-			}
-        }
-        res.writeHead(303,{"Location":"/submit-answer?pass=false&token="+token})
- 	    // res.end()
-        res.redirect("/submit-answer?token="+token+"&email="+email);
-    });*/
 });
 
 app.get('/statistics', function(req, res) {
     var token = req.query.token;
     verifyStudent(token, function(student) {
         if(student) {
-            checkSubmissionStatus(function(posted) {
-                switch(posted) {
-                    case -1: res.writeHead(200, {'Content-Type': 'text/html'});
-                            view("header", {}, res);
-                            view("nav", {}, res);
-                            view("graph", {}, res);
-                            view("footer", {}, res);
-                            res.end();
-                            break;
-                    case 0:  res.writeHead(200, {'Content-Type': 'text/html'});
-                            view("header", {}, res);
-                            view("nav", {}, res);
-                            view("graph", {}, res);
-                            view("footer", {}, res);
-                            res.end();
-                            break;
-
-                    case 1:  res.writeHead(200, {'Content-Type': 'text/html'});
-                            view("header", {}, res);
-                            view("nav-student-answer", {}, res);
-                            view("graph", {}, res);
-                            view("footer", {}, res);
-                            res.end();
-                            break;
-                }
-            });
+            res.writeHead(200, {'Content-Type': 'text/html'});
+            view("header", {}, res);
+            view("nav-student-answer", {}, res);
+            view("graph", {}, res);
+            view("footer", {}, res);
+            res.end();
         } else {
             verifyAdmin(token, function(admin) {
                 if(admin) {
