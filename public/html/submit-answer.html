@@ -34,6 +34,7 @@
 
     for(var i = 0; i < data.length; i++){
         if (data[i][0].type === 'student') {
+            console.log("Entered 1");
             var row = tbl.insertRow(0);
             row.onclick = function (r, j) {
                 return function () {
@@ -47,13 +48,18 @@
             row.insertCell(4).innerHTML = data[i][0].first_factor_time;
             row.setAttribute("expanded", "false");
             // Highlight numbers you factored
-            for (var key in data[i][0].factorized_by_me) {
-                if (alias == key && data[i][0].factorized_by_me[key] == true) {
+            for (var key in data[email_num][0].factorized_by_me) {
+                /*if(key.includes("_")){
+                    for(var numKey in data[i][0])
+                }*/
+                if (data[i][0].alias == key && data[email_num][0].factorized_by_me[key] == true) {
                     row.className = "ok"
                     break
                 }
             }
-        } else {
+        }
+        else {
+            console.log("Entered 2");
             for (var sub in data[i][0].nums) {
                 var row = tbl.insertRow(0);
                 row.onclick = function (r, j) {
@@ -69,12 +75,18 @@
                 row.insertCell(4).innerHTML = data[i][0].nums[sub].first_factor_time;
                 row.setAttribute("expanded", "false");
                 // Highlight numbers you factored
-                for (var key in data[i][0].nums[sub].factorized_by_me) {
-                    if (alias == key && data[i][0].nums[sub].factorized_by_me[key] == true) {
+                for (var key in data[email_num][0].factorized_by_me){
+                    if (data[i][0].nums[sub].alias == key && data[email_num][0].factorized_by_me[key] == true) {
                         row.className = "ok"
                         break
                     }
                 }
+                /*for (var key in data[i][0].nums[sub].factorized_by_me) {
+                    if (data[i][0].nums[sub].alias == key && data[i][0].nums[sub].factorized_by_me[key] == true) {
+                        row.className = "ok"
+                        break
+                    }
+                }*/
 
             }
         }

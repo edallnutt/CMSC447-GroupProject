@@ -373,6 +373,7 @@ app.post('/submit-num', function(req, res) {
 
                                 student_data = {
                                     alias: randomFruit,
+                                    type: "admin",
                                     nums:[{
                                         alias: randomFruit+"_1",
                                         num_submit: student_number,
@@ -386,6 +387,7 @@ app.post('/submit-num', function(req, res) {
                             } else {
                                 student_data = {
                                     alias: randomFruit,
+                                    type: "student",
                                     num_submit: student_number,
                                     num_length: stdout,
                                     factor_count: 0,
@@ -407,6 +409,7 @@ app.post('/submit-num', function(req, res) {
 
                                 var num_data = {
                                         alias: aliasr+"_"+nextLabel,
+                                        type: "admin",
                                         num_submit: student_number,
                                         num_length: stdout,
                                         factor_count: 0,
@@ -421,6 +424,7 @@ app.post('/submit-num', function(req, res) {
                                 course[student_email] = [];
                                 student_data = {
                                     alias: objAlias,
+                                    type: "student",
                                     num_submit: student_number,
                                     num_length: stdout,
                                     factor_count: 0,
@@ -580,18 +584,46 @@ app.post('/submit-answer', function(req, res) {
                 if(stdout === '1'){
                     console.log("Correct Factor");
                     for(var key in course){
-                        if(course[key][0].alias === number_to_answer_alias){
-                            if(course[key][0].first_factor_time === ""){
-                                var currentdate = new Date();
-                                var datetime =  currentdate.getMonth() + "/"
-                                                + currentdate.getDate() + "/"
-                                                + currentdate.getFullYear() + " @ "
-                                                + currentdate.getHours() + ":"
-                                                + currentdate.getMinutes() + ":"
-                                                + currentdate.getSeconds();
-                                course[key][0].first_factor_time = datetime;
+                        if(course[key][0].type === "admin"){
+                            for(var sub in course[key][0].nums){
+                                console.log("nums alias" + course[key][0].nums[sub].alias);
+                                if(course[key][0].nums[sub].alias === number_to_answer_alias){
+                                    if(course[key][0].nums[sub].first_factor_time === ""){
+                                        var currentdate = new Date();
+                                        var hours = currentdate.getHours() - 4;
+                                        if(hours > 12){
+                                            hours = hours - 12;
+                                        }
+                                        var datetime =  (currentdate.getMonth() + 1) + "/"
+                                                        + currentdate.getDate() + "/"
+                                                        + currentdate.getFullYear() + " @ "
+                                                        + hours + ":"
+                                                        + currentdate.getMinutes() + ":"
+                                                        + currentdate.getSeconds();
+                                        course[key][0].nums[sub].first_factor_time = datetime;
+                                    }
+                                    course[key][0].nums[sub].factor_count++;
+                                }
                             }
-                            course[key][0].factor_count++;
+                        }
+                        else{
+                            if(course[key][0].alias === number_to_answer_alias){
+                                if(course[key][0].first_factor_time === ""){
+                                    var currentdate = new Date();
+                                    var hours = currentdate.getHours() - 4;
+                                    if(hours > 12){
+                                        hours = hours - 12;
+                                    }
+                                    var datetime =  (currentdate.getMonth() + 1) + "/"
+                                                    + currentdate.getDate() + "/"
+                                                    + currentdate.getFullYear() + " @ "
+                                                    + hours + ":"
+                                                    + currentdate.getMinutes() + ":"
+                                                    + currentdate.getSeconds();
+                                    course[key][0].first_factor_time = datetime;
+                                }
+                                course[key][0].factor_count++;
+                            }
                         }
                     }
                     course[email][0].factorized_by_me[number_to_answer_alias] = true;
@@ -602,7 +634,7 @@ app.post('/submit-answer', function(req, res) {
                 }
 
                 if(error !== null){
-                  console.log("Error -> "+error);
+                    console.log("Error -> "+error);
                 }
             }
         );
