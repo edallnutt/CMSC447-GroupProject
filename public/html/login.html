@@ -51,7 +51,7 @@
 
             } finally {
                 console.log('Logged in as: ' + tgoogleUser.getBasicProfile().getEmail());
-                $.post('/login?token='+token, function(data) {
+                $.post('/login?token='+token+'&email='+tgoogleUser.getBasicProfile().getEmail(), function(data) {
                     document.location.href = data;
                 });
             }
@@ -59,7 +59,7 @@
             alert("This site needs local storage and cannot work correctly in your browser. This is often caused by browsing in private mode. Some features may not work.");
 
             console.log('Logged in as: ' + tgoogleUser.getBasicProfile().getEmail());
-            $.post('/admin?token='+token, function(data) {
+            $.post('/admin?token='+token+'&email='+tgoogleUser.getBasicProfile().getEmail(), function(data) {
                 document.location.href = data;
             });
         }
