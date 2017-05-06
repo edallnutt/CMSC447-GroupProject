@@ -255,6 +255,7 @@ app.get('/', function(req,res) {
     res.sendFile(path.join(__dirname,'public/html/login.html'));
 });
 
+// Displays number submission page
 app.get('/submit-num', function(req, res) {
     var token = req.query.token;
     verifyStudent(token, function(student) {
@@ -330,200 +331,203 @@ app.post('/submit-num', function(req, res) {
     if(!isNaN(student_number) && student_number.length > 0){
         // Get bit length of student number submission
         var cmd = 'java -jar /home/ec2-user/CMSC447/CMSC447-GroupProject/public/Java/verify_numbers.jar check ' + student_number;
-        var output = exec(cmd,
-            function (error, stdout, stderr){
-                var bit_length = stdout;
-                if(parseInt(stdout) < 2){
+        var output = exec(cmd, function (error, stdout, stderr){
+            var bit_length = stdout;
+            if(parseInt(bit_length) < 2){
+                verifyAdmin(token, function(admin) {
+                    if(admin){
+                        // Incorrect submission redirects to submit-num page with navigation
+                        // corresponding to admin or student
+                        res.writeHead(200, {'Content-Type': 'text/html'});
+                        view("header", {}, res);
+                        view("nav-admin", {}, res);
+                        view("submit_num",  {error:"Invalid Bit length (< 80): " + bit_length}, res);
+                        view("footer", {}, res);
+                        res.end();
+                    }
+                    else{
+                        res.writeHead(200, {'Content-Type': 'text/html'});
+                        view("header", {}, res);
+                        view("nav", {}, res);
+                        view("submit_num",  {error:"Invalid Bit length (< 80): " + bit_length}, res);
+                        view("footer", {}, res);
+                        res.end();
+                    }
+                });
+            }
+            else if(parseInt(bit_length) > 2000){
+                // Incorrect submission redirects to submit-num page with navigation
+                // corresponding to admin or student
+                verifyAdmin(token, function(admin) {
+                    if(admin){
+                        res.writeHead(200, {'Content-Type': 'text/html'});
+                        view("header", {}, res);
+                        view("nav-admin", {}, res);
+                        view("submit_num",  {error:"Invalid Bit length (> 2000): " + bit_length}, res);
+                        view("footer", {}, res);
+                        res.end();
+                    }
+                    else{
+                        res.writeHead(200, {'Content-Type': 'text/html'});
+                        view("header", {}, res);
+                        view("nav", {}, res);
+                        view("submit_num",  {error:"Invalid Bit length (> 2000): " + bit_length}, res);
+                        view("footer", {}, res);
+                        res.end();
+                    }
+                });
+            }
+            else{
+                // Check if submission is a prime number
+                var isPrimeCmd = "python /home/ec2-user/CMSC447/CMSC447-GroupProject/public/python/prime.py 10 " + student_number;
+                var outputIsPrime = exec(isPrimeCmd, function (error, stdout, stderr){
+                    var isPrime;
+                    if(stdout === "True\n"){
+                        isPrime = "Yes";
+                    }
+                    else{
+                        isPrime = "No";
+                    }
                     verifyAdmin(token, function(admin) {
-                        if(admin){
-                            res.writeHead(200, {'Content-Type': 'text/html'});
-                            view("header", {}, res);
-                            view("nav-admin", {}, res);
-                            view("submit_num",  {error:"Invalid Bit length (< 80): " + bit_length}, res);
-                            view("footer", {}, res);
-                            res.end();
-                        }
-                        else{
-                            res.writeHead(200, {'Content-Type': 'text/html'});
-                            view("header", {}, res);
-                            view("nav", {}, res);
-                            view("submit_num",  {error:"Invalid Bit length (< 80): " + bit_length}, res);
-                            view("footer", {}, res);
-                            res.end();
-                        }
-                    });
-                }
-                else if(parseInt(stdout) > 2000){
-                    verifyAdmin(token, function(admin) {
-                        if(admin){
-                            res.writeHead(200, {'Content-Type': 'text/html'});
-                            view("header", {}, res);
-                            view("nav-admin", {}, res);
-                            view("submit_num",  {error:"Invalid Bit length (> 2000): " + bit_length}, res);
-                            view("footer", {}, res);
-                            res.end();
-                        }
-                        else{
-                            res.writeHead(200, {'Content-Type': 'text/html'});
-                            view("header", {}, res);
-                            view("nav", {}, res);
-                            view("submit_num",  {error:"Invalid Bit length (> 2000): " + bit_length}, res);
-                            view("footer", {}, res);
-                            res.end();
-                        }
-                    });
-                }
-                else{
-                    var isPrimeCmd = "python /home/ec2-user/CMSC447/CMSC447-GroupProject/public/python/prime.py 10 " + student_number;
-                    var outputIsPrime = exec(isPrimeCmd,
-                        function (error, stdout, stderr){
-                            var isPrime;
-                            console.log(stdout);
-                            if(stdout === "True\n"){
-                                isPrime = "Yes";
-                            }
-                            else{
-                                isPrime = "No";
-                            }
-                            verifyAdmin(token, function(admin) {
-                                var course = JSON.parse(fs.readFileSync('./data.json', 'utf-8'));
-                                var fruits = JSON.parse(fs.readFileSync('./fruit.json', 'utf-8'));
-                                var student_data;
-                                var randomFruit;
-                                var counter = 0;
-                                if(isEmpty(course[student_email])){
-                                    randomFruit = fruits["fruits"][Math.floor((Math.random() * Object.keys(fruits["fruits"]).length))].name;
-                                    while(counter != Object.keys(course).length){
-                                        counter = 0;
-                                        for(var student in course){
-                                            if(course[student][0].alias === randomFruit){
-                                                randomFruit = fruits["fruits"][Math.floor((Math.random() * Object.keys(fruits["fruits"]).length))].name;
-                                            }
-                                            else{
-                                                counter++;
-                                            }
-                                        }
-                                    }
-                                    course[student_email] = [];
+                        var course = JSON.parse(fs.readFileSync('./data.json', 'utf-8'));
+                        var fruits = JSON.parse(fs.readFileSync('./fruit.json', 'utf-8'));
+                        var student_data;
+                        var randomFruit;
+                        var counter = 0;
 
-                                    /*for(var key in fruits["fruits"]){
-                                        var name = fruits["fruits"][key].name;
-                                        factorized_by_me_list[name] = false;
-                                    }*/
-                                    //factorized_by_me_list = [];
-                                    if(admin) {
-
-                                        student_data = {
-                                            alias: randomFruit,
-                                            nums:[{
-                                                alias: randomFruit+"_1",
-                                                num_submit: student_number,
-                                                num_length: bit_length,
-                                                num_prime: isPrime,
-                                                factor_count: 0,
-                                                first_factor_time: ""}],
-                                            factorized_by_me: factorized_by_me_list
-                                        };
-                                        course[student_email].push(student_data);
-
-                                    } else {
-                                        student_data = {
-                                            alias: randomFruit,
-                                            num_submit: student_number,
-                                            num_length: bit_length,
-                                            num_prime: isPrime,
-                                            factor_count: 0,
-                                            first_factor_time: "",
-                                            factorized_by_me: factorized_by_me_list
-                                        };
-                                        course[student_email].push(student_data);
-                                    }
-                                }
-                                else{
-
-                                    if(admin) {
-
-                                        var aliasr = course[student_email][0].alias;
-                                        var oldNums = course[student_email][0].nums;
-
-                                        if(oldNums.length === 0){
-                                            var num_data = {
-                                                    alias: aliasr+"_1",
-                                                    num_submit: student_number,
-                                                    num_length: bit_length,
-                                                    num_prime: isPrime,
-                                                    factor_count: 0,
-                                                    first_factor_time: ""
-                                            };
-                                            course[student_email][0].nums.push(num_data);
-                                        }
-                                        else{
-                                            var lastLabel = oldNums[oldNums.length-1].alias.split("_")[1];
-                                            var nextLabel = parseInt(lastLabel) + 1;
-
-                                            var num_data = {
-                                                    alias: aliasr+"_"+nextLabel,
-                                                    num_submit: student_number,
-                                                    num_length: bit_length,
-                                                    num_prime: isPrime,
-                                                    factor_count: 0,
-                                                    first_factor_time: ""
-                                            };
-                                            course[student_email][0].nums.push(num_data);
-                                        }
-
-                                    } else {
-                                        var objAlias = course[student_email][0].alias;
-                                        var objFactorizedList = course[student_email][0].factorized_by_me;
-                                        course[student_email] = [];
-                                        student_data = {
-                                            alias: objAlias,
-                                            num_submit: student_number,
-                                            num_length: bit_length,
-                                            num_prime: isPrime,
-                                            factor_count: 0,
-                                            first_factor_time: "",
-                                            factorized_by_me: objFactorizedList
-                                        };
-
-                                        course[student_email].push(student_data);
-                                    }
-                                }
-
-                                fs.writeFileSync('./data.json', JSON.stringify(course), 'utf-8');
-
-                                verifyAdmin(token, function(admin) {
-                                    if(admin){
-                                        res.writeHead(200, {'Content-Type': 'text/html'});
-                                        view("header", {}, res);
-                                        view("nav-admin", {}, res);
-                                        view("submit_num",  {error:"Valid Bit length: " + bit_length + ", Prime: " + isPrime}, res);
-                                        view("footer", {}, res);
-                                        res.end();
+                        // Assigns random fruit to new submissions
+                        if(isEmpty(course[student_email])){
+                            randomFruit = fruits["fruits"][Math.floor((Math.random() * Object.keys(fruits["fruits"]).length))].name;
+                            while(counter != Object.keys(course).length){
+                                counter = 0;
+                                for(var student in course){
+                                    if(course[student][0].alias === randomFruit){
+                                        randomFruit = fruits["fruits"][Math.floor((Math.random() * Object.keys(fruits["fruits"]).length))].name;
                                     }
                                     else{
-                                        res.writeHead(200, {'Content-Type': 'text/html'});
-                                        view("header", {}, res);
-                                        view("nav", {}, res);
-                                        view("submit_num",  {error:"Valid Bit length: " + bit_length + ", Prime: " + isPrime}, res);
-                                        view("footer", {}, res);
-                                        res.end();
+                                        counter++;
                                     }
-                                });
-                                /*res.writeHead(303, {"Location": "/submit-num?token=" + token});
-                                res.end();*/
-                            });
-                            if(error !== null){
-                              console.log("Error -> "+error);
+                                }
+                            }
+                            course[student_email] = [];
+
+                            if(admin) {
+                                // Inputs data for first admin submissions
+                                student_data = {
+                                    alias: randomFruit,
+                                    nums:[{
+                                        alias: randomFruit+"_1",
+                                        num_submit: student_number,
+                                        num_length: bit_length,
+                                        num_prime: isPrime,
+                                        factor_count: 0,
+                                        first_factor_time: ""}],
+                                    factorized_by_me: factorized_by_me_list
+                                };
+                                course[student_email].push(student_data);
+
+                            } else {
+                                // Inputs data for first student submissions
+                                student_data = {
+                                    alias: randomFruit,
+                                    num_submit: student_number,
+                                    num_length: bit_length,
+                                    num_prime: isPrime,
+                                    factor_count: 0,
+                                    first_factor_time: "",
+                                    factorized_by_me: factorized_by_me_list
+                                };
+                                course[student_email].push(student_data);
+                            }
+                        }
+                        else{
+
+                            if(admin) {
+                                // Inputs data for admin submissions
+                                var aliasr = course[student_email][0].alias;
+                                var oldNums = course[student_email][0].nums;
+
+                                if(oldNums.length === 0){
+                                    var num_data = {
+                                            alias: aliasr+"_1",
+                                            num_submit: student_number,
+                                            num_length: bit_length,
+                                            num_prime: isPrime,
+                                            factor_count: 0,
+                                            first_factor_time: ""
+                                    };
+                                    course[student_email][0].nums.push(num_data);
+                                }
+                                else{
+                                    var lastLabel = oldNums[oldNums.length-1].alias.split("_")[1];
+                                    var nextLabel = parseInt(lastLabel) + 1;
+
+                                    var num_data = {
+                                            alias: aliasr+"_"+nextLabel,
+                                            num_submit: student_number,
+                                            num_length: bit_length,
+                                            num_prime: isPrime,
+                                            factor_count: 0,
+                                            first_factor_time: ""
+                                    };
+                                    course[student_email][0].nums.push(num_data);
+                                }
+
+                            } else {
+                                // Inputs data for student admin submissions
+                                var objAlias = course[student_email][0].alias;
+                                var objFactorizedList = course[student_email][0].factorized_by_me;
+                                course[student_email] = [];
+                                student_data = {
+                                    alias: objAlias,
+                                    num_submit: student_number,
+                                    num_length: bit_length,
+                                    num_prime: isPrime,
+                                    factor_count: 0,
+                                    first_factor_time: "",
+                                    factorized_by_me: objFactorizedList
+                                };
+
+                                course[student_email].push(student_data);
+                            }
+                        }
+
+                        fs.writeFileSync('./data.json', JSON.stringify(course), 'utf-8');
+
+                        // Correct submission redirects to submit-num page with navigation
+                        // corresponding to admin or student
+                        verifyAdmin(token, function(admin) {
+                            if(admin){
+                                res.writeHead(200, {'Content-Type': 'text/html'});
+                                view("header", {}, res);
+                                view("nav-admin", {}, res);
+                                view("submit_num",  {error:"Valid Bit length: " + bit_length + ", Prime: " + isPrime}, res);
+                                view("footer", {}, res);
+                                res.end();
+                            }
+                            else{
+                                res.writeHead(200, {'Content-Type': 'text/html'});
+                                view("header", {}, res);
+                                view("nav", {}, res);
+                                view("submit_num",  {error:"Valid Bit length: " + bit_length + ", Prime: " + isPrime}, res);
+                                view("footer", {}, res);
+                                res.end();
                             }
                         });
-                }
-                if(error !== null){
-                  console.log("Error -> "+error);
-                }
+                    });
+                    if(error !== null){
+                      console.log("Error -> "+error);
+                    }
+                });
+            }
+            if(error !== null){
+              console.log("Error -> "+error);
+            }
         });
     }
     else {
+        // Invalid submission redirects to submit-num page with navigation
+        // corresponding to admin or student
         verifyAdmin(token, function(admin) {
             if(admin){
                 res.writeHead(200, {'Content-Type': 'text/html'});
@@ -545,6 +549,7 @@ app.post('/submit-num', function(req, res) {
     }
 });
 
+// Displays answer submission page
 app.get('/submit-answer', function(req, res) {
     var token = req.query.token;
     var email = req.query.email;
@@ -555,13 +560,6 @@ app.get('/submit-answer', function(req, res) {
                 checkSubmissionStatus(function (posted) {
                     switch (posted) {
                         case -1:
-                            /*res.writeHead(200, {'Content-Type': 'text/html'});
-                            view("header", {}, res);
-                            view("nav", {}, res);
-                            table_view("submit-answer", fs.readFileSync('./data.json', 'utf-8'), email, res, adminList);
-                            view("footer", {}, res);
-                            res.end();*/
-                            /* BELOW IS THE ACTUAL CODE FOR THIS SECTION, ABOVE IS FOR TESTING */
                             res.writeHead(200, {'Content-Type': 'text/html'});
                              view("header", {}, res);
                              view("nav", {}, res);
@@ -593,13 +591,6 @@ app.get('/submit-answer', function(req, res) {
                         checkSubmissionStatus(function (posted) {
                             switch (posted) {
                                 case -1:
-                                    /*res.writeHead(200, {'Content-Type': 'text/html'});
-                                    view("header", {}, res);
-                                    view("nav", {}, res);
-                                    table_view("submit-answer", fs.readFileSync('./data.json', 'utf-8'), email, res, adminList);
-                                    view("footer", {}, res);
-                                    res.end();*/
-                                    /* BELOW IS THE ACTUAL CODE FOR THIS SECTION, ABOVE IS FOR TESTING */
                                     res.writeHead(200, {'Content-Type': 'text/html'});
                                      view("header", {}, res);
                                      view("nav-admin", {}, res);
@@ -631,7 +622,6 @@ app.get('/submit-answer', function(req, res) {
                 });
             }
         });
-
     });
 });
 
@@ -643,73 +633,97 @@ app.post('/submit-answer', function(req, res) {
     var number_to_answer = req.body.num_to_answer;
     var number_to_answer_alias = req.body.num_to_answer_alias;
     var course = JSON.parse(fs.readFileSync('./data.json', 'utf-8'));
-    console.log( req.body.user_email + '\n'
-				+req.body.submit_answer + '\n'
-				+req.body.num_to_answer + '\n'
-                +req.body.num_to_answer_alias + '\n');
+
     // This Comment block initializes the arguments for the java program to check the
-    // Answer the student submits. *CHANGE VARIABLE TO GET THE VARIABLE student_answer*
+    // answer the student submits and the primality
     var two_nums = student_answer.split(" ");
     var cmd = 'java -jar /home/ec2-user/CMSC447/CMSC447-GroupProject/public/Java/verify_numbers.jar answer ' + number_to_answer + ' ';
     var isPrimeCmd = 'python /home/ec2-user/CMSC447/CMSC447-GroupProject/public/python/prime.py 10 ';
     for (var i = 0; i < two_nums.length; i ++){
         cmd += two_nums[i] + ' ';
         isPrimeCmd += two_nums[i] + ' ';
-        //args.push(two_nums[i]);
     }
 
+    // Checks if alias was answers already
     if(course[email][0].factorized_by_me[number_to_answer_alias] !== true){
-        // This comment block runs the java program to check the factorization
+
+        // Check primality of submitted answers
         var isPrimeOutput = exec(isPrimeCmd, function(error, stdout, stderr){
             if(stdout === "True\n"){
+
+                // If prime, checks if the factors are correct
                 var output = exec(cmd, function (error, stdout, stderr){
                     var correctFactor = stdout;
+
+                    // If correct
                     if(correctFactor === '1'){
                         for(var key in course){
+
+                            // If current key is an admin key
                             if(!isEmpty(course[key][0].nums)){
                                 for(var sub in course[key][0].nums){
+
+                                    // Locates admin alias being answered
                                     if(course[key][0].nums[sub].alias === number_to_answer_alias){
+
+                                        // Updates time of factoring if first time factored
                                         if(course[key][0].nums[sub].first_factor_time === ""){
                                             var currentdate = new Date();
+                                            var dayTime = "AM";
                                             var hours = currentdate.getHours() - 4;
                                             if(hours > 12){
                                                 hours = hours - 12;
+                                                dayTime = "PM";
                                             }
                                             var datetime =  (currentdate.getMonth() + 1) + "/"
                                                             + currentdate.getDate() + "/"
                                                             + currentdate.getFullYear() + " @ "
                                                             + hours + ":"
                                                             + currentdate.getMinutes() + ":"
-                                                            + currentdate.getSeconds();
+                                                            + currentdate.getSeconds() + " "
+                                                            + dayTime;
                                             course[key][0].nums[sub].first_factor_time = datetime;
                                         }
+
+                                        // Updates factor count of admin alias being answered
                                         course[key][0].nums[sub].factor_count++;
                                     }
                                 }
                             }
                             else{
+                                // If not admin, locates student alias being answered
                                 if(course[key][0].alias === number_to_answer_alias){
+
+                                    // Updates time of factoring if first time factored
                                     if(course[key][0].first_factor_time === ""){
                                         var currentdate = new Date();
+                                        var dayTime = "AM";
                                         var hours = currentdate.getHours() - 4;
                                         if(hours > 12){
                                             hours = hours - 12;
+                                            dayTime = "PM";
                                         }
                                         var datetime =  (currentdate.getMonth() + 1) + "/"
                                                         + currentdate.getDate() + "/"
                                                         + currentdate.getFullYear() + " @ "
                                                         + hours + ":"
                                                         + currentdate.getMinutes() + ":"
-                                                        + currentdate.getSeconds();
+                                                        + currentdate.getSeconds() + " "
+                                                        + dayTime;
                                         course[key][0].first_factor_time = datetime;
                                     }
+
+                                    // Updates factor count of student alias being answered
                                     course[key][0].factor_count++;
                                 }
                             }
                         }
+
+                        // Updates factorized_by_me list of user submitting an answer
                         course[email][0].factorized_by_me[number_to_answer_alias] = true;
                         fs.writeFileSync('./data.json', JSON.stringify(course), 'utf-8');
 
+                        // Displays answer submission page alerting that the submitted factors are correct
                         getAdmins(function(adminList) {
                             verifyAdmin(token, function(admin) {
                                 if(admin){
@@ -723,7 +737,7 @@ app.post('/submit-answer', function(req, res) {
                                 else{
                                     res.writeHead(200, {'Content-Type': 'text/html'});
                                     view("header", {}, res);
-                                    view("nav", {}, res);
+                                    view("nav-student-answer", {}, res);
                                     table_view("submit-answer", fs.readFileSync('./data.json', 'utf-8'), {check:"Correct"}, email, res, adminList);
                                     view("footer", {}, res);
                                     res.end();
@@ -732,6 +746,7 @@ app.post('/submit-answer', function(req, res) {
                         });
                     }
                     else{
+                        // Displays answer submission page alerting that the submitted factors are incorrect
                         getAdmins(function(adminList) {
                             verifyAdmin(token, function(admin) {
                                 if(admin){
@@ -745,7 +760,7 @@ app.post('/submit-answer', function(req, res) {
                                 else{
                                     res.writeHead(200, {'Content-Type': 'text/html'});
                                     view("header", {}, res);
-                                    view("nav", {}, res);
+                                    view("nav-student-answer", {}, res);
                                     table_view("submit-answer", fs.readFileSync('./data.json', 'utf-8'), {check:"Incorrect Factors"}, email, res, adminList);
                                     view("footer", {}, res);
                                     res.end();
@@ -760,6 +775,7 @@ app.post('/submit-answer', function(req, res) {
                 });
             }
             else{
+                // Displays answer submission page alerting that the submitted factors are not prime
                 getAdmins(function(adminList) {
                     verifyAdmin(token, function(admin) {
                         if(admin){
@@ -773,7 +789,7 @@ app.post('/submit-answer', function(req, res) {
                         else{
                             res.writeHead(200, {'Content-Type': 'text/html'});
                             view("header", {}, res);
-                            view("nav", {}, res);
+                            view("nav-student-answer", {}, res);
                             table_view("submit-answer", fs.readFileSync('./data.json', 'utf-8'), {check:"Invalid Factors: Not Prime"}, email, res, adminList);
                             view("footer", {}, res);
                             res.end();
@@ -788,6 +804,8 @@ app.post('/submit-answer', function(req, res) {
         });
     }
     else{
+        // Displays answer submission page alerting that the alias
+        // being answered was already answered
         getAdmins(function(adminList) {
             verifyAdmin(token, function(admin) {
                 if(admin){
@@ -809,31 +827,6 @@ app.post('/submit-answer', function(req, res) {
             });
         });
     }
-
-
-
-    /*getAdmins(function(adminList) {
-        verifyAdmin(token, function(admin) {
-            if(admin){
-                res.writeHead(200, {'Content-Type': 'text/html'});
-                view("header", {}, res);
-                view("nav-admin", {}, res);
-                table_view("submit-answer", fs.readFileSync('./data.json', 'utf-8'), {check:""}, email, res, adminList);
-                view("footer", {}, res);
-                res.end();
-            }
-            else{
-                res.writeHead(200, {'Content-Type': 'text/html'});
-                view("header", {}, res);
-                view("nav", {}, res);
-                table_view("submit-answer", fs.readFileSync('./data.json', 'utf-8'), {check:""}, email, res, adminList);
-                view("footer", {}, res);
-                res.end();
-            }
-        });
-    });
-    res.writeHead(303, {"Location": "/submit-answer?token=" + token + "&email=" + email});
-    res.end();*/
 });
 
 app.get('/statistics', function(req, res) {
@@ -983,8 +976,8 @@ app.get('/admin', function(req,res) {
 });
 
 
-//link to /close?status=true to close submissions, everything else opens them back up
-//redirects to admin page
+// link to /close?status=true to close submissions, everything else opens them back up
+// redirects to admin page
 app.get('/close', function(req,res) {
     var file = require('./config.json');
     var val = (req.query.status === "true");
@@ -1003,8 +996,8 @@ app.get('/close', function(req,res) {
 });
 
 
-//link to /publish?status=true to publish submissions, everything else hides them
-//redirects to admin page
+// link to /publish?status=true to publish submissions, everything else hides them
+// redirects to admin page
 app.get('/publish', function(req,res) {
     var file = require('./config.json');
     var val = (req.query.status == "true");
@@ -1022,13 +1015,24 @@ app.get('/publish', function(req,res) {
     });
 });
 
+// Uploads student.txt file for student authentication
 app.post('/fileupload', function(req, res){
+
+    // Gets form of uploaded file
     var form = new formidable.IncomingForm();
+
+    // Parses form for the txt file
     form.parse(req, function (err, fields, files) {
+
+        // Path is updated for student.txt
         var oldpath = files.filetoupload.path;
         var newpath = '/home/ec2-user/CMSC447/CMSC447-GroupProject/' + files.filetoupload.name;
         fs.rename(oldpath, newpath, function (err) {
+
+            // If an error occurs or the file is not name "students.txt"
             if (err || files.filetoupload.name !== 'students.txt'){
+
+                // Displays admin page alerting admin of unsuccesful upload
                 getAdmins(function(adminList) {
                     res.writeHead(200, {'Content-Type': 'text/html'});
                     view("header", {}, res);
@@ -1039,6 +1043,7 @@ app.post('/fileupload', function(req, res){
                 });
             }
             else{
+                // Displays admin page alerting admin of successful upload
                 getAdmins(function(adminList) {
                     res.writeHead(200, {'Content-Type': 'text/html'});
                     view("header", {}, res);
@@ -1052,47 +1057,46 @@ app.post('/fileupload', function(req, res){
     });
 });
 
-//Admin function for deleting submissions
+// Admin function for deleting submissions
 app.get('/delete-num', function(req, res) {
-    //fs.writeFileSync('./data.json', JSON.stringify(file), 'utf-8');
     var token = req.query.token;
     var email = req.query.email;
     var alias = req.query.alias;
     var num = req.query.num;
-
-    console.log(email);
-    console.log(alias);
-
     var file = JSON.parse(fs.readFileSync('./data.json', 'utf-8'));
+
     verifyAdmin(token, function(admin) {
        if(admin) {
             getAdmins(function(admins) {
                 getStudents(function(students) {
                     var json = {};
+
+                    // If email is an admin email
                     if(admins.indexOf(email) !== -1) {
                         for (var i = 0; i < admins.length; i++) {
-                            if (admins[i] !== email && !isEmpty(file[admins[i]])) {
-                                json[admins[i]] = file[admins[i]];
-                            } else {
-                                var newNums = [];
-                                var newFactorizedList = {};
-                                for(var n in file[admins[i]][0].nums) {
-                                    // Creates new json data for everything but deleted submission
-                                    if(file[admins[i]][0].nums[n].num_submit.slice(-10) != num && file[admins[i]][0].nums[n].alias != alias) {
-                                        newNums.push(file[admins[i]][0].nums[n]);
-                                        if(file[admins[i]][0].factorized_by_me[file[admins[i]][0].nums[n].alias] === true){
-                                            newFactorizedList[file[admins[i]][0].nums[n].alias] = true;
-                                        }
+                            var newNums = [];
+                            var newFactorizedList = {};
+                            for(var n in file[admins[i]][0].nums) {
+
+                                // Creates new json data for everything but deleted submission
+                                if(file[admins[i]][0].nums[n].num_submit.slice(-10) != num && file[admins[i]][0].nums[n].alias != alias) {
+                                    newNums.push(file[admins[i]][0].nums[n]);
+
+                                    // Updates factorized_by_me list of admin data
+                                    if(file[admins[i]][0].factorized_by_me[file[admins[i]][0].nums[n].alias] === true){
+                                        newFactorizedList[file[admins[i]][0].nums[n].alias] = true;
                                     }
                                 }
-                                json[admins[i]] = [];
-                                var newObj = {
-                                    alias : file[admins[i]][0].alias,
-                                    nums : newNums,
-                                    factorized_by_me : newFactorizedList
-                                };
-                                json[admins[i]].push(newObj);
                             }
+
+                            // Pushes new admin data without deleted submissions
+                            json[admins[i]] = [];
+                            var newObj = {
+                                alias : file[admins[i]][0].alias,
+                                nums : newNums,
+                                factorized_by_me : newFactorizedList
+                            };
+                            json[admins[i]].push(newObj);
                         }
 
                         for (var i = 0; i < students.length; i++) {
@@ -1104,42 +1108,49 @@ app.get('/delete-num', function(req, res) {
                         fs.writeFileSync('./data.json', JSON.stringify(json), 'utf-8');
                         res.send();
                     } else {
-                        console.log("entered1");
+
+                        // Creates new json data for everything but deleted submission
                         var newFactorizedList = {};
                         for (var i = 0; i < students.length; i++) {
-                            console.log(students[i]);
-                            if (students[i].trim() !== email && !isEmpty(file[students[i].trim()])) {
-                                console.log("entered2");
-                                for(var key in file[students[i].trim()][0].factorized_by_me){
-                                    console.log("student key" + key);
+
+                            var newStudent = students[i].trim();
+                            if (newStudent !== email && !isEmpty(file[newStudent])) {
+
+                                // Updates factorized_by_me list of student data
+                                for(var key in file[newStudent][0].factorized_by_me){
                                     if(key !== alias){
                                         newFactorizedList[key] = true;
                                     }
                                 }
-                                json[students[i].trim()] = [];
+
+                                // Pushes new student data without deleted submissions
+                                json[newStudent] = [];
                                 var newObj = {
-                                    alias : file[students[i].trim()][0].alias,
-                                    num_submit: file[students[i].trim()][0].num_submit,
-                                    num_length: file[students[i].trim()][0].num_length,
-                                    num_prime: file[students[i].trim()][0].num_prime,
-                                    factor_count: file[students[i].trim()][0].factor_count,
-                                    first_factor_time: file[students[i].trim()][0].first_factor_time,
+                                    alias : file[newStudent][0].alias,
+                                    num_submit: file[newStudent][0].num_submit,
+                                    num_length: file[newStudent][0].num_length,
+                                    num_prime: file[newStudent][0].num_prime,
+                                    factor_count: file[newStudent][0].factor_count,
+                                    first_factor_time: file[newStudent][0].first_factor_time,
                                     factorized_by_me : newFactorizedList
                                 };
-                                json[students[i].trim()].push(newObj);
-                                //json[students[i].trim()] = file[students[i].trim()];
+                                json[newStudent].push(newObj);
                             }
                         }
 
+                        // Creates new json data for everything but deleted submission
                         var newFactorizedListAdmin = {};
                         for (var i = 0; i < admins.length; i++) {
                             if (!isEmpty(file[admins[i]])) {
+
+                                // Updates factorized_by_me list of student data
                                 for(var key in file[admins[i]][0].factorized_by_me){
-                                    console.log("admin key" + key);
                                     if(key !== alias){
                                         newFactorizedListAdmin[key] = true;
                                     }
                                 }
+
+                                // Pushes new admin data without deleted submissions
                                 json[admins[i]] = [];
                                 var newObj = {
                                     alias : file[admins[i]][0].alias,
@@ -1147,14 +1158,12 @@ app.get('/delete-num', function(req, res) {
                                     factorized_by_me : newFactorizedListAdmin
                                 };
                                 json[admins[i]].push(newObj);
-                                //json[admins[i]] = file[admins[i]];
                             }
                         }
 
                         fs.writeFileSync('./data.json', JSON.stringify(json), 'utf-8');
                         res.send();
                     }
-
                 });
             });
        }
@@ -1162,7 +1171,7 @@ app.get('/delete-num', function(req, res) {
     });
 });
 
-//logs user out of google account
+// logs user out of google account
 app.get('/logout', function(req,res) {
 
     res.redirect('https://accounts.google.com/logout');
@@ -1171,18 +1180,17 @@ app.get('/logout', function(req,res) {
 
 app.get('/number-list', function(req, res) {
     var file = JSON.parse(fs.readFileSync('./data.json', 'utf-8'));
-    //var file = require('./data.json');
     var list = [];
     var body = '';
 
     for(var email in file) {
         if(isEmpty(file[email][0].nums)){
-            var str = file[email][0].alias+' : '+file[email][0].num_submit;
+            var str = file[email][0].alias+': '+file[email][0].num_submit;
             list.push(str);
         }
         else{
             for(var sub in file[email][0].nums){
-                var str = file[email][0].nums[sub].alias+' : '+file[email][0].nums[sub].num_submit;
+                var str = file[email][0].nums[sub].alias+': '+file[email][0].nums[sub].num_submit;
                 list.push(str);
             }
         }
