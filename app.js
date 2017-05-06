@@ -1024,36 +1024,49 @@ app.post('/fileupload', function(req, res){
     // Parses form for the txt file
     form.parse(req, function (err, fields, files) {
 
-        // Path is updated for student.txt
-        var oldpath = files.filetoupload.path;
-        var newpath = '/home/ec2-user/CMSC447/CMSC447-GroupProject/' + files.filetoupload.name;
-        fs.rename(oldpath, newpath, function (err) {
+        // If file is not named "students.txt"
+        if(files.filetoupload.name !== 'students.txt'){
+            // Displays admin page alerting admin of unsuccesful upload
+            getAdmins(function(adminList) {
+                res.writeHead(200, {'Content-Type': 'text/html'});
+                view("header", {}, res);
+                view("nav-admin", {}, res);
+                table_view("admin", fs.readFileSync('./data.json', 'utf-8'), {check:"Unsuccesful Upload"}, 'admin', res, adminList);
+                view("footer", {}, res);
+                res.end();
+            });
+        }
+        else{
+            // Path is updated for student.txt
+            var oldpath = files.filetoupload.path;
+            var newpath = '/home/ec2-user/CMSC447/CMSC447-GroupProject/' + files.filetoupload.name;
+            fs.rename(oldpath, newpath, function (err) {
 
-            // If an error occurs or the file is not name "students.txt"
-            if (err || files.filetoupload.name !== 'students.txt'){
-
-                // Displays admin page alerting admin of unsuccesful upload
-                getAdmins(function(adminList) {
-                    res.writeHead(200, {'Content-Type': 'text/html'});
-                    view("header", {}, res);
-                    view("nav-admin", {}, res);
-                    table_view("admin", fs.readFileSync('./data.json', 'utf-8'), {check:"Unsuccesful Upload"}, 'admin', res, adminList);
-                    view("footer", {}, res);
-                    res.end();
-                });
-            }
-            else{
-                // Displays admin page alerting admin of successful upload
-                getAdmins(function(adminList) {
-                    res.writeHead(200, {'Content-Type': 'text/html'});
-                    view("header", {}, res);
-                    view("nav-admin", {}, res);
-                    table_view("admin", fs.readFileSync('./data.json', 'utf-8'), {check:"Successful Upload"}, 'admin', res, adminList);
-                    view("footer", {}, res);
-                    res.end();
-                });
-            }
-        });
+                // If an error occurs
+                if (err){
+                    // Displays admin page alerting admin of unsuccesful upload
+                    getAdmins(function(adminList) {
+                        res.writeHead(200, {'Content-Type': 'text/html'});
+                        view("header", {}, res);
+                        view("nav-admin", {}, res);
+                        table_view("admin", fs.readFileSync('./data.json', 'utf-8'), {check:"Unsuccesful Upload"}, 'admin', res, adminList);
+                        view("footer", {}, res);
+                        res.end();
+                    });
+                }
+                else{
+                    // Displays admin page alerting admin of successful upload
+                    getAdmins(function(adminList) {
+                        res.writeHead(200, {'Content-Type': 'text/html'});
+                        view("header", {}, res);
+                        view("nav-admin", {}, res);
+                        table_view("admin", fs.readFileSync('./data.json', 'utf-8'), {check:"Successful Upload"}, 'admin', res, adminList);
+                        view("footer", {}, res);
+                        res.end();
+                    });
+                }
+            });
+        }
     });
 });
 
