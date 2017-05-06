@@ -16,7 +16,7 @@
         <tbody>
         </tbody>
     </table>
-</div>
+</div><br /><br />
 
 <div style="text-align: center">
     <button type="button" onclick="adminLink('/close?status=true&')">Close Submissions</button>
@@ -24,12 +24,16 @@
     <button type="button" onclick="adminLink('/publish?status=true&')">Publish Submissions</button>
     <button type="button" onclick="adminLink('/publish?status=false&')">Un-publish Submissions</button>
     <button type="button" onclick="deleteSelection()">Delete Selection</button>
-    <!-- <button type="button" onclick="adminLink('/upload')">Upload Student List</button> -->
+    <form action="fileupload" method="post" enctype="multipart/form-data">
+        <input type="file" id="files" style="visibility:hidden" name="filetoupload">
+        <label for="files" class="btn btn-primary">Upload students.txt file</label>
+        <input type="submit" value="Submit" class="btn btn-primary">
+        <h3>{{check}}</h3>
+    </form>
 </div>
 
 
 <script>
-
     /*
         So we can either use $.get(admins) to check for mult subs and have the special case or everything can be handled
         like there are multiple submissions when in reality there is only one for everyone except admins

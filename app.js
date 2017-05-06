@@ -17,6 +17,7 @@ var users = require('./routes/users');
 
 var config = require('./config.json');
 var bodyParser = require('body-parser');
+var formidable = require('formidable');
 
 var app = express();
 
@@ -862,14 +863,6 @@ app.get('/statistics', function(req, res) {
     });
 });
 
-app.get('/test-java', function(req, res){
-
-    // var i = exec
-
-    // console.log(i)
-    res.send(i);
-});
-
 app.get('/home', function(req,res) {
     var token = req.query.token;
     var email = req.query.email;
@@ -1029,9 +1022,35 @@ app.get('/publish', function(req,res) {
     });
 });
 
-/*app.get('/upload', function(req, res){
-
-});*/
+app.post('/fileupload', function(req, res){
+    var form = new formidable.IncomingForm();
+    form.parse(req, function (err, fields, files) {
+        var oldpath = files.filetoupload.path;
+        var newpath = '/home/ec2-user/CMSC447/CMSC447-GroupProject/' + files.filetoupload.name;
+        fs.rename(oldpath, newpath, function (err) {
+            if (err || files.filetoupload.name !== 'students.txt'){
+                getAdmins(function(adminList) {
+                    res.writeHead(200, {'Content-Type': 'text/html'});
+                    view("header", {}, res);
+                    view("nav-admin", {}, res);
+                    table_view("admin", fs.readFileSync('./data.json', 'utf-8'), {check:"Unsuccesful Upload"}, 'admin', res, adminList);
+                    view("footer", {}, res);
+                    res.end();
+                });
+            }
+            else{
+                getAdmins(function(adminList) {
+                    res.writeHead(200, {'Content-Type': 'text/html'});
+                    view("header", {}, res);
+                    view("nav-admin", {}, res);
+                    table_view("admin", fs.readFileSync('./data.json', 'utf-8'), {check:"Successful Upload"}, 'admin', res, adminList);
+                    view("footer", {}, res);
+                    res.end();
+                });
+            }
+        });
+    });
+});
 
 //Admin function for deleting submissions
 app.get('/delete-num', function(req, res) {
