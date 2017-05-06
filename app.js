@@ -112,7 +112,7 @@ function verifyStudent(id, callback) {
         if(email != null) {
             getStudents(function(list) {
                 for(var i = 0;i < list.length;i++) {
-                    if(list[i] === email) {
+                    if(list[i].trim() === email) {
                         callback(true);
                         return;
                     }
@@ -497,7 +497,7 @@ app.post('/submit-num', function(req, res) {
                                         res.writeHead(200, {'Content-Type': 'text/html'});
                                         view("header", {}, res);
                                         view("nav-admin", {}, res);
-                                        view("submit_num",  {error:"Valid Bit length: " + bit_length}, res);
+                                        view("submit_num",  {error:"Valid Bit length: " + bit_length + ", Prime: " + isPrime}, res);
                                         view("footer", {}, res);
                                         res.end();
                                     }
@@ -505,7 +505,7 @@ app.post('/submit-num', function(req, res) {
                                         res.writeHead(200, {'Content-Type': 'text/html'});
                                         view("header", {}, res);
                                         view("nav", {}, res);
-                                        view("submit_num",  {error:"Valid Bit length: " + bit_length}, res);
+                                        view("submit_num",  {error:"Valid Bit length: " + bit_length + ", Prime: " + isPrime}, res);
                                         view("footer", {}, res);
                                         res.end();
                                     }
@@ -529,7 +529,7 @@ app.post('/submit-num', function(req, res) {
                 res.writeHead(200, {'Content-Type': 'text/html'});
                 view("header", {}, res);
                 view("nav-admin", {}, res);
-                view("submit_num",  {error:"Invalid Submission" + bit_length}, res);
+                view("submit_num",  {error:"Invalid Submission"}, res);
                 view("footer", {}, res);
                 res.end();
             }
@@ -537,7 +537,7 @@ app.post('/submit-num', function(req, res) {
                 res.writeHead(200, {'Content-Type': 'text/html'});
                 view("header", {}, res);
                 view("nav", {}, res);
-                view("submit_num",  {error:"Invalid Submission" + bit_length}, res);
+                view("submit_num",  {error:"Invalid Submission"}, res);
                 view("footer", {}, res);
                 res.end();
             }
@@ -1059,6 +1059,10 @@ app.get('/delete-num', function(req, res) {
     var email = req.query.email;
     var alias = req.query.alias;
     var num = req.query.num;
+
+    console.log(email);
+    console.log(alias);
+
     var file = JSON.parse(fs.readFileSync('./data.json', 'utf-8'));
     verifyAdmin(token, function(admin) {
        if(admin) {
@@ -1071,40 +1075,79 @@ app.get('/delete-num', function(req, res) {
                                 json[admins[i]] = file[admins[i]];
                             } else {
                                 var newNums = [];
+                                var newFactorizedList = {};
                                 for(var n in file[admins[i]][0].nums) {
+                                    // Creates new json data for everything but deleted submission
                                     if(file[admins[i]][0].nums[n].num_submit.slice(-10) != num && file[admins[i]][0].nums[n].alias != alias) {
                                         newNums.push(file[admins[i]][0].nums[n]);
+                                        if(file[admins[i]][0].factorized_by_me[file[admins[i]][0].nums[n].alias] === true){
+                                            newFactorizedList[file[admins[i]][0].nums[n].alias] = true;
+                                        }
                                     }
                                 }
                                 json[admins[i]] = [];
                                 var newObj = {
                                     alias : file[admins[i]][0].alias,
                                     nums : newNums,
-                                    factorized_by_me : file[admins[i]][0].factorized_by_me
+                                    factorized_by_me : newFactorizedList
                                 };
                                 json[admins[i]].push(newObj);
                             }
                         }
 
                         for (var i = 0; i < students.length; i++) {
-                            if (!isEmpty(file[students[i]])) {
-                                json[students[i]] = file[students[i]];
+                            if (!isEmpty(file[students[i].trim()])) {
+                                json[students[i].trim()] = file[students[i].trim()];
                             }
                         }
 
                         fs.writeFileSync('./data.json', JSON.stringify(json), 'utf-8');
                         res.send();
                     } else {
-
+                        console.log("entered1");
+                        var newFactorizedList = {};
                         for (var i = 0; i < students.length; i++) {
-                            if (students[i] !== email && !isEmpty(file[students[i]])) {
-                                json[students[i]] = file[students[i]];
+                            console.log(students[i]);
+                            if (students[i].trim() !== email && !isEmpty(file[students[i].trim()])) {
+                                console.log("entered2");
+                                for(var key in file[students[i].trim()][0].factorized_by_me){
+                                    console.log("student key" + key);
+                                    if(key !== alias){
+                                        newFactorizedList[key] = true;
+                                    }
+                                }
+                                json[students[i].trim()] = [];
+                                var newObj = {
+                                    alias : file[students[i].trim()][0].alias,
+                                    num_submit: file[students[i].trim()][0].num_submit,
+                                    num_length: file[students[i].trim()][0].num_length,
+                                    num_prime: file[students[i].trim()][0].num_prime,
+                                    factor_count: file[students[i].trim()][0].factor_count,
+                                    first_factor_time: file[students[i].trim()][0].first_factor_time,
+                                    factorized_by_me : newFactorizedList
+                                };
+                                json[students[i].trim()].push(newObj);
+                                //json[students[i].trim()] = file[students[i].trim()];
                             }
                         }
 
+                        var newFactorizedListAdmin = {};
                         for (var i = 0; i < admins.length; i++) {
                             if (!isEmpty(file[admins[i]])) {
-                                json[admins[i]] = file[admins[i]];
+                                for(var key in file[admins[i]][0].factorized_by_me){
+                                    console.log("admin key" + key);
+                                    if(key !== alias){
+                                        newFactorizedListAdmin[key] = true;
+                                    }
+                                }
+                                json[admins[i]] = [];
+                                var newObj = {
+                                    alias : file[admins[i]][0].alias,
+                                    nums : file[admins[i]][0].nums,
+                                    factorized_by_me : newFactorizedListAdmin
+                                };
+                                json[admins[i]].push(newObj);
+                                //json[admins[i]] = file[admins[i]];
                             }
                         }
 
