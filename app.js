@@ -143,7 +143,7 @@ function view(templateName, values, res){
 }
 
 /* Displays html template with student data to the screen */
-function table_view(templateName, values, email, res, admins){
+function table_view(templateName, values, checkMsg, email, res, admins){
     // Read from the template files
         var fileContents = fs.readFileSync("./public/html/" + templateName + ".html", {encoding: "utf-8"});
         var obj = JSON.parse(values);
@@ -189,6 +189,7 @@ function table_view(templateName, values, email, res, admins){
             };
 
             // Insert course JSON object into the Content
+            fileContents = fileContents.replace("{{check}}", checkMsg["check"]);
             fileContents = fileContents.replace("{{course.JSON}}", JSON.stringify(newObj));
             fileContents = fileContents.replace("{{student_num}}", email_num);
 
@@ -231,6 +232,7 @@ function table_view(templateName, values, email, res, admins){
             };
 
             // Insert course JSON object into the Content
+            fileContents = fileContents.replace("{{check}}", checkMsg["check"]);
             fileContents = fileContents.replace("{{course.JSON}}", JSON.stringify(newObj));
             fileContents = fileContents.replace("{{student_num}}", email_num);
 
@@ -578,7 +580,7 @@ app.get('/submit-answer', function(req, res) {
                             res.writeHead(200, {'Content-Type': 'text/html'});
                             view("header", {}, res);
                             view("nav-student-answer", {}, res);
-                            table_view("submit-answer", fs.readFileSync('./data.json', 'utf-8'), email, res, adminList);
+                            table_view("submit-answer", fs.readFileSync('./data.json', 'utf-8'), {check:""}, email, res, adminList);
                             view("footer", {}, res);
                             res.end();
                             break;
@@ -616,7 +618,7 @@ app.get('/submit-answer', function(req, res) {
                                     res.writeHead(200, {'Content-Type': 'text/html'});
                                     view("header", {}, res);
                                     view("nav-admin", {}, res);
-                                    table_view("submit-answer", fs.readFileSync('./data.json', 'utf-8'), email, res, adminList);
+                                    table_view("submit-answer", fs.readFileSync('./data.json', 'utf-8'), {check:""}, email, res, adminList);
                                     view("footer", {}, res);
                                     res.end();
                                     break;
@@ -648,27 +650,45 @@ app.post('/submit-answer', function(req, res) {
     // Answer the student submits. *CHANGE VARIABLE TO GET THE VARIABLE student_answer*
     var two_nums = student_answer.split(" ");
     var cmd = 'java -jar /home/ec2-user/CMSC447/CMSC447-GroupProject/public/Java/verify_numbers.jar answer ' + number_to_answer + ' ';
+    var isPrimeCmd = 'python /home/ec2-user/CMSC447/CMSC447-GroupProject/public/python/prime.py 10 ';
     for (var i = 0; i < two_nums.length; i ++){
         cmd += two_nums[i] + ' ';
+        isPrimeCmd += two_nums[i] + ' ';
         //args.push(two_nums[i]);
     }
-    console.log("cmd: " + cmd);
-    // This comment block runs the java program to check the factorization
-    if (two_nums.length < 2){
-        console.log("Please enter 2 numbers seperated by space");
-    }
-    else{
-        var output = exec(cmd,
-            function (error, stdout, stderr){
-                console.log("stdout: " + stdout);
-                if(stdout === '1'){
-                    console.log("Correct Factor");
-                    for(var key in course){
-                        if(!isEmpty(course[key][0].nums)){
-                            for(var sub in course[key][0].nums){
-                                console.log("nums alias" + course[key][0].nums[sub].alias);
-                                if(course[key][0].nums[sub].alias === number_to_answer_alias){
-                                    if(course[key][0].nums[sub].first_factor_time === ""){
+
+    if(course[email][0].factorized_by_me[number_to_answer_alias] !== true){
+        // This comment block runs the java program to check the factorization
+        var isPrimeOutput = exec(isPrimeCmd, function(error, stdout, stderr){
+            if(stdout === "True\n"){
+                var output = exec(cmd, function (error, stdout, stderr){
+                    var correctFactor = stdout;
+                    if(correctFactor === '1'){
+                        for(var key in course){
+                            if(!isEmpty(course[key][0].nums)){
+                                for(var sub in course[key][0].nums){
+                                    if(course[key][0].nums[sub].alias === number_to_answer_alias){
+                                        if(course[key][0].nums[sub].first_factor_time === ""){
+                                            var currentdate = new Date();
+                                            var hours = currentdate.getHours() - 4;
+                                            if(hours > 12){
+                                                hours = hours - 12;
+                                            }
+                                            var datetime =  (currentdate.getMonth() + 1) + "/"
+                                                            + currentdate.getDate() + "/"
+                                                            + currentdate.getFullYear() + " @ "
+                                                            + hours + ":"
+                                                            + currentdate.getMinutes() + ":"
+                                                            + currentdate.getSeconds();
+                                            course[key][0].nums[sub].first_factor_time = datetime;
+                                        }
+                                        course[key][0].nums[sub].factor_count++;
+                                    }
+                                }
+                            }
+                            else{
+                                if(course[key][0].alias === number_to_answer_alias){
+                                    if(course[key][0].first_factor_time === ""){
                                         var currentdate = new Date();
                                         var hours = currentdate.getHours() - 4;
                                         if(hours > 12){
@@ -680,48 +700,139 @@ app.post('/submit-answer', function(req, res) {
                                                         + hours + ":"
                                                         + currentdate.getMinutes() + ":"
                                                         + currentdate.getSeconds();
-                                        course[key][0].nums[sub].first_factor_time = datetime;
+                                        course[key][0].first_factor_time = datetime;
                                     }
-                                    course[key][0].nums[sub].factor_count++;
+                                    course[key][0].factor_count++;
                                 }
                             }
+                        }
+                        course[email][0].factorized_by_me[number_to_answer_alias] = true;
+                        fs.writeFileSync('./data.json', JSON.stringify(course), 'utf-8');
+
+                        getAdmins(function(adminList) {
+                            verifyAdmin(token, function(admin) {
+                                if(admin){
+                                    res.writeHead(200, {'Content-Type': 'text/html'});
+                                    view("header", {}, res);
+                                    view("nav-admin", {}, res);
+                                    table_view("submit-answer", fs.readFileSync('./data.json', 'utf-8'), {check:"Correct"}, email, res, adminList);
+                                    view("footer", {}, res);
+                                    res.end();
+                                }
+                                else{
+                                    res.writeHead(200, {'Content-Type': 'text/html'});
+                                    view("header", {}, res);
+                                    view("nav", {}, res);
+                                    table_view("submit-answer", fs.readFileSync('./data.json', 'utf-8'), {check:"Correct"}, email, res, adminList);
+                                    view("footer", {}, res);
+                                    res.end();
+                                }
+                            });
+                        });
+                    }
+                    else{
+                        getAdmins(function(adminList) {
+                            verifyAdmin(token, function(admin) {
+                                if(admin){
+                                    res.writeHead(200, {'Content-Type': 'text/html'});
+                                    view("header", {}, res);
+                                    view("nav-admin", {}, res);
+                                    table_view("submit-answer", fs.readFileSync('./data.json', 'utf-8'), {check:"Incorrect Factors"}, email, res, adminList);
+                                    view("footer", {}, res);
+                                    res.end();
+                                }
+                                else{
+                                    res.writeHead(200, {'Content-Type': 'text/html'});
+                                    view("header", {}, res);
+                                    view("nav", {}, res);
+                                    table_view("submit-answer", fs.readFileSync('./data.json', 'utf-8'), {check:"Incorrect Factors"}, email, res, adminList);
+                                    view("footer", {}, res);
+                                    res.end();
+                                }
+                            });
+                        });
+                    }
+
+                    if(error !== null){
+                        console.log("Error -> "+error);
+                    }
+                });
+            }
+            else{
+                getAdmins(function(adminList) {
+                    verifyAdmin(token, function(admin) {
+                        if(admin){
+                            res.writeHead(200, {'Content-Type': 'text/html'});
+                            view("header", {}, res);
+                            view("nav-admin", {}, res);
+                            table_view("submit-answer", fs.readFileSync('./data.json', 'utf-8'), {check:"Invalid Factors: Not Prime"}, email, res, adminList);
+                            view("footer", {}, res);
+                            res.end();
                         }
                         else{
-                            if(course[key][0].alias === number_to_answer_alias){
-                                if(course[key][0].first_factor_time === ""){
-                                    var currentdate = new Date();
-                                    var hours = currentdate.getHours() - 4;
-                                    if(hours > 12){
-                                        hours = hours - 12;
-                                    }
-                                    var datetime =  (currentdate.getMonth() + 1) + "/"
-                                                    + currentdate.getDate() + "/"
-                                                    + currentdate.getFullYear() + " @ "
-                                                    + hours + ":"
-                                                    + currentdate.getMinutes() + ":"
-                                                    + currentdate.getSeconds();
-                                    course[key][0].first_factor_time = datetime;
-                                }
-                                course[key][0].factor_count++;
-                            }
+                            res.writeHead(200, {'Content-Type': 'text/html'});
+                            view("header", {}, res);
+                            view("nav", {}, res);
+                            table_view("submit-answer", fs.readFileSync('./data.json', 'utf-8'), {check:"Invalid Factors: Not Prime"}, email, res, adminList);
+                            view("footer", {}, res);
+                            res.end();
                         }
-                    }
-                    course[email][0].factorized_by_me[number_to_answer_alias] = true;
-                    fs.writeFileSync('./data.json', JSON.stringify(course), 'utf-8');
+                    });
+                });
+            }
+
+            if(error !== null){
+                console.log("Error -> "+error);
+            }
+        });
+    }
+    else{
+        getAdmins(function(adminList) {
+            verifyAdmin(token, function(admin) {
+                if(admin){
+                    res.writeHead(200, {'Content-Type': 'text/html'});
+                    view("header", {}, res);
+                    view("nav-admin", {}, res);
+                    table_view("submit-answer", fs.readFileSync('./data.json', 'utf-8'), {check:"Already answered: " + number_to_answer_alias}, email, res, adminList);
+                    view("footer", {}, res);
+                    res.end();
                 }
                 else{
-                    console.log("Incorrect Factor");
+                    res.writeHead(200, {'Content-Type': 'text/html'});
+                    view("header", {}, res);
+                    view("nav", {}, res);
+                    table_view("submit-answer", fs.readFileSync('./data.json', 'utf-8'), {check:"Already answered: " + number_to_answer_alias}, email, res, adminList);
+                    view("footer", {}, res);
+                    res.end();
                 }
-
-                if(error !== null){
-                    console.log("Error -> "+error);
-                }
-            }
-        );
+            });
+        });
     }
 
+
+
+    /*getAdmins(function(adminList) {
+        verifyAdmin(token, function(admin) {
+            if(admin){
+                res.writeHead(200, {'Content-Type': 'text/html'});
+                view("header", {}, res);
+                view("nav-admin", {}, res);
+                table_view("submit-answer", fs.readFileSync('./data.json', 'utf-8'), {check:""}, email, res, adminList);
+                view("footer", {}, res);
+                res.end();
+            }
+            else{
+                res.writeHead(200, {'Content-Type': 'text/html'});
+                view("header", {}, res);
+                view("nav", {}, res);
+                table_view("submit-answer", fs.readFileSync('./data.json', 'utf-8'), {check:""}, email, res, adminList);
+                view("footer", {}, res);
+                res.end();
+            }
+        });
+    });
     res.writeHead(303, {"Location": "/submit-answer?token=" + token + "&email=" + email});
-    res.end();
+    res.end();*/
 });
 
 app.get('/statistics', function(req, res) {
@@ -786,7 +897,7 @@ app.get('/home', function(req,res) {
                         case 1:  res.writeHead(200, {'Content-Type': 'text/html'});
                             view("header", {}, res);
                             view("nav-student-answer", {}, res);
-                            table_view("submit-answer", fs.readFileSync('./data.json', 'utf-8'), email, res, adminList);
+                            table_view("submit-answer", fs.readFileSync('./data.json', 'utf-8'), {check:""}, email, res, adminList);
                             view("footer", {}, res);
                             res.end();
                             break;
@@ -823,7 +934,7 @@ app.get('/home', function(req,res) {
                                 case 1:  res.writeHead(200, {'Content-Type': 'text/html'});
                                     view("header", {}, res);
                                     view("nav-admin", {}, res);
-                                    table_view("submit-answer", fs.readFileSync('./data.json', 'utf-8'), email, res, adminList);
+                                    table_view("submit-answer", fs.readFileSync('./data.json', 'utf-8'), {check:""}, email, res, adminList);
                                     view("footer", {}, res);
                                     res.end();
                                     break;
@@ -868,7 +979,7 @@ app.get('/admin', function(req,res) {
                 res.writeHead(200, {'Content-Type': 'text/html'});
                 view("header", {}, res);
                 view("nav-admin", {}, res);
-                table_view("admin", fs.readFileSync('./data.json', 'utf-8'), 'admin', res, adminList);
+                table_view("admin", fs.readFileSync('./data.json', 'utf-8'), {check:""}, 'admin', res, adminList);
                 view("footer", {}, res);
                 res.end();
             } else {
@@ -917,6 +1028,10 @@ app.get('/publish', function(req,res) {
         }
     });
 });
+
+/*app.get('/upload', function(req, res){
+
+});*/
 
 //Admin function for deleting submissions
 app.get('/delete-num', function(req, res) {

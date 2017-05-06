@@ -6,6 +6,9 @@ import sys
 
 #Miller-Rabin Primality test
 def rabMill(num, reps):
+    if num == 1 or num == 3:
+        return True
+
     if num % 2 == 0:
         return False
 
