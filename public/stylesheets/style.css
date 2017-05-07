@@ -1,3 +1,17 @@
+/***************************/
+/* Nav Link + Button Style */
+/***************************/
+.navbar-default { background-color: #122232 !important; }
+
+.navbar-header a { color: #FFFFFF !important; }
+.navbar-header a:hover { color: #F5CA5C !important; }
+
+ul.nav a { color: #FFFFFF !important; }
+ul.nav a:hover { color: #F5CA5C !important; }
+
+.btn-primary { color: #122232 !important; background-color: #D3D3D3 !important; border-color: #C0C0C0 !important; }
+.btn-primary:hover { color: #122232 !important; background-color: #F5CA5C !important; border-color: #F5CA5C !important; }
+
 /**********************/
 /* Submit Number Page */
 /**********************/

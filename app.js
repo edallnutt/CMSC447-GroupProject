@@ -272,14 +272,14 @@ app.get('/submit-num', function(req, res) {
                     case 0:     res.writeHead(200, {'Content-Type': 'text/html'});
                         view("header", {}, res);
                         view("nav", {}, res);
-                        view("landing-page",  {username:"Landing Page", description:"Submissions have been closed"}, res);
+                        view("landing-page",  {description:"Submissions have been closed"}, res);
                         view("footer", {}, res);
                         res.end();
                         break;
                     case 1:
                         view("header", {}, res);
                         view("nav-student-answer", {}, res);
-                        view("landing-page",  {username:"Landing Page", description:"Submissions have been closed"}, res);
+                        view("landing-page",  {description:"Submissions have been closed"}, res);
                         view("footer", {}, res);
                         res.end();
                         break;
@@ -300,14 +300,14 @@ app.get('/submit-num', function(req, res) {
                             case 0:     res.writeHead(200, {'Content-Type': 'text/html'});
                                 view("header", {}, res);
                                 view("nav-admin", {}, res);
-                                view("landing-page",  {username:"Landing Page", description:"Submissions have been closed"}, res);
+                                view("landing-page",  {description:"Submissions have been closed"}, res);
                                 view("footer", {}, res);
                                 res.end();
                                 break;
                             case 1:
                                 view("header", {}, res);
                                 view("nav-admin", {}, res);
-                                view("landing-page",  {username:"Landing Page", description:"Submissions have been closed"}, res);
+                                view("landing-page",  {description:"Submissions have been closed"}, res);
                                 view("footer", {}, res);
                                 res.end();
                                 break;
@@ -563,7 +563,7 @@ app.get('/submit-answer', function(req, res) {
                             res.writeHead(200, {'Content-Type': 'text/html'});
                              view("header", {}, res);
                              view("nav", {}, res);
-                             view("landing-page", {username:"Landing Page", description:"Submissions will be posted soon"}, res);
+                             view("landing-page", {description:"Submissions will be posted soon"}, res);
                              view("footer", {}, res);
                              res.end();
                             break;
@@ -571,7 +571,7 @@ app.get('/submit-answer', function(req, res) {
                             res.writeHead(200, {'Content-Type': 'text/html'});
                             view("header", {}, res);
                             view("nav", {}, res);
-                            view("landing-page",  {username:"Landing Page", description:"Submissions will be posted soon"}, res);
+                            view("landing-page",  {description:"Submissions will be posted soon"}, res);
                             view("footer", {}, res);
                             res.end();
                             break;
@@ -594,7 +594,7 @@ app.get('/submit-answer', function(req, res) {
                                     res.writeHead(200, {'Content-Type': 'text/html'});
                                      view("header", {}, res);
                                      view("nav-admin", {}, res);
-                                     view("landing-page", {username:"Landing Page", description:"Submissions will be posted soon"}, res);
+                                     view("landing-page", {description:"Submissions will be posted soon"}, res);
                                      view("footer", {}, res);
                                      res.end();
                                     break;
@@ -602,7 +602,7 @@ app.get('/submit-answer', function(req, res) {
                                     res.writeHead(200, {'Content-Type': 'text/html'});
                                     view("header", {}, res);
                                     view("nav-admin", {}, res);
-                                    view("landing-page",  {username:"Landing Page", description:"Submissions will be posted soon"}, res);
+                                    view("landing-page",  {description:"Submissions will be posted soon"}, res);
                                     view("footer", {}, res);
                                     res.end();
                                     break;
@@ -879,7 +879,7 @@ app.get('/home', function(req,res) {
                         case 0:  res.writeHead(200, {'Content-Type': 'text/html'});
                             view("header", {}, res);
                             view("nav", {}, res);
-                            view("landing-page",  {username:"Landing Page", description:"Submissions have been closed"}, res);
+                            view("landing-page",  {description:"Submissions have been closed"}, res);
                             view("footer", {}, res);
                             res.end();
                             break;
@@ -916,7 +916,7 @@ app.get('/home', function(req,res) {
                                 case 0:  res.writeHead(200, {'Content-Type': 'text/html'});
                                     view("header", {}, res);
                                     view("nav-admin", {}, res);
-                                    view("landing-page",  {username:"Landing Page", description:"Submissions have been closed"}, res);
+                                    view("landing-page",  {description:"Submissions have been closed"}, res);
                                     view("footer", {}, res);
                                     res.end();
                                     break;

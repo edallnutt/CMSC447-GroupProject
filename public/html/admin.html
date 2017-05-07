@@ -18,12 +18,12 @@
     </table>
 </div><br /><br />
 
-<div style="text-align: center">
-    <button type="button" onclick="adminLink('/close?status=true&')">Close Submissions</button>
-    <button type="button" onclick="adminLink('/close?status=false&')">Open Submissions</button>
-    <button type="button" onclick="adminLink('/publish?status=true&')">Publish Submissions</button>
-    <button type="button" onclick="adminLink('/publish?status=false&')">Un-publish Submissions</button>
-    <button type="button" onclick="deleteSelection()">Delete Selection</button>
+<div style="text-align: center; padding-bottom: 100px">
+    <button class="btn btn-primary" type="button" onclick="adminLink('/close?status=true&')">Close Submissions</button>
+    <button class="btn btn-primary" type="button" onclick="adminLink('/close?status=false&')">Open Submissions</button>
+    <button class="btn btn-primary" type="button" onclick="adminLink('/publish?status=true&')">Publish Submissions</button>
+    <button class="btn btn-primary" type="button" onclick="adminLink('/publish?status=false&')">Un-publish Submissions</button>
+    <button class="btn btn-primary" type="button" onclick="deleteSelection()">Delete Selection</button>
     <form action="fileupload" method="post" enctype="multipart/form-data">
         <input type="file" id="files" style="visibility:hidden" name="filetoupload">
         <label for="files" class="btn btn-primary">Upload students.txt file</label>
