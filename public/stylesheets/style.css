@@ -98,6 +98,17 @@
 /**********************/
 /* Statistics Page */
 /**********************/
+.new-graph{
+    position: relative;
+    width: 80%;
+    margin: 100px auto;
+    min-height: 60vw;
+    max-height: 50vw;
+    min-width: 40%;
+    max-width: 60%;
+    z-index: 1;
+ }
+
 .graph {
     position: relative;
     border: 3px solid black;

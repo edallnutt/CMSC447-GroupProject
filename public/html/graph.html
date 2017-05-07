@@ -1,16 +1,71 @@
-<div class="graph">
-    <div class="graph-title">
-        Number Results
-    </div>
-
+<div class="sub-ans-table">
+    <div id="chart_div"></div>
     <script>
-        var text = "";
+        google.charts.load('current', {'packages':['bar']});
+        google.charts.setOnLoadCallback(drawChart);
+
+        var email_num = '{{student_num}}';                // Number associated with user
+        var courseData = JSON.parse('{{course.JSON}}');        // Project data
+
+        var dataArray = [['Alias', 'Factor Count', 'Bit Length']];
+
+        for(var i = 0; i < courseData.length; i++){
+            if(courseData[i][0].type === "admin"){
+                for(var sub in courseData[i][0].nums){
+                    dataArray.push([courseData[i][0].nums[sub].alias, courseData[i][0].nums[sub].factor_count, courseData[i][0].nums[sub].num_length])
+                }
+            }
+            else{
+                dataArray.push([courseData[i][0].alias, courseData[i][0].factor_count, courseData[i][0].num_length])
+            }
+        }
+
+        function drawChart() {
+
+            var data = google.visualization.arrayToDataTable(dataArray);
+
+            var options = {
+                chart: {
+                    title: 'Number Results',
+                    subtitle: 'RSA Factoring Challenge',
+                },
+                series: {
+                    0: { axis: 'count' },
+                    1: { axis: 'bits' }
+                },
+                axes: {
+                    x: {
+                        count: { label: 'Factor Count' },
+                        bits: { side: 'top', label: 'Bit Length' }
+                    }
+                },
+                bars: 'horizontal', // Required for Material Bar Charts.
+                hAxis: {format: 'decimal'},
+                width: 1200,
+                height: 800,
+                colors: ['#1b9e77', '#d95f02']
+            };
+
+            var chart = new google.charts.Bar(document.getElementById('chart_div'));
+
+            chart.draw(data, google.charts.Bar.convertOptions(options));
+
+            var btns = document.getElementById('btn-group');
+
+            btns.onclick = function (e) {
+                if (e.target.tagName === 'BUTTON') {
+                    options.hAxis.format = e.target.id === 'none' ? '' : e.target.id;
+                    chart.draw(data, google.charts.Bar.convertOptions(options));
+                }
+            }
+        }
+        /*var text = "";
         var elements = [["Apple", 12, 4, 12],["Banana", 60, 21, 60],["Melon", 15, 36, 15],["Mango", 5, 51, 5],["Grape", 34, 66, 34], ["Orange", 80, 84, 80]];
 
         for (i = 0; i < elements.length; i++) {
         text += "<div class='bar' style='height:" + elements[i][1] + "%;left:" + elements[i][2] + "%'>" + elements[i][3] + "<div class='entry-name'>" + elements[i][0] + "</div></div>";
         }
 
-        document.write(text)
+        document.write(text)*/
     </script>
 </div>

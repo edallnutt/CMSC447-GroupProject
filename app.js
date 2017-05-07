@@ -159,6 +159,7 @@ function table_view(templateName, values, checkMsg, email, res, admins){
             for(var key in obj){
                 var student_data;
                 if(admins.indexOf(key) === -1) {
+                    console.log(key);
                     student_data = {
                         type: "student",
                         email: key,
@@ -204,6 +205,7 @@ function table_view(templateName, values, checkMsg, email, res, admins){
             for(var key in obj){
                 var student_data;
                 if(admins.indexOf(key) === -1) {
+                    console.log(key);
                     student_data = {
                         type: "student",
                         alias: obj[key][0].alias,
@@ -332,7 +334,7 @@ app.post('/submit-num', function(req, res) {
         // Get bit length of student number submission
         var cmd = 'java -jar /home/ec2-user/CMSC447/CMSC447-GroupProject/public/Java/verify_numbers.jar check ' + student_number;
         var output = exec(cmd, function (error, stdout, stderr){
-            var bit_length = stdout;
+            var bit_length = parseInt(stdout);
             if(parseInt(bit_length) < 2){
                 verifyAdmin(token, function(admin) {
                     if(admin){
@@ -831,28 +833,32 @@ app.post('/submit-answer', function(req, res) {
 
 app.get('/statistics', function(req, res) {
     var token = req.query.token;
-    verifyStudent(token, function(student) {
-        if(student) {
-            res.writeHead(200, {'Content-Type': 'text/html'});
-            view("header", {}, res);
-            view("nav-student-answer", {}, res);
-            view("graph", {}, res);
-            view("footer", {}, res);
-            res.end();
-        } else {
-            verifyAdmin(token, function(admin) {
-                if(admin) {
-                    res.writeHead(200, {'Content-Type': 'text/html'});
-                    view("header", {}, res);
-                    view("nav-admin", {}, res);
-                    view("graph", {}, res);
-                    view("footer", {}, res);
-                    res.end();
-                } else {
-                    res.sendFile(path.join(__dirname,'public/html/invalid-login.html'));
-                }
-            });
-        }
+    var email = req.query.email;
+
+    getAdmins(function(adminList) {
+        verifyStudent(token, function(student) {
+            if(student) {
+                res.writeHead(200, {'Content-Type': 'text/html'});
+                view("header", {}, res);
+                view("nav-student-answer", {}, res);
+                table_view("graph", fs.readFileSync('./data.json', 'utf-8'), {}, email, res, adminList);
+                view("footer", {}, res);
+                res.end();
+            } else {
+                verifyAdmin(token, function(admin) {
+                    if(admin) {
+                        res.writeHead(200, {'Content-Type': 'text/html'});
+                        view("header", {}, res);
+                        view("nav-admin", {}, res);
+                        table_view("graph", fs.readFileSync('./data.json', 'utf-8'), {}, email, res, adminList);
+                        view("footer", {}, res);
+                        res.end();
+                    } else {
+                        res.sendFile(path.join(__dirname,'public/html/invalid-login.html'));
+                    }
+                });
+            }
+        });
     });
 });
 
