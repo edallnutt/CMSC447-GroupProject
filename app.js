@@ -159,7 +159,6 @@ function table_view(templateName, values, checkMsg, email, res, admins){
             for(var key in obj){
                 var student_data;
                 if(admins.indexOf(key) === -1) {
-                    console.log(key);
                     student_data = {
                         type: "student",
                         email: key,
@@ -205,7 +204,6 @@ function table_view(templateName, values, checkMsg, email, res, admins){
             for(var key in obj){
                 var student_data;
                 if(admins.indexOf(key) === -1) {
-                    console.log(key);
                     student_data = {
                         type: "student",
                         alias: obj[key][0].alias,
