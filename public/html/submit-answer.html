@@ -52,10 +52,6 @@
             row.setAttribute("expanded", "false");
             // Highlight numbers you factored
             for (var key in data[email_num][0].factorized_by_me) {
-                /*if(key.includes("_")){
-                    for(var numKey in data[i][0])
-                }*/
-                console.log(key);
                 if (data[i][0].alias === key && data[email_num][0].factorized_by_me[key] === true) {
                     row.className = "ok"
                     break
@@ -85,13 +81,6 @@
                         break
                     }
                 }
-                /*for (var key in data[i][0].nums[sub].factorized_by_me) {
-                    if (data[i][0].nums[sub].alias == key && data[i][0].nums[sub].factorized_by_me[key] == true) {
-                        row.className = "ok"
-                        break
-                    }
-                }*/
-
             }
         }
     }

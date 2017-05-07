@@ -1,13 +1,18 @@
 <div class="sub-ans-table">
     <div id="chart_div"></div>
+    <br/>
+    <div id="btn-group">
+        <button class="button button-blue" id="none" onclick="factorSort()">Sort by Factor Count</button>
+        <button class="button button-blue" id="scientific">Sort by Bit Length</button>
+    </div>
     <script>
         google.charts.load('current', {'packages':['bar']});
         google.charts.setOnLoadCallback(drawChart);
 
-        var email_num = '{{student_num}}';                // Number associated with user
-        var courseData = JSON.parse('{{course.JSON}}');        // Project data
-
+        var email_num = '{{student_num}}';                          // Number associated with user
+        var courseData = JSON.parse('{{course.JSON}}');             // Project data
         var dataArray = [['Alias', 'Factor Count', 'Bit Length']];
+        var sortType = 'asc';
 
         for(var i = 0; i < courseData.length; i++){
             if(courseData[i][0].type === "admin"){
@@ -42,22 +47,115 @@
                 bars: 'horizontal', // Required for Material Bar Charts.
                 hAxis: {format: 'decimal'},
                 width: 1200,
-                height: 800,
-                colors: ['#1b9e77', '#d95f02']
+                height: 2600,
+                colors: ['#1b9e77', '#fe9834']
             };
 
             var chart = new google.charts.Bar(document.getElementById('chart_div'));
 
             chart.draw(data, google.charts.Bar.convertOptions(options));
 
-            var btns = document.getElementById('btn-group');
+            /*var btns = document.getElementById('btn-group');
 
             btns.onclick = function (e) {
                 if (e.target.tagName === 'BUTTON') {
                     options.hAxis.format = e.target.id === 'none' ? '' : e.target.id;
                     chart.draw(data, google.charts.Bar.convertOptions(options));
                 }
+            }*/
+        }
+
+        function factorSort() {
+            console.log(dataArray);
+            var data;
+            if(sortType === 'asc'){
+                var largest =  parseInt(dataArray[1][1]);
+                for(var i = 2; i < dataArray.length; i++){
+                    if(parseInt(dataArray[i][1]) > largest){
+                        largest = parseInt(dataArray[i][1]);
+                    }
+                }
+
+                var largestStr = largest.toString();
+                for(var i = 1; i < dataArray.length; i++){
+                    var str = dataArray[i][1].toString();
+                    while(str.length < largestStr.length){
+                        str = "0" + str;
+                    }
+                    dataArray[i][1] = str;
+                }
+                console.log(dataArray);
+
+                var frequency = new Array(largest).fill(0);
+                var sorted = new Array(dataArray.length);
+                sorted[0] = ['Alias', 'Factor Count', 'Bit Length'];
+                for(var i = 1; i < largestStr.length + 1; i++){
+                    console.log(i);
+                    for(var j = 1; j < dataArray.length; j++){
+                        if(i === 1){
+                            frequency[dataArray[j][1].toString().slice(-1)]++;
+                        }
+                        else{
+                            frequency[dataArray[j][1].toString().slice(-i, -i + 1)]++;
+                        }
+                    }
+                    console.log(frequency);
+
+                    for(var j = 1; j < frequency.length; j++){
+                        frequency[j] = frequency[j - 1] + frequency[j];
+                    }
+                    console.log(frequency);
+
+                    for(var j = dataArray.length - 1; j > 0; j--){
+                        if(i === 1){
+                            sorted[frequency[dataArray[j][1].toString().slice(-1)]] = dataArray[j];
+                            frequency[dataArray[j][1].toString().slice(-1)]--;
+                        }
+                        else{
+                            sorted[frequency[dataArray[j][1].toString().slice(-i, -i + 1)]] = dataArray[j];
+                            frequency[dataArray[j][1].toString().slice(-i, -i + 1)]--;
+                        }
+                    }
+                    console.log(sorted);
+                    dataArray = sorted.slice();
+
+                    frequency.fill(0);
+                }
+                data = google.visualization.arrayToDataTable(sorted);
+                sortType = 'desc';
             }
+            else if(sortType === 'desc'){
+                console.log(dataArray);
+                data = google.visualization.arrayToDataTable(dataArray.reverse());
+                sortType = 'asc';
+            }
+
+            var options = {
+                chart: {
+                    title: 'Number Results',
+                    subtitle: 'RSA Factoring Challenge',
+                },
+                series: {
+                    0: { axis: 'count' },
+                    1: { axis: 'bits' }
+                },
+                axes: {
+                    x: {
+                        count: { label: 'Factor Count' },
+                        bits: { side: 'top', label: 'Bit Length' }
+                    }
+                },
+                bars: 'horizontal', // Required for Material Bar Charts.
+                hAxis: {format: 'decimal'},
+                width: 1200,
+                height: 2600,
+                colors: ['#1b9e77', '#fe9834']
+            };
+
+            var chart = new google.charts.Bar(document.getElementById('chart_div'));
+
+            chart.draw(data, google.charts.Bar.convertOptions(options));
+
         }
         /*var text = "";
         var elements = [["Apple", 12, 4, 12],["Banana", 60, 21, 60],["Melon", 15, 36, 15],["Mango", 5, 51, 5],["Grape", 34, 66, 34], ["Orange", 80, 84, 80]];
