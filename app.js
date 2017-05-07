@@ -333,7 +333,7 @@ app.post('/submit-num', function(req, res) {
         var cmd = 'java -jar /home/ec2-user/CMSC447/CMSC447-GroupProject/public/Java/verify_numbers.jar check ' + student_number;
         var output = exec(cmd, function (error, stdout, stderr){
             var bit_length = parseInt(stdout);
-            if(parseInt(bit_length) < 2){
+            if(parseInt(bit_length) < 80){
                 verifyAdmin(token, function(admin) {
                     if(admin){
                         // Incorrect submission redirects to submit-num page with navigation
