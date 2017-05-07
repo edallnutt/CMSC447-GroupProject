@@ -38,6 +38,9 @@
 
             var data = google.visualization.arrayToDataTable(dataArray);
 
+            var view = new google.visualization.DataView(data);
+            view.setColumns([{ type: "string" }, { type: "string" }, { type: "string" }]);
+
             var options = {
                 chart: {
                     title: 'Number Results',
@@ -68,7 +71,6 @@
 
         // Sort and redraw graph
         function sort(type) {
-            var data;
 
             // Insertion Sort Alias - params(dataArray)
             if(type === 0){
@@ -82,7 +84,6 @@
                     }
                     dataArray[j + 1] = key;
                 }
-                console.log(dataArray);
             }
             // Radix Sort either Factor Count or Bit Length
             else{
@@ -146,11 +147,19 @@
                     dataArray = sorted.slice();     // Assign new data to original data
                     frequency.fill(0);              // Reset occurence count array
                 }
+
+                // Convert strings back to numbers
+                for(var i = 1; i < dataArray.length; i++){
+                    dataArray[i][type] = parseInt(dataArray[i][type]);
+                }
             }
 
             /* Display bar chart */
 
-            data = google.visualization.arrayToDataTable(dataArray);
+            var data = google.visualization.arrayToDataTable(dataArray);
+
+            var newView = new google.visualization.DataView(data);
+            newView.setColumns([{ type: "string" }, { type: "string" }, { type: "string" }]);
 
             var options = {
                 chart: {
