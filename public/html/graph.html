@@ -1,15 +1,15 @@
 <div class="sub-ans-table">
     <div id="btn-group">
-        <button class="btn btn-primary" id="none" onclick="sort(0)">Sort by Alias</button>
-        <button class="btn btn-primary" id="none" onclick="sort(1)">Sort by Factor Count</button>
-        <button class="btn btn-primary" id="scientific" onclick="sort(2)">Sort by Bit Length</button>
+        <button class="btn btn-primary" id="alias" onclick="sortChart(0)">Sort by Alias</button>
+        <button class="btn btn-primary" id="factor_count" onclick="sortChart(1)">Sort by Factor Count</button>
+        <button class="btn btn-primary" id="bit_length" onclick="sortChart(2)">Sort by Bit Length</button>
     </div>
     <div id="chart_div" style="width: 100%; height: 100%"></div>
     <br/><br/>
     <div id="btn-group">
-        <button class="btn btn-primary" id="none" onclick="sort(0)">Sort by Alias</button>
-        <button class="btn btn-primary" id="none" onclick="sort(1)">Sort by Factor Count</button>
-        <button class="btn btn-primary" id="scientific" onclick="sort(2)">Sort by Bit Length</button>
+        <button class="btn btn-primary" id="alias" onclick="sortChart(0)">Sort by Alias</button>
+        <button class="btn btn-primary" id="factor_count" onclick="sortChart(1)">Sort by Factor Count</button>
+        <button class="btn btn-primary" id="bit_length" onclick="sortChart(2)">Sort by Bit Length</button>
     </div>
     <script>
         google.charts.load('current', {'packages':['bar']});
@@ -75,97 +75,9 @@
         }
 
         // Sort and redraw graph
-        function sort(type) {
+        function sortChart(type) {
 
-            // Insertion Sort Alias - params(dataArray)
-            if(type === 0){
-                for(var i = 2; i < dataArray.length; i++){
-                    var key = dataArray[i];
-                    var j = i - 1;
-
-                    while(j > 0 && dataArray[j][type] > key[type]){
-                        dataArray[j + 1] = dataArray[j];
-                        j--;
-                    }
-                    dataArray[j + 1] = key;
-                }
-            }
-            // Radix Sort either Factor Count or Bit Length
-            else{
-
-                // Find largest Factor Count or Bit Length
-                var largest =  parseInt(dataArray[1][type]);
-                for(var i = 2; i < dataArray.length; i++){
-                    if(parseInt(dataArray[i][type]) > largest){
-                        largest = parseInt(dataArray[i][type]);
-                    }
-                }
-
-                // Pad numbers to match #digits of largest int
-                var largestStr = largest.toString();
-                for(var i = 1; i < dataArray.length; i++){
-                    var str = dataArray[i][type].toString();
-                    while(str.length < largestStr.length){
-                        str = "0" + str;
-                    }
-                    dataArray[i][type] = str;
-                }
-
-                var frequency;
-                if(largest === 0){
-                    frequency =  new Array(1).fill(0);
-                }
-                else{
-                    frequency =  new Array(largest + 1).fill(0);
-                }
-
-                var sorted = new Array(dataArray.length);
-                sorted[0] = ['Alias', 'Factor Count', 'Bit Length'];
-
-                /* Radix Sort - params(dataArray, largestStr.length + 1) */
-                for(var i = 1; i < largestStr.length + 1; i++){
-
-                    /* Counting Sort params(dataArray) */
-
-                    // Count occurences of each Factor Count or Bit Length
-                    for(var j = 1; j < dataArray.length; j++){
-                        if(i === 1){
-                            frequency[dataArray[j][type].toString().slice(-1)]++;
-                        }
-                        else{
-                            frequency[dataArray[j][type].toString().slice(-i, -i + 1)]++;
-                        }
-                    }
-
-                    // Subsequently add occurence counts to the prev occurence count
-                    for(var j = 1; j < frequency.length; j++){
-                        frequency[j] = frequency[j - 1] + frequency[j];
-                    }
-
-                    // Stable sort original array using occurence count array into sorted array
-                    for(var j = dataArray.length - 1; j > 0; j--){
-                        if(i === 1){
-                            sorted[frequency[dataArray[j][type].toString().slice(-1)]] = dataArray[j];
-                            frequency[dataArray[j][type].toString().slice(-1)]--;
-                        }
-                        else{
-                            sorted[frequency[dataArray[j][type].toString().slice(-i, -i + 1)]] = dataArray[j];
-                            frequency[dataArray[j][type].toString().slice(-i, -i + 1)]--;
-                        }
-                    }
-
-                    /* Counting Sort End */
-
-                    dataArray = sorted.slice();     // Assign new data to original data
-                    frequency.fill(0);              // Reset occurence count array
-                }
-
-                // Convert strings back to numbers
-                for(var i = 1; i < dataArray.length; i++){
-                    //console.log(dataArray)
-                    dataArray[i][type] = parseInt(dataArray[i][type]);
-                }
-            }
+            dataArray = insertionSort(dataArray, type);
 
             /* Display bar chart */
 
@@ -204,7 +116,6 @@
             var chart = new google.charts.Bar(document.getElementById('chart_div'));
 
             chart.draw(data, google.charts.Bar.convertOptions(options));
-
         }
     </script>
 </div>

@@ -1,3 +1,17 @@
+function insertionSort(dataArray, type){
+    // Insertion Sort Alias - params(dataArray)
+    for(var i = 2; i < dataArray.length; i++){
+        var key = dataArray[i];
+        var j = i - 1;
+
+        while(j > 0 && dataArray[j][type] > key[type]){
+            dataArray[j + 1] = dataArray[j];
+            j--;
+        }
+        dataArray[j + 1] = key;
+    }
+    return dataArray;
+}
 
 function searchTable(searchID, tableID, col) {
     var input, filter, table, tr, td, i;
