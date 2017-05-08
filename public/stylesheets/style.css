@@ -75,6 +75,9 @@ ul.nav a:hover { color: #F5CA5C !important; }
 #tbl tr:nth-child(even){
     background-color:#dedede
 }
+#tbl td:nth-child(5){
+    color: #EE0000
+}
 #tbl input{
     width:100%;
     text-align:center;

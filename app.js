@@ -348,7 +348,7 @@ app.post('/submit-num', function(req, res) {
         var cmd = 'java -jar /home/ec2-user/CMSC447/CMSC447-GroupProject/public/Java/verify_numbers.jar check ' + student_number;
         var output = exec(cmd, function (error, stdout, stderr){
             var bit_length = parseInt(stdout);
-            if(parseInt(bit_length) < 2){
+            if(parseInt(bit_length) < 80){
                 verifyAdmin(token, function(admin) {
                     if(admin){
                         // Incorrect submission redirects to submit-num page with navigation
@@ -649,9 +649,20 @@ app.post('/submit-answer', function(req, res) {
     var token = req.body.user_token;
     var email = req.body.user_email;
     var student_answer = req.body.submit_answer;
-    var number_to_answer = req.body.num_to_answer;
+    var number_to_answer;
     var number_to_answer_alias = req.body.num_to_answer_alias;
     var course = JSON.parse(fs.readFileSync('./data.json', 'utf-8'));
+
+    if(isEmpty(course[email][0].nums)){
+        number_to_answer = course[email][0].submit_num;
+    }
+    else {
+        for(var key in course[email][0].nums){
+            if(course[email][0].nums[key].alias === number_to_answer_alias){
+                number_to_answer = course[email][0].nums[key].num_submit;
+            }
+        }
+    }
 
     // This Comment block initializes the arguments for the java program to check the
     // answer the student submits and the primality
@@ -662,7 +673,7 @@ app.post('/submit-answer', function(req, res) {
         cmd += two_nums[i] + ' ';
         isPrimeCmd += two_nums[i] + ' ';
     }
-
+    console.log(cmd)
     // Checks if alias was answers already
     if(course[email][0].factorized_by_me[number_to_answer_alias] !== true){
 
@@ -675,6 +686,7 @@ app.post('/submit-answer', function(req, res) {
                     var correctFactor = stdout;
 
                     // If correct
+                    console.log(correctFactor);
                     if(correctFactor === '1'){
                         for(var key in course){
 
@@ -1145,35 +1157,37 @@ app.get('/delete-num', function(req, res) {
                     // If email is an admin email
                     if(admins.indexOf(email) !== -1) {
                         for (var i = 0; i < admins.length; i++) {
-                            var newNums = [];
-                            var newFactorizedList = {};
-                            for(var n in file[admins[i]][0].nums) {
+                            if(!isEmpty(file[admins[i]])){
+                                var newNums = [];
+                                var newFactorizedList = {};
+                                for(var n in file[admins[i]][0].nums) {
 
-                                // Creates new json data for everything but deleted submission
-                                if(file[admins[i]][0].nums[n].num_submit.slice(-10) != num && file[admins[i]][0].nums[n].alias != alias) {
-                                    newNums.push(file[admins[i]][0].nums[n]);
+                                    // Creates new json data for everything but deleted submission
+                                    if(file[admins[i]][0].nums[n].num_submit.slice(-10) != num && file[admins[i]][0].nums[n].alias != alias) {
+                                        newNums.push(file[admins[i]][0].nums[n]);
 
-                                    // Updates factorized_by_me list of admin data
-                                    if(file[admins[i]][0].factorized_by_me[file[admins[i]][0].nums[n].alias] === true){
-                                        newFactorizedList[file[admins[i]][0].nums[n].alias] = true;
+                                        // Updates factorized_by_me list of admin data
+                                        if(file[admins[i]][0].factorized_by_me[file[admins[i]][0].nums[n].alias] === true){
+                                            newFactorizedList[file[admins[i]][0].nums[n].alias] = true;
+                                        }
                                     }
                                 }
-                            }
 
-                            for(var key in file[admins[i]][0].factorized_by_me){
-                                if(key !== alias){
-                                    newFactorizedList[key] = true;
+                                for(var key in file[admins[i]][0].factorized_by_me){
+                                    if(key !== alias){
+                                        newFactorizedList[key] = true;
+                                    }
                                 }
-                            }
 
-                            // Pushes new admin data without deleted submissions
-                            json[admins[i]] = [];
-                            var newObj = {
-                                alias : file[admins[i]][0].alias,
-                                nums : newNums,
-                                factorized_by_me : newFactorizedList
-                            };
-                            json[admins[i]].push(newObj);
+                                // Pushes new admin data without deleted submissions
+                                json[admins[i]] = [];
+                                var newObj = {
+                                    alias : file[admins[i]][0].alias,
+                                    nums : newNums,
+                                    factorized_by_me : newFactorizedList
+                                };
+                                json[admins[i]].push(newObj);
+                            }
                         }
 
                         for (var i = 0; i < students.length; i++) {
