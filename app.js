@@ -652,18 +652,27 @@ app.post('/submit-answer', function(req, res) {
     var number_to_answer;
     var number_to_answer_alias = req.body.num_to_answer_alias;
     var course = JSON.parse(fs.readFileSync('./data.json', 'utf-8'));
-
-    if(isEmpty(course[email][0].nums)){
-        number_to_answer = course[email][0].submit_num;
-    }
-    else {
-        for(var key in course[email][0].nums){
-            if(course[email][0].nums[key].alias === number_to_answer_alias){
-                number_to_answer = course[email][0].nums[key].num_submit;
+    console.log(number_to_answer_alias)
+    // Gets full number for course data
+    if(number_to_answer_alias.includes("_") === false) {
+        for(var key in course){
+            if(course[key][0].alias === number_to_answer_alias){
+                number_to_answer = course[email][0].num_submit;
             }
         }
     }
-
+    else{
+        for(var key in course){
+            if(!isEmpty(course[key][0].nums) && !isEmpty(course[key])){
+                for(var sub in course[key][0].nums){
+                    if(course[key][0].nums[sub].alias === number_to_answer_alias){
+                        number_to_answer = course[key][0].nums[sub].num_submit;
+                    }
+                }
+            }
+        }
+    }
+    console.log(number_to_answer)
     // This Comment block initializes the arguments for the java program to check the
     // answer the student submits and the primality
     var two_nums = student_answer.split(" ");
