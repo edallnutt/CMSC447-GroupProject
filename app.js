@@ -18,6 +18,7 @@ var users = require('./routes/users');
 var config = require('./config.json');
 var bodyParser = require('body-parser');
 var formidable = require('formidable');
+var json2csv = require('json2csv');
 
 var app = express();
 
@@ -1332,6 +1333,33 @@ app.get('/number-list', function(req, res) {
     fs.writeFile(path.join(__dirname, 'nums.txt'), body, function (err) {
         if (err) return console.log(err);
         res.download(path.join(__dirname, 'nums.txt'));
+    });
+});
+
+app.get('/download-csv', function(req, res){
+    console.log("entered")
+    var file = JSON.parse(fs.readFileSync('./data.json', 'utf-8'));
+    var fields = ["Email", "Alias", "Submitted", "Number_Submitted", "Bit_Length", "Prime", "Factor_Count", "Factored_By_Me"];
+    var json = [];
+    for(var key in file){
+        if(isEmpty(file[key][0].nums)){
+            var data = {
+                Email: key,
+                Alias: file[key][0].alias,
+                Submitted: file[key][0].submitted,
+                Number_Submitted: file[key][0].num_submit,
+                Bit_Length: file[key][0].num_length,
+                Prime: file[key][0].num_prime,
+                Factor_Count: file[key][0].factor_count,
+                Factored_By_Me: file[key][0].factorized_by_me
+            };
+            json.push(data);
+        }
+    }
+    var csv = json2csv({ data: json, fields: fields });
+    fs.writeFile('student-data.csv', csv, function(err) {
+        if (err) throw err;
+        res.download(path.join(__dirname, 'student-data.csv'));
     });
 });
 
