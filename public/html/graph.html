@@ -105,16 +105,24 @@
                     }
                     dataArray[i][type] = str;
                 }
+                console.log(largest);
+                var frequency;
+                if(largest === 0){
+                    frequency =  new Array(1).fill(0);
+                }
+                else{
+                    frequency =  new Array(largest + 1).fill(0);
+                }
 
-                var frequency = new Array(largest).fill(0);
                 var sorted = new Array(dataArray.length);
                 sorted[0] = ['Alias', 'Factor Count', 'Bit Length'];
 
+                console.log(largestStr.length);
                 /* Radix Sort - params(dataArray, largestStr.length + 1) */
                 for(var i = 1; i < largestStr.length + 1; i++){
 
                     /* Counting Sort params(dataArray) */
-
+                    console.log("array: " + dataArray);
                     // Count occurences of each Factor Count or Bit Length
                     for(var j = 1; j < dataArray.length; j++){
                         if(i === 1){
@@ -129,7 +137,7 @@
                     for(var j = 1; j < frequency.length; j++){
                         frequency[j] = frequency[j - 1] + frequency[j];
                     }
-
+                    console.log("freq: " + frequency);
                     // Stable sort original array using occurence count array into sorted array
                     for(var j = dataArray.length - 1; j > 0; j--){
                         if(i === 1){
@@ -141,7 +149,7 @@
                             frequency[dataArray[j][type].toString().slice(-i, -i + 1)]--;
                         }
                     }
-
+                    console.log("sorted: " + sorted);
                     /* Counting Sort End */
 
                     dataArray = sorted.slice();     // Assign new data to original data
@@ -150,6 +158,7 @@
 
                 // Convert strings back to numbers
                 for(var i = 1; i < dataArray.length; i++){
+                    //console.log(dataArray)
                     dataArray[i][type] = parseInt(dataArray[i][type]);
                 }
             }

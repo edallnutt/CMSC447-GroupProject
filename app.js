@@ -258,14 +258,28 @@ app.get('/', function(req,res) {
 // Displays number submission page
 app.get('/submit-num', function(req, res) {
     var token = req.query.token;
+    var email = req.query.email;
+    var course = JSON.parse(fs.readFileSync('./data.json', 'utf-8'));
+    var msg;
+
     verifyStudent(token, function(student) {
         if(student) {
+            if(isEmpty(course[email])){
+                msg = "Currently no submission";
+            }
+            else if(course[email][0].submitted === "yes"){
+                msg = "Number already submitted - Resubmit if necessary";
+            }
+            else if(course[email][0].submitted === "deleted"){
+                msg = "Your submission was deleted by an admin, please resubmit";
+            }
+
             checkSubmissionStatus(function (posted) {
                 switch(posted){
                     case -1:    res.writeHead(200, {'Content-Type': 'text/html'});
                         view("header", {}, res);
                         view("nav", {}, res);
-                        view("submit_num", {error:""}, res);
+                        view("submit_num", {error: msg}, res);
                         view("footer", {}, res);
                         res.end();
                         break;
@@ -333,7 +347,7 @@ app.post('/submit-num', function(req, res) {
         var cmd = 'java -jar /home/ec2-user/CMSC447/CMSC447-GroupProject/public/Java/verify_numbers.jar check ' + student_number;
         var output = exec(cmd, function (error, stdout, stderr){
             var bit_length = parseInt(stdout);
-            if(parseInt(bit_length) < 80){
+            if(parseInt(bit_length) < 2){
                 verifyAdmin(token, function(admin) {
                     if(admin){
                         // Incorrect submission redirects to submit-num page with navigation
@@ -430,6 +444,7 @@ app.post('/submit-num', function(req, res) {
                                 // Inputs data for first student submissions
                                 student_data = {
                                     alias: randomFruit,
+                                    submitted: "yes",
                                     num_submit: student_number,
                                     num_length: bit_length,
                                     num_prime: isPrime,
@@ -447,6 +462,7 @@ app.post('/submit-num', function(req, res) {
                                 var aliasr = course[student_email][0].alias;
                                 var oldNums = course[student_email][0].nums;
 
+                                // If admin deleted all their submissions
                                 if(oldNums.length === 0){
                                     var num_data = {
                                             alias: aliasr+"_1",
@@ -474,12 +490,14 @@ app.post('/submit-num', function(req, res) {
                                 }
 
                             } else {
-                                // Inputs data for student admin submissions
+                                // Inputs data for student submissions
                                 var objAlias = course[student_email][0].alias;
                                 var objFactorizedList = course[student_email][0].factorized_by_me;
+
                                 course[student_email] = [];
                                 student_data = {
                                     alias: objAlias,
+                                    submitted:  "yes",
                                     num_submit: student_number,
                                     num_length: bit_length,
                                     num_prime: isPrime,
@@ -671,9 +689,20 @@ app.post('/submit-answer', function(req, res) {
                                             var currentdate = new Date();
                                             var dayTime = "AM";
                                             var hours = currentdate.getHours() - 4;
-                                            if(hours > 12){
-                                                hours = hours - 12;
+                                            if(hours >= 12){
+                                                if(hours !== 12){
+                                                    hours = hours - 12;
+                                                }
                                                 dayTime = "PM";
+                                            }
+                                            else if(hours <= 0){
+                                                if(hours === 0){
+                                                    hours = 12;
+                                                }
+                                                else{
+                                                    newHours = 12 + hours;
+                                                    dayTime = "PM"
+                                                }
                                             }
                                             var datetime =  (currentdate.getMonth() + 1) + "/"
                                                             + currentdate.getDate() + "/"
@@ -699,9 +728,20 @@ app.post('/submit-answer', function(req, res) {
                                         var currentdate = new Date();
                                         var dayTime = "AM";
                                         var hours = currentdate.getHours() - 4;
-                                        if(hours > 12){
-                                            hours = hours - 12;
+                                        if(hours >= 12){
+                                            if(hours !== 12){
+                                                hours = hours - 12;
+                                            }
                                             dayTime = "PM";
+                                        }
+                                        else if(hours <= 0){
+                                            if(hours === 0){
+                                                hours = 12;
+                                            }
+                                            else{
+                                                hours = 12 + hours;
+                                                dayTime = "PM"
+                                            }
                                         }
                                         var datetime =  (currentdate.getMonth() + 1) + "/"
                                                         + currentdate.getDate() + "/"
@@ -819,7 +859,7 @@ app.post('/submit-answer', function(req, res) {
                 else{
                     res.writeHead(200, {'Content-Type': 'text/html'});
                     view("header", {}, res);
-                    view("nav", {}, res);
+                    view("nav-student-answer", {}, res);
                     table_view("submit-answer", fs.readFileSync('./data.json', 'utf-8'), {check:"Already answered: " + number_to_answer_alias}, email, res, adminList);
                     view("footer", {}, res);
                     res.end();
@@ -863,15 +903,28 @@ app.get('/statistics', function(req, res) {
 app.get('/home', function(req,res) {
     var token = req.query.token;
     var email = req.query.email;
+    var course = JSON.parse(fs.readFileSync('./data.json', 'utf-8'));
+    var msg;
+
     getAdmins(function(adminList) {
         verifyStudent(token, function(student) {
             if(student) {
+                if(isEmpty(course[email])){
+                    msg = "Currently no submission";
+                }
+                else if(course[email][0].submitted === "yes"){
+                    msg = "Number already submitted - Resubmit if necessary";
+                }
+                else if(course[email][0].submitted === "deleted"){
+                    msg = "Your submission was deleted by an admin, please resubmit";
+                }
+
                 checkSubmissionStatus(function(posted) {
                     switch(posted) {
                         case -1: res.writeHead(200, {'Content-Type': 'text/html'});
                             view("header", {}, res);
                             view("nav", {}, res);
-                            view("submit_num", {error:""}, res);
+                            view("submit_num", {error: msg}, res);
                             view("footer", {}, res);
                             res.end();
                             break;
@@ -1106,6 +1159,12 @@ app.get('/delete-num', function(req, res) {
                                 }
                             }
 
+                            for(var key in file[admins[i]][0].factorized_by_me){
+                                if(key !== alias){
+                                    newFactorizedList[key] = true;
+                                }
+                            }
+
                             // Pushes new admin data without deleted submissions
                             json[admins[i]] = [];
                             var newObj = {
@@ -1117,8 +1176,46 @@ app.get('/delete-num', function(req, res) {
                         }
 
                         for (var i = 0; i < students.length; i++) {
-                            if (!isEmpty(file[students[i].trim()])) {
-                                json[students[i].trim()] = file[students[i].trim()];
+                            var newFactorizedList = {};
+                            var newStudent = students[i].trim();
+                            if (!isEmpty(file[newStudent])) {
+                                // Updates factorized_by_me list of student data
+                                for(var key in file[newStudent][0].factorized_by_me){
+                                    if(key !== alias){
+                                        newFactorizedList[key] = true;
+                                    }
+                                }
+
+                                if(newStudent !== email && file[newStudent][0].submitted !== "deleted"){
+                                    // Pushes new student data without deleted submissions
+                                    json[newStudent] = [];
+                                    var newObj = {
+                                        alias : file[newStudent][0].alias,
+                                        submitted: "yes",
+                                        num_submit: file[newStudent][0].num_submit,
+                                        num_length: file[newStudent][0].num_length,
+                                        num_prime: file[newStudent][0].num_prime,
+                                        factor_count: file[newStudent][0].factor_count,
+                                        first_factor_time: file[newStudent][0].first_factor_time,
+                                        factorized_by_me : newFactorizedList
+                                    };
+                                    json[newStudent].push(newObj);
+                                }
+                                else{
+                                    // Pushes new student data without deleted submissions
+                                    json[newStudent] = [];
+                                    var newObj = {
+                                        alias : file[newStudent][0].alias,
+                                        submitted: "deleted",
+                                        num_submit: "0",
+                                        num_length: 0,
+                                        num_prime: "No",
+                                        factor_count: 0,
+                                        first_factor_time: "",
+                                        factorized_by_me : newFactorizedList
+                                    };
+                                    json[newStudent].push(newObj);
+                                }
                             }
                         }
 
@@ -1127,11 +1224,10 @@ app.get('/delete-num', function(req, res) {
                     } else {
 
                         // Creates new json data for everything but deleted submission
-                        var newFactorizedList = {};
                         for (var i = 0; i < students.length; i++) {
-
+                            var newFactorizedList = {};
                             var newStudent = students[i].trim();
-                            if (newStudent !== email && !isEmpty(file[newStudent])) {
+                            if (!isEmpty(file[newStudent])) {
 
                                 // Updates factorized_by_me list of student data
                                 for(var key in file[newStudent][0].factorized_by_me){
@@ -1140,18 +1236,36 @@ app.get('/delete-num', function(req, res) {
                                     }
                                 }
 
-                                // Pushes new student data without deleted submissions
-                                json[newStudent] = [];
-                                var newObj = {
-                                    alias : file[newStudent][0].alias,
-                                    num_submit: file[newStudent][0].num_submit,
-                                    num_length: file[newStudent][0].num_length,
-                                    num_prime: file[newStudent][0].num_prime,
-                                    factor_count: file[newStudent][0].factor_count,
-                                    first_factor_time: file[newStudent][0].first_factor_time,
-                                    factorized_by_me : newFactorizedList
-                                };
-                                json[newStudent].push(newObj);
+                                if(newStudent !== email && file[newStudent][0].submitted !== "deleted"){
+                                    // Pushes new student data without deleted submissions
+                                    json[newStudent] = [];
+                                    var newObj = {
+                                        alias : file[newStudent][0].alias,
+                                        submitted: "yes",
+                                        num_submit: file[newStudent][0].num_submit,
+                                        num_length: file[newStudent][0].num_length,
+                                        num_prime: file[newStudent][0].num_prime,
+                                        factor_count: file[newStudent][0].factor_count,
+                                        first_factor_time: file[newStudent][0].first_factor_time,
+                                        factorized_by_me : newFactorizedList
+                                    };
+                                    json[newStudent].push(newObj);
+                                }
+                                else{
+                                    // Pushes new student data without deleted submissions
+                                    json[newStudent] = [];
+                                    var newObj = {
+                                        alias : file[newStudent][0].alias,
+                                        submitted: "deleted",
+                                        num_submit: "0",
+                                        num_length: 0,
+                                        num_prime: "No",
+                                        factor_count: 0,
+                                        first_factor_time: "",
+                                        factorized_by_me : newFactorizedList
+                                    };
+                                    json[newStudent].push(newObj);
+                                }
                             }
                         }
 
