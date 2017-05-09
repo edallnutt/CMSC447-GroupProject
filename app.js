@@ -342,8 +342,45 @@ app.post('/submit-num', function(req, res) {
     var student_email = req.body.user_email;
     var token = req.body.user_token;
     var factorized_by_me_list = {};
+    var course = JSON.parse(fs.readFileSync('./data.json', 'utf-8'));
+    var fruits = JSON.parse(fs.readFileSync('./fruit.json', 'utf-8'));
 
-    if(!isNaN(student_number) && student_number.length > 0){
+    // Check if submitted number was already submitted
+    var checkSameNumber = false;
+    for(var key in course){
+        if(isEmpty(course[key][0].nums)){
+            if(course[key][0].num_submit === student_number) checkSameNumber = true;
+        }
+        else{
+            for(var sub in course[key][0].nums){
+                if(course[key][0].nums[sub].num_submit === student_number) checkSameNumber = true;
+            }
+        }
+    }
+
+    if(checkSameNumber){
+        // Already submitted number redirects to submit-num page with navigation
+        // corresponding to admin or student
+        verifyAdmin(token, function(admin) {
+            if(admin){
+                res.writeHead(200, {'Content-Type': 'text/html'});
+                view("header", {}, res);
+                view("nav-admin", {}, res);
+                view("submit_num",  {error:"That number was already submitted, please submit a new number"}, res);
+                view("footer", {}, res);
+                res.end();
+            }
+            else{
+                res.writeHead(200, {'Content-Type': 'text/html'});
+                view("header", {}, res);
+                view("nav", {}, res);
+                view("submit_num",  {error:"That number was already submitted, please submit a new number"}, res);
+                view("footer", {}, res);
+                res.end();
+            }
+        });
+    }
+    else if(!isNaN(student_number) && student_number.length > 0){
         // Get bit length of student number submission
         var cmd = 'java -jar /home/ec2-user/CMSC447/CMSC447-GroupProject/public/Java/verify_numbers.jar check ' + student_number;
         var output = exec(cmd, function (error, stdout, stderr){
@@ -404,8 +441,6 @@ app.post('/submit-num', function(req, res) {
                         isPrime = "No";
                     }
                     verifyAdmin(token, function(admin) {
-                        var course = JSON.parse(fs.readFileSync('./data.json', 'utf-8'));
-                        var fruits = JSON.parse(fs.readFileSync('./fruit.json', 'utf-8'));
                         var student_data;
                         var randomFruit;
                         var counter = 0;
@@ -653,38 +688,63 @@ app.post('/submit-answer', function(req, res) {
     var number_to_answer_alias = req.body.num_to_answer_alias;
     var course = JSON.parse(fs.readFileSync('./data.json', 'utf-8'));
     console.log(number_to_answer_alias)
+
     // Gets full number for course data
-    if(number_to_answer_alias.includes("_") === false) {
-        for(var key in course){
+    for(var key in course){
+        if(isEmpty(course[key][0].nums)){
             if(course[key][0].alias === number_to_answer_alias){
-                number_to_answer = course[email][0].num_submit;
+                number_to_answer = course[key][0].num_submit;
             }
         }
-    }
-    else{
-        for(var key in course){
-            if(!isEmpty(course[key][0].nums) && !isEmpty(course[key])){
-                for(var sub in course[key][0].nums){
-                    if(course[key][0].nums[sub].alias === number_to_answer_alias){
-                        number_to_answer = course[key][0].nums[sub].num_submit;
-                    }
+        else{
+            for(var sub in course[key][0].nums){
+                if(course[key][0].nums[sub].alias === number_to_answer_alias){
+                    number_to_answer = course[key][0].nums[sub].num_submit;
                 }
             }
         }
     }
     console.log(number_to_answer)
+
     // This Comment block initializes the arguments for the java program to check the
     // answer the student submits and the primality
+    var checkForOne = false;
     var two_nums = student_answer.split(" ");
     var cmd = 'java -jar /home/ec2-user/CMSC447/CMSC447-GroupProject/public/Java/verify_numbers.jar answer ' + number_to_answer + ' ';
     var isPrimeCmd = 'python /home/ec2-user/CMSC447/CMSC447-GroupProject/public/python/prime.py 10 ';
     for (var i = 0; i < two_nums.length; i ++){
+        if(two_nums[i] === "1") checkForOne = true;
         cmd += two_nums[i] + ' ';
         isPrimeCmd += two_nums[i] + ' ';
     }
     console.log(cmd)
+
+    if(checkForOne){
+        // Displays answer submission page alerting that the
+        // factor submitted contains 1
+        getAdmins(function(adminList) {
+            verifyAdmin(token, function(admin) {
+                if(admin){
+                    res.writeHead(200, {'Content-Type': 'text/html'});
+                    view("header", {}, res);
+                    view("nav-admin", {}, res);
+                    table_view("submit-answer", fs.readFileSync('./data.json', 'utf-8'), {check:"Invalid: Cannot Submit 1 as a factor"}, email, res, adminList);
+                    view("footer", {}, res);
+                    res.end();
+                }
+                else{
+                    res.writeHead(200, {'Content-Type': 'text/html'});
+                    view("header", {}, res);
+                    view("nav-student-answer", {}, res);
+                    table_view("submit-answer", fs.readFileSync('./data.json', 'utf-8'), {check:"Invalid: Cannot Submit 1 as a factor"}, email, res, adminList);
+                    view("footer", {}, res);
+                    res.end();
+                }
+            });
+        });
+    }
     // Checks if alias was answers already
-    if(course[email][0].factorized_by_me[number_to_answer_alias] !== true){
+    else if(course[email][0].factorized_by_me[number_to_answer_alias] !== true){
 
         // Check primality of submitted answers
         var isPrimeOutput = exec(isPrimeCmd, function(error, stdout, stderr){
