@@ -904,7 +904,7 @@ app.post('/submit-answer', function(req, res) {
                             res.writeHead(200, {'Content-Type': 'text/html'});
                             view("header", {}, res);
                             view("nav-admin", {}, res);
-                            table_view("submit-answer", fs.readFileSync('./data.json', 'utf-8'), {check:"Invalid Factors: Not Prime"}, email, res, adminList);
+                            table_view("submit-answer", fs.readFileSync('./data.json', 'utf-8'), {check:"Invalid: One of the factors entered was not prime"}, email, res, adminList);
                             view("footer", {}, res);
                             res.end();
                         }
@@ -912,7 +912,7 @@ app.post('/submit-answer', function(req, res) {
                             res.writeHead(200, {'Content-Type': 'text/html'});
                             view("header", {}, res);
                             view("nav-student-answer", {}, res);
-                            table_view("submit-answer", fs.readFileSync('./data.json', 'utf-8'), {check:"Invalid Factors: Not Prime"}, email, res, adminList);
+                            table_view("submit-answer", fs.readFileSync('./data.json', 'utf-8'), {check:"Invalid: One of the factors entered was not prime"}, email, res, adminList);
                             view("footer", {}, res);
                             res.end();
                         }
