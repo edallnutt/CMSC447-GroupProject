@@ -40,31 +40,14 @@ ul.nav a:hover { color: #F5CA5C !important; }
 /* Submit Answer Page */
 /**********************/
 
-/*#tblTitle{*/
-    /*margin-top: 100px*/
-/*}*/
-
-/* #tblTitle span:nth-child(1){
-    float:left
-}
-
-#tblTitle span:nth-child(2){
-    float:right
-}*/
 .sub-ans-table {
     width: 75%;
-    /*display: block;*/
     padding-top: 100px;
     padding-bottom: 100px;
     text-align: center;
     margin-left: auto;
     margin-right: auto;
 }
-
-/*#tbl{
-    display: inline-block;
-    text-align: center;
-}*/
 
 #tbl .ok.ok{    /*this IS needed*/
     background-color:#ffe033
@@ -81,21 +64,17 @@ ul.nav a:hover { color: #F5CA5C !important; }
 #tbl input{
     width:100%;
     text-align:center;
-    /*font-size: 14*/
 }
 #tbl th {
     text-align: center;
 }
+
 /**********************/
 /* Admin Page         */
 /**********************/
 
-/* Use class="container text-center" for admin table
-   instead of table-container-admin */
-
 .table-container-admin {
     width: 75%;
-    /*display: block;*/
     padding-top: 100px;
     text-align: center;
     margin-left: auto;
@@ -113,69 +92,13 @@ ul.nav a:hover { color: #F5CA5C !important; }
     font-size: 16px;
 }
 
-/**********************/
-/* Statistics Page */
-/**********************/
-.new-graph{
-    position: relative;
-    width: 80%;
-    margin: 100px auto;
-    min-height: 60vw;
-    max-height: 50vw;
-    min-width: 40%;
-    max-width: 60%;
-    z-index: 1;
- }
-
-.graph {
-    position: relative;
-    border: 3px solid black;
-    border-radius: 5px 5px 0 0;
-    width: 80%;
-    margin: 100px auto;
-    min-height: 60vw;
-    max-height: 50vw;
-    min-width: 40%;
-    max-width: 60%;
-    z-index: 1;
-    background:#deeeed;
- }
-
-.graph-title {
-    display: inline;
-    position: absolute;
+.expand-table {
     width: 100%;
-    padding-top: 3px;
-    padding-bottom: 3px;
-    background: #663399;
-    border-bottom: 3px solid black;
-    font-size: 1.5em;
-    color: white;
-    text-align: center;
-    text-shadow: 3px 3px 5px black;
-    z-index: 0;
-  }
-
-.bar {
-    position: absolute;
-    display: inline-block;
-    bottom: 0;
-    border: 1px solid black;
-    border-radius: 6px 6px 0 0;
-    background: #4aaa99;
-    width: 12%;
-    text-align: center;
-    color: white;
-    text-shadow: 1px 1px 3px black;
-    box-shadow: 4px 0 8px #888;
 }
 
-.entry-name {
-    position: absolute;
-    border-top: 1px solid black;
-    background: #78aac8;
-    bottom: 0;
-    width: 100%;
-    text-shadow: 1px 1px 3px black;
-    color: white;
+.expand-table td {
+    text-align: center;
+    border-color: #D3D3D3;
+    border-style: solid;
+    border-width: thick;
 }
