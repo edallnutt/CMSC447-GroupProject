@@ -1,5 +1,7 @@
 # CMSC447-GroupProject 
-
+## Current Problems:
+Google api key is invalid for localhost so you cannot login to site and site is not hosted anywhere so basically site is useless at the moment  
+  
 ## Purpose:
 This was a group project for a senior year class where we had to find a customer with a need, gather the requirements, and implement a solution.  
   
